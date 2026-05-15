@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Centro Studio — Un espacio donde convive la escena",
   "type": "module",
+  "dependencies": {
+    "nodemailer": "^6.9.16"
+  },
   "scripts": {
     "dev": "python3 -m http.server 3000",
     "start": "python3 -m http.server 3000"
