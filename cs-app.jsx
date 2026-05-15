@@ -10,9 +10,15 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "accent": "neutral"
 }/*EDITMODE-END*/;
 
+const VALID_ROUTES = ["home","blog","quote","guest","store","workshops","gallery","events","giftcard","info"];
+function pathToRoute(path) {
+  const seg = path.replace(/^\//, "").split("/")[0] || "home";
+  return VALID_ROUTES.includes(seg) ? seg : "home";
+}
+
 function App() {
   const [lang, setLang] = useStateApp("es");
-  const [route, setRouteRaw] = useStateApp("home");
+  const [route, setRouteRaw] = useStateApp(() => pathToRoute(window.location.pathname));
   const [subroute, setSubroute] = useStateApp("about");
   const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
 
@@ -24,11 +30,20 @@ function App() {
   }, []);
   const tStr = time.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", timeZone: "America/Argentina/Buenos_Aires" });
 
+  // Sync URL on route change
   const setRoute = (r) => {
     setRouteRaw(r);
+    window.history.pushState({}, "", r === "home" ? "/" : `/${r}`);
     if (r === "info") setSubroute("about");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  // Handle browser back/forward
+  useEffectApp(() => {
+    const handler = () => setRouteRaw(pathToRoute(window.location.pathname));
+    window.addEventListener("popstate", handler);
+    return () => window.removeEventListener("popstate", handler);
+  }, []);
 
   const t = I18N[lang];
   const ctx = { lang, t, setLang };
