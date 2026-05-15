@@ -1,11 +1,11 @@
-// Vercel serverless function — sends wizard form email via Resend
+// Vercel serverless function — sends wizard form email via Brevo (ex-Sendinblue)
 // Setup (one-time):
-//   1. Sign up free at resend.com
-//   2. In Vercel dashboard → Settings → Environment Variables, add:
-//      RESEND_API_KEY = re_xxxxxxxxxxxxxxxxxxxx
-//   3. Optionally verify your domain in Resend and update the `from` address below
+//   1. Sign up free at brevo.com with centrostudio.ar@gmail.com
+//   2. Go to Settings → SMTP & API → API Keys → Generate a new API key
+//   3. In Vercel dashboard → Settings → Environment Variables, add:
+//      BREVO_API_KEY = xkeysib-xxxxxxxxxxxxxxxxxxxx
 //
-// Without RESEND_API_KEY the function returns { ok: false, fallback: true }
+// Without BREVO_API_KEY the function returns { ok: false, fallback: true }
 // and the wizard falls back to the mailto: approach.
 
 export default async function handler(req, res) {
@@ -14,7 +14,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
+  const apiKey = process.env.BREVO_API_KEY;
   if (!apiKey) {
     return res.status(200).json({ ok: false, fallback: true });
   }
@@ -32,35 +32,31 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Missing subject or text" });
   }
 
-  // CONTACT_EMAIL must match the email you registered in Resend
-  // (Resend test domain only delivers to the account owner's email)
-  const contactEmail = process.env.CONTACT_EMAIL || "centrostudio.ar@gmail.com";
-
   const emailPayload = {
-    from: "Centro Studio <onboarding@resend.dev>",
-    to: [contactEmail],
+    sender: { name: "Centro Studio", email: "centrostudio.ar@gmail.com" },
+    to: [{ email: "centrostudio.ar@gmail.com", name: "Centro Studio" }],
     subject,
-    text,
-    attachments: attachments.map(a => ({
-      filename: a.name,
+    textContent: text,
+    attachment: attachments.map(a => ({
+      name: a.name,
       content: a.data,
     })),
   };
 
   try {
-    const resp = await fetch("https://api.resend.com/emails", {
+    const resp = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${apiKey}`,
+        "api-key": apiKey,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(emailPayload),
     });
 
-    const resendBody = await resp.text();
+    const brevoBody = await resp.text();
     if (!resp.ok) {
-      console.error("Resend error:", resendBody);
-      return res.status(200).json({ ok: false, resendError: resendBody });
+      console.error("Brevo error:", brevoBody);
+      return res.status(200).json({ ok: false, brevoError: brevoBody });
     }
 
     return res.status(200).json({ ok: true });
