@@ -32,9 +32,13 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Missing subject or text" });
   }
 
+  // CONTACT_EMAIL must match the email you registered in Resend
+  // (Resend test domain only delivers to the account owner's email)
+  const contactEmail = process.env.CONTACT_EMAIL || "centrostudio.ar@gmail.com";
+
   const emailPayload = {
     from: "Centro Studio <onboarding@resend.dev>",
-    to: ["centrostudio.ar@gmail.com"],
+    to: [contactEmail],
     subject,
     text,
     attachments: attachments.map(a => ({
@@ -53,10 +57,10 @@ export default async function handler(req, res) {
       body: JSON.stringify(emailPayload),
     });
 
+    const resendBody = await resp.text();
     if (!resp.ok) {
-      const err = await resp.text();
-      console.error("Resend error:", err);
-      return res.status(500).json({ error: "Email send failed" });
+      console.error("Resend error:", resendBody);
+      return res.status(200).json({ ok: false, resendError: resendBody });
     }
 
     return res.status(200).json({ ok: true });

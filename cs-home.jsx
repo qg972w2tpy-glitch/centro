@@ -498,7 +498,7 @@ function LinkArrow({ onClick, label, href, target }) {
 /* ---------------- DISCIPLINES ---------------- */
 function Disciplines({ setRoute, t }) {
   const [hover, setHover] = useStateH(null);
-  const routes = ["quote", "gallery", "store", "workshops"];
+  const routes = ["tattoo", "gallery", "store", "workshops"];
   const items = (t.home.areas || []).map((a, i) => ({ ...a, route: routes[i] }));
 
   return (

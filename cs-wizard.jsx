@@ -14,14 +14,14 @@ function Wizard({ setRoute, preselectedArtist }) {
     refs: [],
     artist: preselectedArtist || null,
     dates: { from: "", to: "" },
-    contact: { name: "", email: "", phone: "", notes: "" },
+    contact: { name: "", ig: "" },
   });
   const [submitted, setSubmitted] = useStateW(false);
 
   const total = 9;
   const set = (k, v) => setData(d => ({ ...d, [k]: v }));
 
-  const canSubmit = data.contact.name && data.contact.email;
+  const canSubmit = data.contact.name && data.contact.ig;
   const filled = (() => {
     switch (step) {
       case 0: return data.first !== null;
@@ -56,11 +56,8 @@ function Wizard({ setRoute, preselectedArtist }) {
       `· Artista:        ${data.artist || "—"}\n` +
       `· Fechas:         ${data.dates.from || "—"}${data.dates.to ? " → " + data.dates.to : ""}\n\n` +
       `── Contacto ──\n` +
-      `Nombre:   ${data.contact.name}\n` +
-      `Email:    ${data.contact.email}\n` +
-      `Teléfono: ${data.contact.phone || "—"}\n\n` +
-      `── Notas ──\n` +
-      `${data.contact.notes || "—"}\n\n` +
+      `Nombre:    ${data.contact.name}\n` +
+      `Instagram: @${data.contact.ig}\n\n` +
       `Gracias.`;
     return { subj, body };
   };
@@ -276,9 +273,6 @@ function Step03({ data, setAndAdvance, T }) {
 }
 
 function Step04({ data, setAndAdvance, T }) {
-  const [pending, setPending] = React.useState(data.zone);
-
-  // Deduplicated zone list (same key can appear in front + back)
   const seen = new Set();
   const uniqueZones = T.zones.filter(z => { if (seen.has(z.k)) return false; seen.add(z.k); return true; });
 
@@ -292,12 +286,9 @@ function Step04({ data, setAndAdvance, T }) {
   return (
     <div>
       <StepHeader num="04" q={T.q4} sub={T.q4sub} />
-
-      <div style={{ display: "grid", gap: 28 }}>
+      <div style={{ display: "grid", gap: 28, maxHeight: "58vh", overflowY: "auto", paddingRight: 8 }}>
         {GROUPS.map(grp => {
-          const grpZones = grp.keys
-            .map(k => uniqueZones.find(z => z.k === k))
-            .filter(Boolean);
+          const grpZones = grp.keys.map(k => uniqueZones.find(z => z.k === k)).filter(Boolean);
           if (!grpZones.length) return null;
           return (
             <div key={grp.g}>
@@ -306,15 +297,15 @@ function Step04({ data, setAndAdvance, T }) {
                 {grpZones.map(z => (
                   <button
                     key={z.k}
-                    onClick={() => setPending(z.k)}
+                    onClick={() => setAndAdvance("zone", z.k)}
                     style={{
                       padding: "10px 18px",
                       border: "1.5px solid",
-                      borderColor: pending === z.k ? "#000" : "var(--hair)",
-                      background: pending === z.k ? "#000" : "#fff",
-                      color: pending === z.k ? "#fff" : "#000",
+                      borderColor: data.zone === z.k ? "#000" : "var(--hair)",
+                      background: data.zone === z.k ? "#000" : "#fff",
+                      color: data.zone === z.k ? "#fff" : "#000",
                       fontSize: 13.5,
-                      fontWeight: pending === z.k ? 700 : 400,
+                      fontWeight: data.zone === z.k ? 700 : 400,
                       transition: "all .15s",
                       cursor: "pointer",
                       whiteSpace: "nowrap",
@@ -328,18 +319,6 @@ function Step04({ data, setAndAdvance, T }) {
           );
         })}
       </div>
-
-      {pending && (
-        <div style={{ marginTop: 28, display: "flex", justifyContent: "flex-end" }}>
-          <button
-            onClick={() => setAndAdvance("zone", pending)}
-            className="btn btn-dark"
-            style={{ fontSize: 13, padding: "14px 36px", letterSpacing: "0.06em" }}
-          >
-            {T.confirmZone || "Confirmar zona"} →
-          </button>
-        </div>
-      )}
     </div>
   );
 }
@@ -550,30 +529,20 @@ function Step09({ data, set, T }) {
             <input className="field" value={data.contact.name} onChange={e => update("name", e.target.value)} placeholder="Tu nombre" />
           </div>
           <div>
-            <label className="meta" style={{ display: "block", marginBottom: 4 }}>{T.fEmail} *</label>
-            <input className="field" type="email" value={data.contact.email} onChange={e => update("email", e.target.value)} placeholder="tu@email.com" />
-          </div>
-          <div>
-            <label className="meta" style={{ display: "block", marginBottom: 4 }}>{T.fPhone}</label>
-            <input className="field" value={data.contact.phone} onChange={e => update("phone", e.target.value)} placeholder="+54 11 ..." />
-          </div>
-          <div>
-            <label className="meta" style={{ display: "block", marginBottom: 4 }}>{T.fNotes}</label>
-            <textarea className="field" value={data.contact.notes} onChange={e => update("notes", e.target.value)} rows={3} />
+            <label className="meta" style={{ display: "block", marginBottom: 4 }}>{T.fIg} *</label>
+            <div style={{ position: "relative" }}>
+              <span style={{ position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)", color: "rgba(0,0,0,0.4)", fontSize: 18, pointerEvents: "none" }}>@</span>
+              <input
+                className="field"
+                value={data.contact.ig}
+                onChange={e => update("ig", e.target.value.replace(/^@/, ""))}
+                placeholder="tuusuario"
+                style={{ paddingLeft: 18 }}
+              />
+            </div>
           </div>
         </div>
         <Summary data={data} T={T} />
-      </div>
-      <div style={{
-        marginTop: 28, padding: "16px 22px", background: "var(--warm)",
-        display: "flex", gap: 14, alignItems: "flex-start",
-        fontSize: 13, color: "var(--muted)",
-      }}>
-        <Asterisk size={14} />
-        <div>
-          Al enviar abrimos tu cliente de mail con todos los datos pre-cargados — vas a tener que sumar las imágenes de referencia como adjuntas y darle <em>Enviar</em>.
-          El destinatario es <strong>centrostudio.ar@gmail.com</strong>.
-        </div>
       </div>
     </div>
   );
@@ -624,10 +593,7 @@ function WizardDone({ setRoute, T, data }) {
           {T.thanksTime}
         </p>
         <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-          <a href="https://wa.me/5492804777018" target="_blank" rel="noopener" className="btn btn-dark">
-            {T.thanksWA} →
-          </a>
-          <button className="btn" onClick={() => setRoute("home")}>{T.thanksHome}</button>
+          <button className="btn btn-dark" onClick={() => setRoute("home")}>{T.thanksHome}</button>
         </div>
       </div>
     </div>
@@ -737,7 +703,8 @@ const wzES = {
   dateNote: "Coordinamos el turno por mail dentro de las 48h hábiles.",
   q9: "Datos de contacto",
   q9sub: "Solo lo necesario para responderte.",
-  fName: "Nombre", fEmail: "Email", fPhone: "Teléfono / WhatsApp",
+  fName: "Nombre", fIg: "Instagram",
+  fEmail: "Email", fPhone: "Teléfono / WhatsApp",
   fNotes: "Algo más que quieras contarnos",
   summary: "Resumen",
   sumFirst: "Primer tatuaje", sumStyle: "Estilo", sumSize: "Tamaño",
@@ -828,7 +795,8 @@ const wzEN = Object.assign({}, wzES, {
   dateFrom: "From", dateTo: "To",
   dateNote: "We schedule by email within 48 business hours.",
   q9: "Contact details", q9sub: "Only what we need to reply.",
-  fName: "Name", fEmail: "Email", fPhone: "Phone / WhatsApp",
+  fName: "Name", fIg: "Instagram",
+  fEmail: "Email", fPhone: "Phone / WhatsApp",
   fNotes: "Anything else?",
   summary: "Summary",
   sumFirst: "First tattoo", sumStyle: "Style", sumSize: "Size",
