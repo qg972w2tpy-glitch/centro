@@ -203,7 +203,7 @@ function Navbar({ route, setRoute, time, intensity }) {
             }}
           >
             <img src="assets/centro-logo.png" alt="" style={{ width: 38, height: 38, objectFit: "contain", display: "block" }} />
-            <span style={{
+            <span className="nav-wordmark" style={{
               fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
               fontWeight: 900,
               fontSize: 20,
@@ -294,9 +294,8 @@ function Navbar({ route, setRoute, time, intensity }) {
       <NavOverlay open={open} setOpen={setOpen} route={route} setRoute={setRoute} />
 
       <style>{`
-        @media (min-width: 1180px) {
-          .nav-desktop { display: flex !important; }
-        }
+        @media (min-width: 1180px) { .nav-desktop { display: flex !important; } }
+        @media (max-width: 520px) { .nav-wordmark { display: none !important; } }
       `}</style>
     </>
   );

@@ -10,15 +10,30 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "accent": "neutral"
 }/*EDITMODE-END*/;
 
-const VALID_ROUTES = ["home","blog","quote","guest","store","workshops","gallery","events","giftcard","info"];
+const SLUG_TO_ROUTE = {
+  "cotiza": "quote", "tienda": "store", "talleres": "workshops",
+  "galeria": "gallery", "eventos": "events", "giftcard": "giftcard",
+  "info": "info", "visita": "guest", "blog": "blog",
+};
+const ROUTE_TO_SLUG = {
+  "quote": "cotiza", "store": "tienda", "workshops": "talleres",
+  "gallery": "galeria", "events": "eventos", "giftcard": "giftcard",
+  "info": "info", "guest": "visita", "blog": "blog",
+};
 function pathToRoute(path) {
-  const seg = path.replace(/^\//, "").split("/")[0] || "home";
-  return VALID_ROUTES.includes(seg) ? seg : "home";
+  const parts = path.replace(/^\//, "").split("/");
+  const slug = parts[0] || "";
+  if (!slug) return { route: "home", artist: null };
+  const route = SLUG_TO_ROUTE[slug];
+  if (!route) return { route: "home", artist: null };
+  return { route, artist: route === "quote" && parts[1] ? decodeURIComponent(parts[1]) : null };
 }
 
 function App() {
   const [lang, setLang] = useStateApp("es");
-  const [route, setRouteRaw] = useStateApp(() => pathToRoute(window.location.pathname));
+  const [initPath] = useStateApp(() => pathToRoute(window.location.pathname));
+  const [route, setRouteRaw] = useStateApp(() => initPath.route);
+  const [preselectedArtist] = useStateApp(() => initPath.artist);
   const [subroute, setSubroute] = useStateApp("about");
   const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
 
@@ -33,14 +48,15 @@ function App() {
   // Sync URL on route change
   const setRoute = (r) => {
     setRouteRaw(r);
-    window.history.pushState({}, "", r === "home" ? "/" : `/${r}`);
+    const slug = ROUTE_TO_SLUG[r];
+    window.history.pushState({}, "", r === "home" ? "/" : `/${slug || r}`);
     if (r === "info") setSubroute("about");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // Handle browser back/forward
   useEffectApp(() => {
-    const handler = () => setRouteRaw(pathToRoute(window.location.pathname));
+    const handler = () => setRouteRaw(pathToRoute(window.location.pathname).route);
     window.addEventListener("popstate", handler);
     return () => window.removeEventListener("popstate", handler);
   }, []);
@@ -97,7 +113,7 @@ function App() {
   switch (route) {
     case "home": page = <HomePage setRoute={setRoute} intensity={tweaks.intensity} imagery={tweaks.imageMode} />; break;
     case "blog": page = <BlogPage />; break;
-    case "quote": page = <Wizard setRoute={setRoute} />; break;
+    case "quote": page = <Wizard setRoute={setRoute} preselectedArtist={preselectedArtist} />; break;
     case "guest": page = <GuestPage />; break;
     case "store": page = <StorePage />; break;
     case "workshops": page = <WorkshopsPage />; break;

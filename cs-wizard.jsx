@@ -1,7 +1,7 @@
 // Wizard: 9-step tattoo quote
 const { useState: useStateW, useRef: useRefW } = React;
 
-function Wizard({ setRoute }) {
+function Wizard({ setRoute, preselectedArtist }) {
   const { t, lang } = useI18n();
   const T = lang === "es" ? wzES : wzEN;
   const [step, setStep] = useStateW(0);
@@ -12,7 +12,7 @@ function Wizard({ setRoute }) {
     zone: null,
     hasDesign: null,
     refs: [],
-    artist: null,
+    artist: preselectedArtist || null,
     dates: { from: "", to: "" },
     contact: { name: "", email: "", phone: "", notes: "" },
   });
@@ -108,7 +108,7 @@ function Wizard({ setRoute }) {
           {step === 3 && <Step04 data={data} set={set} setAndAdvance={setAndAdvance} T={T} />}
           {step === 4 && <Step05 data={data} set={set} setAndAdvance={setAndAdvance} T={T} />}
           {step === 5 && <Step06 data={data} set={set} T={T} />}
-          {step === 6 && <Step07 data={data} set={set} setAndAdvance={setAndAdvance} T={T} />}
+          {step === 6 && <Step07 data={data} set={set} setAndAdvance={setAndAdvance} T={T} preselectedArtist={preselectedArtist} />}
           {step === 7 && <Step08 data={data} set={set} T={T} />}
           {step === 8 && <Step09 data={data} set={set} T={T} />}
         </div>
@@ -236,32 +236,44 @@ function Step03({ data, setAndAdvance, T }) {
 
 function Step04({ data, setAndAdvance, T }) {
   const [view, setView] = React.useState("front");
+  const [pending, setPending] = React.useState(data.zone);
   const viewZones = T.zones.filter(z => z.v === view);
   return (
     <div>
       <StepHeader num="04" q={T.q4} sub={T.q4sub} />
       <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 24, alignItems: "start" }} className="zone-grid">
-        <BodyDiagram selected={data.zone} onSelect={(z) => setAndAdvance("zone", z)} view={view} setView={setView} T={T} />
+        <BodyDiagram selected={pending} onSelect={setPending} view={view} setView={setView} T={T} />
         <div style={{ display: "grid", gap: 6, maxHeight: 480, overflowY: "auto" }}>
           {viewZones.map(z => (
             <button key={z.k + z.v}
-              onClick={() => setAndAdvance("zone", z.k)}
+              onClick={() => setPending(z.k)}
               style={{
                 textAlign: "left", padding: "12px 16px",
                 border: "1px solid var(--hair)",
-                background: data.zone === z.k ? "#000" : "#fff",
-                color: data.zone === z.k ? "#fff" : "#000",
+                background: pending === z.k ? "#000" : "#fff",
+                color: pending === z.k ? "#fff" : "#000",
                 display: "flex", justifyContent: "space-between", alignItems: "center",
                 transition: "all .15s",
               }}>
               <span style={{ fontSize: 14 }}>{z.label || z.k}</span>
               <span className="mono" style={{ fontSize: 10, opacity: 0.6 }}>
-                {data.zone === z.k ? "●" : "○"}
+                {pending === z.k ? "●" : "○"}
               </span>
             </button>
           ))}
         </div>
       </div>
+      {pending && (
+        <div style={{ marginTop: 20, display: "flex", justifyContent: "flex-end" }}>
+          <button
+            onClick={() => setAndAdvance("zone", pending)}
+            className="btn btn-dark"
+            style={{ fontSize: 13, padding: "14px 36px", letterSpacing: "0.06em" }}
+          >
+            {T.confirmZone || "Confirmar zona"} →
+          </button>
+        </div>
+      )}
       <style>{`
         @media (max-width: 720px) {
           .zone-grid { grid-template-columns: 1fr !important; }
@@ -274,112 +286,42 @@ function Step04({ data, setAndAdvance, T }) {
 function BodyDiagram({ selected, onSelect, view, setView, T }) {
   const [hovered, setHovered] = React.useState(null);
 
-  const Z_DEF = "#E8E4DE";
-  const Z_HOV = "#B0ABA4";
-  const Z_SEL = "#111111";
-  const Z_STR = "#111111";
+  const FRONT_DOTS = [
+    { k: "Cabeza",      x: 50,  y: 7  },
+    { k: "Cuello",      x: 50,  y: 15 },
+    { k: "Hombro",      x: 22,  y: 22 },
+    { k: "Pecho",       x: 50,  y: 29 },
+    { k: "Costilla",    x: 27,  y: 38 },
+    { k: "Abdomen",     x: 50,  y: 47 },
+    { k: "Brazo",       x: 17,  y: 33 },
+    { k: "Antebrazo",   x: 14,  y: 43 },
+    { k: "Mano",        x: 13,  y: 53 },
+    { k: "Muslo",       x: 38,  y: 62 },
+    { k: "Rodilla",     x: 38,  y: 72 },
+    { k: "Pantorrilla", x: 38,  y: 82 },
+    { k: "Pie",         x: 38,  y: 92 },
+  ];
 
-  function zFill(k) {
-    if (selected === k) return Z_SEL;
-    if (hovered === k) return Z_HOV;
-    return Z_DEF;
-  }
+  const BACK_DOTS = [
+    { k: "Nuca",         x: 50, y: 10 },
+    { k: "Hombro",       x: 22, y: 22 },
+    { k: "Espalda alta", x: 50, y: 28 },
+    { k: "Brazo",        x: 17, y: 33 },
+    { k: "Antebrazo",    x: 14, y: 43 },
+    { k: "Mano",         x: 13, y: 53 },
+    { k: "Lumbar",       x: 50, y: 44 },
+    { k: "Glúteo",       x: 37, y: 56 },
+    { k: "Isquio",       x: 38, y: 66 },
+    { k: "Rodilla",      x: 38, y: 73 },
+    { k: "Pantorrilla",  x: 38, y: 83 },
+    { k: "Tobillo",      x: 38, y: 92 },
+  ];
 
-  function zp(k) {
-    return {
-      fill: zFill(k),
-      stroke: Z_STR,
-      strokeWidth: "0.6",
-      strokeLinejoin: "round",
-      style: { transition: "fill 0.15s ease", cursor: "pointer" },
-      onClick: () => onSelect(k),
-      onMouseEnter: () => setHovered(k),
-      onMouseLeave: () => setHovered(null),
-    };
-  }
-
-  const det = { fill: "none", stroke: "#111", strokeWidth: "0.5", opacity: "0.18", pointerEvents: "none" };
-
-  /* ── Shared arm / leg shapes ── */
-  const Arms = () => (
-    <g>
-      <path d="M23,77 Q19,94 19,118 L19,166 L33,166 L33,118 Q33,94 28,83 Z" {...zp("Brazo")} />
-      <path d="M97,77 Q101,94 101,118 L101,166 L87,166 L87,118 Q87,94 92,83 Z" {...zp("Brazo")} />
-      <path d="M19,166 Q17,184 17,206 L17,232 L33,232 L33,206 Q33,184 33,166 Z" {...zp("Antebrazo")} />
-      <path d="M101,166 Q103,184 103,206 L103,232 L87,232 L87,206 Q87,184 87,166 Z" {...zp("Antebrazo")} />
-      <ellipse cx="25" cy="247" rx="8" ry="11" {...zp("Mano")} />
-      <ellipse cx="95" cy="247" rx="8" ry="11" {...zp("Mano")} />
-    </g>
-  );
-
-  const KneesCalvesAnkle = (ankleOrFoot) => (
-    <g>
-      <path d="M43,278 L56,278 L56,298 L43,298 Z" {...zp("Rodilla")} />
-      <path d="M77,278 L64,278 L64,298 L77,298 Z" {...zp("Rodilla")} />
-      <path d="M43,298 L56,298 L54,354 L43,354 Q41,332 42,314 Z" {...zp("Pantorrilla")} />
-      <path d="M77,298 L64,298 L66,354 L77,354 Q79,332 78,314 Z" {...zp("Pantorrilla")} />
-      {ankleOrFoot === "foot"
-        ? <><ellipse cx="48" cy="366" rx="11" ry="8" {...zp("Pie")} /><ellipse cx="72" cy="366" rx="11" ry="8" {...zp("Pie")} /></>
-        : <><ellipse cx="48" cy="363" rx="9" ry="7" {...zp("Tobillo")} /><ellipse cx="72" cy="363" rx="9" ry="7" {...zp("Tobillo")} /></>
-      }
-    </g>
-  );
-
-  const FrontFigure = () => (
-    <g>
-      <ellipse cx="60" cy="21" rx="17" ry="18" {...zp("Cabeza")} />
-      <path d="M53,39 L67,39 L65,57 L55,57 Z" {...zp("Cuello")} />
-      {/* Shoulder caps */}
-      <path d="M37,59 Q33,62 30,70 L23,77 L28,83 Q32,76 37,68 Z" {...zp("Hombro")} />
-      <path d="M83,59 Q87,62 90,70 L97,77 L92,83 Q88,76 83,68 Z" {...zp("Hombro")} />
-      {/* Chest */}
-      <path d="M37,59 L83,59 L83,68 L87,72 Q87,92 87,108 Q80,116 60,116 Q40,116 33,108 Q33,92 33,72 L37,68 Z" {...zp("Pecho")} />
-      {/* Ribs */}
-      <path d="M33,108 Q29,118 29,136 L30,156 L50,158 L50,113 Z" {...zp("Costilla")} />
-      <path d="M87,108 Q91,118 91,136 L90,156 L70,158 L70,113 Z" {...zp("Costilla")} />
-      {/* Abdomen + hip bridge */}
-      <path d="M50,158 L70,158 L69,192 Q68,199 60,200 Q52,199 51,192 Z" {...zp("Abdomen")} />
-      <path d="M51,192 Q48,199 44,212 L44,216 L76,216 L76,212 Q72,199 69,192 Z" {...zp("Abdomen")} />
-      <Arms />
-      {/* Thighs */}
-      <path d="M44,216 L57,216 L56,278 L43,278 Q41,256 41,242 Z" {...zp("Muslo")} />
-      <path d="M76,216 L63,216 L64,278 L77,278 Q79,256 79,242 Z" {...zp("Muslo")} />
-      {KneesCalvesAnkle("foot")}
-      {/* Detail lines */}
-      <line x1="60" y1="59" x2="60" y2="110" style={det} />
-      <path d="M37,84 Q60,91 83,84" style={det} />
-      <circle cx="60" cy="183" r="2.5" style={{ ...det, fill: "#111", opacity: 0.12 }} />
-    </g>
-  );
-
-  const BackFigure = () => (
-    <g>
-      {/* Nuca = head + neck */}
-      <ellipse cx="60" cy="21" rx="17" ry="18" {...zp("Nuca")} />
-      <path d="M53,39 L67,39 L65,57 L55,57 Z" {...zp("Nuca")} />
-      {/* Shoulder caps */}
-      <path d="M37,59 Q33,62 30,70 L23,77 L28,83 Q32,76 37,68 Z" {...zp("Hombro")} />
-      <path d="M83,59 Q87,62 90,70 L97,77 L92,83 Q88,76 83,68 Z" {...zp("Hombro")} />
-      {/* Upper back */}
-      <path d="M37,59 L83,59 L83,68 L87,72 Q87,92 87,140 Q80,148 60,148 Q40,148 33,140 Q33,92 33,72 L37,68 Z" {...zp("Espalda alta")} />
-      {/* Lumbar */}
-      <path d="M33,140 L87,140 L87,196 Q80,204 60,205 Q40,204 33,196 Z" {...zp("Lumbar")} />
-      {/* Glutes + hip bridge */}
-      <path d="M33,196 Q28,206 28,216 L44,216 L57,216 L57,200 Q50,197 44,196 Z" {...zp("Glúteo")} />
-      <path d="M87,196 Q92,206 92,216 L76,216 L63,216 L63,200 Q70,197 76,196 Z" {...zp("Glúteo")} />
-      <Arms />
-      {/* Hamstrings / back thigh */}
-      <path d="M44,216 L57,216 L56,278 L43,278 Q41,256 41,242 Z" {...zp("Isquio")} />
-      <path d="M76,216 L63,216 L64,278 L77,278 Q79,256 79,242 Z" {...zp("Isquio")} />
-      {KneesCalvesAnkle("ankle")}
-      {/* Spine detail */}
-      <line x1="60" y1="59" x2="60" y2="200" style={det} />
-    </g>
-  );
+  const dots = view === "front" ? FRONT_DOTS : BACK_DOTS;
+  const bgPos = view === "front" ? "0% 0%" : "100% 0%";
 
   return (
     <div style={{ background: "var(--warm)", border: "1px solid var(--hair)", position: "relative" }}>
-      {/* View toggle */}
       <div style={{ display: "flex", gap: 8, padding: "12px 14px 0" }}>
         <button
           className={"pill" + (view === "front" ? " active" : "")}
@@ -393,9 +335,48 @@ function BodyDiagram({ selected, onSelect, view, setView, T }) {
         >{T.viewBack || "Dorso"}</button>
       </div>
 
-      <svg viewBox="0 0 120 380" style={{ width: "100%", maxWidth: 280, height: "auto", display: "block", margin: "0 auto", padding: "8px 0 4px" }}>
-        {view === "front" ? <FrontFigure /> : <BackFigure />}
-      </svg>
+      <div style={{
+        position: "relative",
+        margin: "8px auto 4px",
+        width: "100%",
+        maxWidth: 200,
+        aspectRatio: "1/2",
+        backgroundImage: "url(assets/body-3views.png)",
+        backgroundSize: "300% auto",
+        backgroundPosition: bgPos,
+        backgroundRepeat: "no-repeat",
+        transition: "background-position 0.35s ease",
+        overflow: "hidden",
+      }}>
+        {dots.map(dot => {
+          const isSel = selected === dot.k;
+          const isHov = hovered === dot.k;
+          const zLabel = (T.zones.find(z => z.k === dot.k && z.v === view) || {}).label || dot.k;
+          return (
+            <button
+              key={dot.k + view}
+              title={zLabel}
+              onClick={() => onSelect(dot.k)}
+              onMouseEnter={() => setHovered(dot.k)}
+              onMouseLeave={() => setHovered(null)}
+              style={{
+                position: "absolute",
+                left: `${dot.x}%`, top: `${dot.y}%`,
+                transform: "translate(-50%, -50%)",
+                width: isSel ? 18 : (isHov ? 15 : 11),
+                height: isSel ? 18 : (isHov ? 15 : 11),
+                borderRadius: "50%",
+                background: isSel ? "#000" : (isHov ? "rgba(0,0,0,0.75)" : "rgba(0,0,0,0.38)"),
+                border: isSel ? "2px solid #fff" : "1.5px solid rgba(0,0,0,0.55)",
+                boxShadow: isSel ? "0 0 0 3px #000" : (isHov ? "0 0 0 2px rgba(0,0,0,0.3)" : "none"),
+                cursor: "pointer",
+                transition: "all 0.15s ease",
+                padding: 0,
+              }}
+            />
+          );
+        })}
+      </div>
 
       {selected && (
         <div style={{
@@ -484,8 +465,37 @@ function Step06({ data, set, T }) {
   );
 }
 
-function Step07({ data, setAndAdvance, T }) {
+function Step07({ data, setAndAdvance, T, preselectedArtist }) {
   const artists = T.artists;
+
+  if (preselectedArtist) {
+    const artist = artists.find(a => a.k === preselectedArtist);
+    if (artist) {
+      return (
+        <div>
+          <StepHeader num="07" q={T.q7} sub={T.q7sub} />
+          <div style={{ display: "flex", flexDirection: "column", gap: 14, maxWidth: 280 }}>
+            <div style={{ border: "2px solid #000", position: "relative", overflow: "hidden" }}>
+              <div style={{ position: "absolute", top: 10, right: 10, zIndex: 2, background: "#000", color: "#fff", padding: "4px 10px", fontSize: 9, fontFamily: "var(--mono)", letterSpacing: "0.1em" }}>● SEL.</div>
+              <div style={{ aspectRatio: "1/1", overflow: "hidden", background: "#f3efe8" }}>
+                <img src={artist.img} alt={artist.k} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              </div>
+              <div style={{ padding: "14px 16px" }}>
+                <div className="num">{artist.role}</div>
+                <div style={{ fontWeight: 600, fontSize: 16, marginTop: 4 }}>{artist.k}</div>
+                {artist.sub && <div style={{ fontSize: 11, opacity: 0.5, marginTop: 2 }}>{artist.sub}</div>}
+                <div style={{ fontSize: 12, opacity: 0.65, marginTop: 5 }}>{artist.styles}</div>
+              </div>
+            </div>
+            <div className="meta" style={{ fontSize: 11, lineHeight: 1.5 }}>
+              {T.lockedArtistNote || "Llegaste desde este perfil. Usá Atrás para cambiar."}
+            </div>
+          </div>
+        </div>
+      );
+    }
+  }
+
   return (
     <div>
       <StepHeader num="07" q={T.q7} sub={T.q7sub} />
@@ -708,6 +718,7 @@ const wzES = {
   viewFront: "Frente",
   viewBack: "Dorso",
   zoneLabel: "Zona seleccionada",
+  confirmZone: "Confirmar zona",
   zones: [
     { k: "Cabeza",       v: "front", label: "Cabeza" },
     { k: "Cuello",       v: "front", label: "Cuello" },
@@ -765,6 +776,7 @@ const wzES = {
     { k: "facundo.void",  role: "Resident", styles: "Fine line · Dotwork",      img: "assets/artists/facu.jpg" },
   ],
   awayNote: "Actualmente de viaje",
+  lockedArtistNote: "Llegaste desde este perfil. Usá Atrás para cambiar.",
   q8: "¿Cuándo te gustaría tatuarte?",
   q8sub: "Indicanos un rango aproximado de fechas.",
   dateFrom: "Desde", dateTo: "Hasta",
@@ -815,6 +827,7 @@ const wzEN = Object.assign({}, wzES, {
   ],
   q4: "Body zone?", q4sub: "Tap the figure or pick from the list.",
   viewFront: "Front", viewBack: "Back", zoneLabel: "Zone",
+  confirmZone: "Confirm zone",
   zones: [
     { k: "Cabeza",       v: "front", label: "Head" },
     { k: "Cuello",       v: "front", label: "Neck" },
@@ -852,6 +865,7 @@ const wzEN = Object.assign({}, wzES, {
   q7: "Which artist would you like?", q7sub: "Optional. If unsure, choose No preference.",
   anyArtist: "No preference", anyArtistD: "We'll match you with the best for your style.",
   awayNote: "Currently traveling",
+  lockedArtistNote: "You arrived from this artist's profile. Use Back to change.",
   q8: "When would you like to get tattooed?", q8sub: "Give us an approximate date range.",
   dateFrom: "From", dateTo: "To",
   dateNote: "We schedule by email within 48 business hours.",

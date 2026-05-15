@@ -147,22 +147,86 @@ function BlogPage() {
 
 /* ============== GIFT CARD ============== */
 const WPP_GC = "5492804777018";
+const CARD_W = 320, CARD_H = 202;
+const chipGrad = "linear-gradient(135deg, #c8922a 0%, #f0c85a 40%, #c8922a 100%)";
 
-function GiftCard({ value, frontBg, backBg, frontColor, accentColor, lastFour, isSelected, isDimmed, onSelect, isCustom, customAmount, onCustomChange, customError, large }) {
-  const [pressed, setPressed] = React.useState(false);
+function GiftCardFace({ fg, logoFilter }) {
+  return (
+    <div style={{
+      position: "absolute", inset: 0,
+      backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden",
+      borderRadius: 14, overflow: "hidden",
+      background: "#F5F2EE", color: fg,
+      boxShadow: "0 28px 64px rgba(0,0,0,0.38), 0 6px 16px rgba(0,0,0,0.16)",
+    }}>
+      <div style={{ position: "absolute", left: 22, top: 16, fontSize: 8, letterSpacing: "0.22em", textTransform: "uppercase", opacity: 0.45, fontFamily: "var(--mono)" }}>Gift Card</div>
+      <img src="assets/centro-logo.png" alt="" style={{ position: "absolute", right: 20, top: 13, height: 24, filter: logoFilter, opacity: 0.85 }} />
+      <div style={{ position: "absolute", left: 22, top: 46, width: 38, height: 29, borderRadius: 4, background: chipGrad, boxShadow: "inset 0 1px 0 rgba(255,255,255,0.4)" }}>
+        <div style={{ position: "absolute", inset: "4px 5px", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 2 }} />
+      </div>
+      <div style={{ position: "absolute", left: 22, bottom: 36, fontFamily: '"Courier New", monospace', fontSize: 9.5, letterSpacing: "0.07em", opacity: 0.7 }}>MONTO LIBRE</div>
+      <div style={{ position: "absolute", left: 22, right: 22, bottom: 12, display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+        <div>
+          <div style={{ fontSize: 6, letterSpacing: "0.14em", textTransform: "uppercase", opacity: 0.38, marginBottom: 2, fontFamily: "var(--mono)" }}>Portador</div>
+          <div style={{ fontFamily: '"Courier New", monospace', fontSize: 9, letterSpacing: "0.04em" }}>CENTRO STUDIO</div>
+        </div>
+        <div style={{ textAlign: "right" }}>
+          <div style={{ fontSize: 6, letterSpacing: "0.14em", textTransform: "uppercase", opacity: 0.38, marginBottom: 2, fontFamily: "var(--mono)" }}>Válido hasta</div>
+          <div style={{ fontFamily: '"Courier New", monospace', fontSize: 9 }}>12/27</div>
+        </div>
+      </div>
+      <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "linear-gradient(135deg, rgba(255,255,255,0.09) 0%, transparent 55%)" }} />
+    </div>
+  );
+}
+
+function GiftCardBack() {
+  return (
+    <div style={{
+      position: "absolute", inset: 0,
+      backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden",
+      transform: "rotateY(180deg)",
+      borderRadius: 14, overflow: "hidden",
+      background: "#111",
+      boxShadow: "0 28px 64px rgba(0,0,0,0.38), 0 6px 16px rgba(0,0,0,0.16)",
+    }}>
+      <div style={{ position: "absolute", top: 24, left: 0, right: 0, height: 38, background: "linear-gradient(to bottom, #1a1a1a, #000 50%, #1a1a1a)" }} />
+      <div style={{ position: "absolute", left: 20, right: 60, top: 82, height: 26, borderRadius: 2, background: "repeating-linear-gradient(90deg, #e6e2de 0 2px, #f0ece8 2px 4px)", display: "flex", alignItems: "center", paddingLeft: 8, overflow: "hidden" }}>
+        <span style={{ fontFamily: '"Brush Script MT", cursive', fontSize: 13, color: "#333", opacity: 0.55 }}>Centro</span>
+      </div>
+      <div style={{ position: "absolute", right: 20, top: 82, width: 34, height: 26, borderRadius: 2, background: "#fff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ fontSize: 5.5, color: "#000", opacity: 0.4, marginBottom: 1, fontFamily: "var(--mono)", textTransform: "uppercase", letterSpacing: "0.04em" }}>CVV</div>
+        <div style={{ fontFamily: '"Courier New", monospace', fontSize: 9.5, color: "#000" }}>•••</div>
+      </div>
+      <div style={{ position: "absolute", left: 20, right: 20, bottom: 12, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ fontFamily: '"Courier New", monospace', fontSize: 8, color: "rgba(255,255,255,0.35)", letterSpacing: "0.1em" }}>•••• •••• •••• XXXX</div>
+        <img src="assets/centro-logo.png" alt="" style={{ height: 14, filter: "invert(1)", opacity: 0.28 }} />
+      </div>
+      <div style={{ position: "absolute", left: 0, right: 0, bottom: 3, fontSize: 5.5, letterSpacing: "0.04em", color: "rgba(255,255,255,0.14)", fontFamily: "var(--sans)", textAlign: "center" }}>
+        centrostudio.ar · Retiro, CABA
+      </div>
+    </div>
+  );
+}
+
+function GiftCard() {
   const spinnerRef = React.useRef(null);
+  const wrapperRef = React.useRef(null);
   const angleRef = React.useRef(0);
   const hoveredRef = React.useRef(false);
-  const frozenRef = React.useRef(false);
+  const modeRef = React.useRef("spinning");
+  const [mode, setMode] = React.useState("spinning");
+  const [customAmount, setCustomAmount] = React.useState("");
+  const [customError, setCustomError] = React.useState("");
 
-  React.useEffect(() => { frozenRef.current = isDimmed; }, [isDimmed]);
+  React.useEffect(() => { modeRef.current = mode; }, [mode]);
 
   React.useEffect(() => {
     let rafId;
     const tick = () => {
-      if (!frozenRef.current) {
-        const spd = hoveredRef.current ? 0.1 : 0.65;
-        angleRef.current = (angleRef.current + spd) % 360;
+      if (modeRef.current === "spinning") {
+        const speed = hoveredRef.current ? 0.35 : 1.9;
+        angleRef.current += speed;
         if (spinnerRef.current) {
           spinnerRef.current.style.transform = `rotateY(${angleRef.current}deg)`;
         }
@@ -173,187 +237,103 @@ function GiftCard({ value, frontBg, backBg, frontColor, accentColor, lastFour, i
     return () => cancelAnimationFrame(rafId);
   }, []);
 
-  const isLight = frontBg.startsWith("#F") || frontBg.startsWith("#E");
-  const fg = frontColor || (isLight ? "#000" : "#fff");
-  const logoFilter = fg === "#fff" ? "invert(1)" : "none";
-  const chipGrad = "linear-gradient(135deg, #c8922a 0%, #f0c85a 40%, #c8922a 100%)";
+  const handleTap = () => {
+    if (modeRef.current !== "spinning") return;
+    modeRef.current = "snapping";
+    setMode("snapping");
+    const normalized = Math.round(angleRef.current / 360) * 360;
+    angleRef.current = normalized;
+    if (spinnerRef.current) {
+      spinnerRef.current.style.transition = "transform 0.42s cubic-bezier(0.2,0.8,0.2,1)";
+      spinnerRef.current.style.transform = `rotateY(${normalized}deg)`;
+    }
+    setTimeout(() => {
+      if (spinnerRef.current) spinnerRef.current.style.transition = "";
+      modeRef.current = "floating";
+      setMode("floating");
+    }, 450);
+  };
+
+  const handleConfirmCard = () => {
+    const n = parseInt(customAmount);
+    if (!customAmount || isNaN(n) || n < 50000) { setCustomError("El monto mínimo es $50.000"); return; }
+    setCustomError("");
+    const formatted = n.toLocaleString("es-AR");
+    const msg = `Hola! Quiero pedir una Gift Card de Centro Studio.\n\nMonto elegido: $${formatted}\n\nGracias!`;
+    window.open("https://wa.me/" + WPP_GC + "?text=" + encodeURIComponent(msg), "_blank");
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-      {/* Filter wrapper for dimming */}
-      <div style={{
-        filter: isDimmed ? "grayscale(1) brightness(0.32)" : "none",
-        transform: isSelected ? "scale(1.06)" : "scale(1)",
-        transition: "filter 0.35s ease, transform 0.3s cubic-bezier(0.2,0.8,0.2,1)",
-      }}>
-        <div style={{ perspective: "900px" }}>
-          <div
-            style={{
-              transform: pressed ? "translateY(-18px) scale(1.02)" : "translateY(0) scale(1)",
-              transition: "transform 0.28s cubic-bezier(0.2,0.8,0.2,1)",
-            }}
-            onMouseEnter={() => { hoveredRef.current = true; }}
-            onMouseLeave={() => { hoveredRef.current = false; setPressed(false); }}
-            onMouseDown={() => { setPressed(true); onSelect(); }}
-            onMouseUp={() => setPressed(false)}
-            onTouchStart={() => { setPressed(true); onSelect(); }}
-            onTouchEnd={() => { setPressed(false); hoveredRef.current = false; }}
-          >
-            <div ref={spinnerRef} style={{
-              width: large ? 320 : 260, height: large ? 202 : 164,
-              position: "relative",
-              transformStyle: "preserve-3d",
-              cursor: "pointer",
-            }}>
-
-              {/* ── FRONT ── */}
-              <div style={{
-                position: "absolute", inset: 0,
-                backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden",
-                borderRadius: 11, overflow: "hidden",
-                background: frontBg, color: fg,
-                boxShadow: "0 20px 52px rgba(0,0,0,0.5), 0 4px 12px rgba(0,0,0,0.2)",
-              }}>
-                <div style={{ position: "absolute", left: 20, top: 15, fontSize: 7.5, letterSpacing: "0.22em", textTransform: "uppercase", opacity: 0.5, fontFamily: "var(--mono)" }}>Gift Card</div>
-                <img src="assets/centro-logo.png" alt="" style={{ position: "absolute", right: 18, top: 12, height: 22, filter: logoFilter, opacity: 0.8 }} />
-                <div style={{ position: "absolute", left: 20, top: 42, width: 34, height: 26, borderRadius: 4, background: chipGrad, boxShadow: "inset 0 1px 0 rgba(255,255,255,0.35)" }}>
-                  <div style={{ position: "absolute", inset: "4px 5px", border: "1px solid rgba(0,0,0,0.12)", borderRadius: 2, background: "linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 100%)" }} />
-                </div>
-                <div style={{ position: "absolute", left: 20, bottom: 34, fontFamily: '"Courier New", monospace', fontSize: isCustom ? 8.5 : 10, letterSpacing: isCustom ? "0.05em" : "0.18em", opacity: 0.75 }}>
-                  {isCustom ? "MONTO LIBRE" : `•••• •••• •••• ${lastFour}`}
-                </div>
-                <div style={{ position: "absolute", left: 20, right: 20, bottom: 10, display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-                  <div>
-                    <div style={{ fontSize: 5.5, letterSpacing: "0.14em", textTransform: "uppercase", opacity: 0.4, marginBottom: 1, fontFamily: "var(--mono)" }}>Portador</div>
-                    <div style={{ fontFamily: '"Courier New", monospace', fontSize: 8.5, letterSpacing: "0.05em" }}>CENTRO STUDIO</div>
-                  </div>
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: 5.5, letterSpacing: "0.14em", textTransform: "uppercase", opacity: 0.4, marginBottom: 1, fontFamily: "var(--mono)" }}>Válido hasta</div>
-                    <div style={{ fontFamily: '"Courier New", monospace', fontSize: 8.5 }}>12/27</div>
-                  </div>
-                </div>
-                {accentColor && <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 3, background: accentColor }} />}
-                <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, transparent 55%)" }} />
-              </div>
-
-              {/* ── BACK ── */}
-              <div style={{
-                position: "absolute", inset: 0,
-                backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden",
-                transform: "rotateY(180deg)",
-                borderRadius: 11, overflow: "hidden",
-                background: backBg || "#111",
-                boxShadow: "0 20px 52px rgba(0,0,0,0.5), 0 4px 12px rgba(0,0,0,0.2)",
-              }}>
-                {accentColor && <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: accentColor }} />}
-                <div style={{ position: "absolute", top: 22, left: 0, right: 0, height: 34, background: "linear-gradient(to bottom, #1a1a1a, #000 50%, #1a1a1a)" }} />
-                <div style={{ position: "absolute", left: 18, right: 56, top: 76, height: 24, borderRadius: 2, background: "repeating-linear-gradient(90deg, #e6e2de 0 2px, #f0ece8 2px 4px)", display: "flex", alignItems: "center", paddingLeft: 7, overflow: "hidden" }}>
-                  <span style={{ fontFamily: '"Brush Script MT", cursive', fontSize: 12, color: "#333", opacity: 0.6 }}>Centro</span>
-                </div>
-                <div style={{ position: "absolute", right: 18, top: 76, width: 32, height: 24, borderRadius: 2, background: "#fff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                  <div style={{ fontSize: 5.5, color: "#000", opacity: 0.4, letterSpacing: "0.05em", marginBottom: 1, fontFamily: "var(--mono)", textTransform: "uppercase" }}>CVV</div>
-                  <div style={{ fontFamily: '"Courier New", monospace', fontSize: 9, color: "#000" }}>•••</div>
-                </div>
-                <div style={{ position: "absolute", left: 18, right: 18, bottom: 10, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div style={{ fontFamily: '"Courier New", monospace', fontSize: 7.5, color: "rgba(255,255,255,0.38)", letterSpacing: "0.1em" }}>
-                    {isCustom ? "•••• •••• •••• XXXX" : `•••• •••• •••• ${lastFour}`}
-                  </div>
-                  <img src="assets/centro-logo.png" alt="" style={{ height: 13, filter: "invert(1)", opacity: 0.32 }} />
-                </div>
-                <div style={{ position: "absolute", left: 0, right: 0, bottom: 3, fontSize: 5.5, letterSpacing: "0.04em", color: "rgba(255,255,255,0.16)", fontFamily: "var(--sans)", textAlign: "center" }}>
-                  centrostudio.ar · Retiro, CABA
-                </div>
-              </div>
-            </div>
-          </div>
+      <style>{`
+        @keyframes gcFloat {
+          0%, 100% { transform: translateY(0px) rotate(-0.4deg); }
+          50% { transform: translateY(-14px) rotate(0.4deg); }
+        }
+      `}</style>
+      <div
+        ref={wrapperRef}
+        onClick={handleTap}
+        onMouseEnter={() => { hoveredRef.current = true; }}
+        onMouseLeave={() => { hoveredRef.current = false; }}
+        style={{
+          perspective: "900px",
+          cursor: mode === "spinning" ? "pointer" : "default",
+          animation: mode === "floating" ? "gcFloat 3.8s ease-in-out infinite" : "none",
+        }}
+      >
+        <div
+          ref={spinnerRef}
+          style={{
+            width: CARD_W, height: CARD_H,
+            position: "relative",
+            transformStyle: "preserve-3d",
+          }}
+        >
+          <GiftCardFace fg="#000" logoFilter="none" />
+          <GiftCardBack />
         </div>
       </div>
 
-      {/* Value / Custom input — outside the dimming wrapper */}
-      <div style={{ marginTop: 22, textAlign: "center", minHeight: 68 }}>
-        {isCustom ? (
-          isSelected ? (
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-              <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
-                <span style={{ fontFamily: "var(--mono)", fontSize: 20, fontWeight: 700 }}>$</span>
-                <input
-                  type="number"
-                  min="50000"
-                  step="1000"
-                  placeholder="50.000"
-                  value={customAmount}
-                  onChange={e => onCustomChange(e.target.value)}
-                  onClick={e => e.stopPropagation()}
-                  style={{
-                    background: "transparent", border: "none", borderBottom: "2px solid #000",
-                    outline: "none", fontSize: 28, fontFamily: '"Courier New", monospace',
-                    fontWeight: 700, width: 160, padding: "2px 0",
-                    letterSpacing: "-0.01em", color: "#000",
-                  }}
-                />
-              </div>
-              {customError
-                ? <div style={{ fontSize: 10.5, color: "#8a1a16", fontFamily: "var(--mono)", letterSpacing: "0.06em" }}>{customError}</div>
-                : <div className="meta" style={{ fontSize: 10 }}>mínimo $50.000</div>
-              }
-            </div>
-          ) : (
-            <div style={{ cursor: "pointer" }} onClick={onSelect}>
-              <div className="display" style={{ fontSize: 32, letterSpacing: "-0.03em", opacity: 0.38 }}>$—</div>
-              <div className="meta" style={{ marginTop: 4, fontSize: 10 }}>Monto personalizado</div>
-            </div>
-          )
-        ) : (
-          <div className="display" style={{ fontSize: 32, letterSpacing: "-0.03em", cursor: "pointer" }} onClick={onSelect}>{value}</div>
-        )}
-      </div>
+      {mode === "floating" && (
+        <div style={{ marginTop: 36, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
+            <span style={{ fontFamily: "var(--mono)", fontSize: 22, fontWeight: 700 }}>$</span>
+            <input
+              type="number" min="50000" step="1000" placeholder="50.000"
+              value={customAmount}
+              onChange={e => { setCustomAmount(e.target.value); if (customError) setCustomError(""); }}
+              autoFocus
+              style={{
+                background: "transparent", border: "none", borderBottom: "2px solid #000",
+                outline: "none", fontSize: 32, fontFamily: '"Courier New", monospace',
+                fontWeight: 700, width: 180, padding: "2px 0",
+                letterSpacing: "-0.01em", color: "#000",
+              }}
+            />
+          </div>
+          {customError
+            ? <div style={{ fontSize: 10.5, color: "#8a1a16", fontFamily: "var(--mono)", letterSpacing: "0.06em" }}>{customError}</div>
+            : <div className="meta" style={{ fontSize: 10 }}>mínimo $50.000</div>
+          }
+          <button
+            onClick={handleConfirmCard}
+            className="btn btn-dark"
+            style={{ marginTop: 8, fontSize: 13.5, padding: "16px 40px", letterSpacing: "0.08em" }}
+          >
+            Pedir mi Gift Card &nbsp;→
+          </button>
+        </div>
+      )}
+
+      {mode === "spinning" && (
+        <div className="meta" style={{ marginTop: 20, fontSize: 10 }}>Tocá la tarjeta para personalizar</div>
+      )}
     </div>
   );
 }
 
 function GiftcardPage() {
-  const [selectedIdx, setSelectedIdx] = React.useState(null);
-  const [customAmount, setCustomAmount] = React.useState("");
-  const [customError, setCustomError] = React.useState("");
-
-  const CARDS = [
-    { id: 0, value: "$100.000", frontBg: "#F5F2EE", backBg: "#111",    frontColor: "#000",  lastFour: "1001" },
-    { id: 1, value: "$200.000", frontBg: "#111111", backBg: "#0a0a0a", frontColor: "#fff",  lastFour: "2002" },
-    { id: 2, value: "$300.000", frontBg: "#0c0c0c", backBg: "#0a0a0a", frontColor: "#fff",  accentColor: "#8a1a16", lastFour: "3003" },
-    { id: 3, value: null,       frontBg: "#F5F2EE", backBg: "#111",    frontColor: "#000",  lastFour: "XXXX", isCustom: true, large: true },
-  ];
-
-  const handleSelect = (idx) => {
-    setSelectedIdx(prev => (prev === idx ? null : idx));
-    setCustomError("");
-  };
-
-  const handleCustomChange = (val) => {
-    setCustomAmount(val);
-    if (customError && val && parseInt(val) >= 50000) setCustomError("");
-  };
-
-  const getAmount = () => {
-    if (selectedIdx === null) return null;
-    if (selectedIdx === 3) { const n = parseInt(customAmount); return (!isNaN(n) && n >= 50000) ? n : null; }
-    return [100000, 200000, 300000][selectedIdx];
-  };
-
-  const handleConfirm = () => {
-    if (selectedIdx === null) return;
-    if (selectedIdx === 3) {
-      const n = parseInt(customAmount);
-      if (!customAmount || isNaN(n) || n < 50000) { setCustomError("El monto mínimo es $50.000"); return; }
-    }
-    const amount = getAmount();
-    if (!amount) return;
-    const formatted = amount.toLocaleString("es-AR");
-    const msg = `Hola! Quiero pedir una Gift Card de Centro Studio.\n\nMonto elegido: $${formatted}\n\nGracias!`;
-    window.open("https://wa.me/" + WPP_GC + "?text=" + encodeURIComponent(msg), "_blank");
-  };
-
-  const canConfirm = getAmount() !== null;
-
   return (
     <div className="page-fade" style={{ paddingTop: 64, paddingBottom: 100 }}>
       <SectionHeader
@@ -363,52 +343,14 @@ function GiftcardPage() {
         intro="Un regalo para canjear por cualquier servicio u objeto de Centro Studio: tatuajes, ropa, accesorios, merch, talleres y más. Sin fecha de vencimiento. Válida en el espacio físico."
       />
 
-      {/* Cards grid */}
-      <div className="container" style={{ marginTop: 80 }}>
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-          gap: "52px 32px",
-          justifyItems: "center",
-        }}>
-          {CARDS.map((card, idx) => (
-            <GiftCard
-              key={card.id}
-              {...card}
-              isSelected={selectedIdx === idx}
-              isDimmed={selectedIdx !== null && selectedIdx !== idx}
-              onSelect={() => handleSelect(idx)}
-              customAmount={customAmount}
-              onCustomChange={handleCustomChange}
-              customError={idx === 3 ? customError : ""}
-            />
-          ))}
-        </div>
-
-        {/* Confirm CTA */}
-        <div style={{ marginTop: 64, display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
-          <button
-            onClick={handleConfirm}
-            disabled={!canConfirm}
-            className="btn btn-dark"
-            style={{ fontSize: 13.5, padding: "18px 44px", letterSpacing: "0.08em", opacity: canConfirm ? 1 : 0.28, transition: "opacity 0.3s ease" }}
-          >
-            Confirmar — Pedir mi Gift Card &nbsp;
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ display: "inline", verticalAlign: "middle" }}>
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.125.557 4.122 1.529 5.855L0 24l6.335-1.509C8.021 23.465 9.977 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.634-.511-5.131-1.397l-.367-.218-3.762.896.957-3.67-.239-.378C2.54 15.556 2 13.84 2 12 2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
-            </svg>
-          </button>
-          {selectedIdx === null && (
-            <div className="meta" style={{ fontSize: 10 }}>Seleccioná una tarjeta para continuar</div>
-          )}
-        </div>
+      <div className="container" style={{ marginTop: 80, display: "flex", justifyContent: "center" }}>
+        <GiftCard />
       </div>
 
-      {/* How it works */}
       <div className="container" style={{ marginTop: 120 }}>
         <div style={{ borderTop: "2px solid #000", paddingTop: 48, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 40 }}>
           {[
-            { n: "01", t: "Elegís el monto", d: "Tres valores fijos o ingresá el tuyo desde $50.000." },
+            { n: "01", t: "Elegís el monto", d: "Ingresá el monto que querés regalar desde $50.000." },
             { n: "02", t: "Lo mandamos por WhatsApp", d: "Recibís el código de canje en menos de 24h." },
             { n: "03", t: "Presentás en el estudio", d: "Mostrás el código en el mostrador o en el turno de tatuaje." },
             { n: "04", t: "Canjeás por lo que quieras", d: "Tatuaje, ropa, taller, accesorios — lo que más te guste." },

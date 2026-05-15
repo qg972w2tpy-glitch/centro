@@ -20,7 +20,9 @@ function useReveal() {
 /* ---------------- LOADING SCREEN ----------------
    Early-web / analog vibe: monospace system text, grainy CRT scanlines,
    the [ * ] logo rotating in 3D space. */
+const LS_VISITED_KEY = "centro_studio_v1";
 function LoadingScreen({ onDone }) {
+  const isFirstVisit = !localStorage.getItem(LS_VISITED_KEY);
   const [pct, setPct] = useStateH(0);
   const [ready, setReady] = useStateH(false);
 
@@ -30,20 +32,30 @@ function LoadingScreen({ onDone }) {
   }, []);
 
   useEffectH(() => {
+    const dur = isFirstVisit ? 2600 : 1400;
     const start = performance.now();
-    const dur = 2400;
     let raf;
     const tick = (t) => {
       const p = Math.min(1, (t - start) / dur);
       setPct(Math.floor(p * 100));
       if (p < 1) raf = requestAnimationFrame(tick);
-      else setReady(true);
+      else {
+        setReady(true);
+        if (!isFirstVisit) {
+          setTimeout(() => {
+            const el = document.querySelector('.loading-root');
+            if (el) { el.classList.add('done'); setTimeout(onDone, 550); }
+            else onDone();
+          }, 320);
+        }
+      }
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, []);
 
   const handleEnter = () => {
+    localStorage.setItem(LS_VISITED_KEY, "1");
     const el = document.querySelector('.loading-root');
     if (el) { el.classList.add('done'); setTimeout(onDone, 550); }
     else onDone();
@@ -51,6 +63,8 @@ function LoadingScreen({ onDone }) {
 
   return (
     <div className="loading-root">
+      {/* Film photo background */}
+      <div className="ls-photo-bg" />
       {/* CRT scanlines + vignette + grain */}
       <div className="crt-scanlines" />
       <div className="crt-vignette" />
@@ -88,7 +102,7 @@ function LoadingScreen({ onDone }) {
           <span>conexión estable</span>
           <span>2026 © centro studio</span>
         </div>
-        {ready && (
+        {ready && isFirstVisit && (
           <div className="ls-enter">
             <button className="ls-enter-btn" onClick={handleEnter}>
               [ ENTRAR ]
@@ -98,10 +112,16 @@ function LoadingScreen({ onDone }) {
       </div>
 
       <style>{`
+        .ls-photo-bg {
+          position: absolute; inset: 0; z-index: 1;
+          background-image: url('assets/film-bg.jpg');
+          background-size: cover; background-position: center;
+          filter: brightness(0.38) grayscale(0.4) contrast(1.1);
+        }
         .loading-root {
           position: fixed; inset: 0; z-index: 9999;
-          background: #efe9dd;
-          color: #1a1612;
+          background: #111;
+          color: #f0ebe0;
           font-family: "Courier New", "Andale Mono", monospace;
           overflow: hidden;
           animation: lsOut .55s ease .04s both;
@@ -143,8 +163,8 @@ function LoadingScreen({ onDone }) {
           padding: 14px 18px;
           font-size: 11px; letter-spacing: 0.06em;
           display: flex; justify-content: space-between; align-items: center;
-          border-bottom: 1px solid rgba(0,0,0,0.35);
-          background: rgba(255,253,247,0.6);
+          border-bottom: 1px solid rgba(255,255,255,0.18);
+          background: rgba(0,0,0,0.55);
           z-index: 5;
         }
         .ls-blink { animation: blink 1s steps(2) infinite; color: #8a1a16; }
@@ -202,8 +222,8 @@ function LoadingScreen({ onDone }) {
         .ls-bottom {
           position: absolute; left: 0; right: 0; bottom: 0;
           padding: 18px 18px 22px;
-          border-top: 1px solid rgba(0,0,0,0.35);
-          background: rgba(255,253,247,0.6);
+          border-top: 1px solid rgba(255,255,255,0.18);
+          background: rgba(0,0,0,0.55);
           z-index: 5;
           font-size: 11px; letter-spacing: 0.06em;
         }
@@ -323,11 +343,9 @@ function Hero({ setRoute, time, t }) {
             fontWeight: 600,
             lineHeight: 1.5,
           }}>
-            <span>
-              Un espacio donde<br/>convive la escena.
-            </span>
+            <span>{t.home.heroSub}</span>
             <span style={{ textAlign: "right" }}>
-              Buenos Aires<br/>{time}h · −34.59° / −58.43°
+              {t.location}<br/>{time}h · −34.59° / −58.43°
             </span>
           </div>
 
@@ -374,9 +392,9 @@ function Hero({ setRoute, time, t }) {
             flexWrap: "wrap",
           }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <LinkArrow onClick={() => setRoute("quote")} label="Cotizá un tatuaje" />
-              <LinkArrow onClick={() => setRoute("info")} label="Conocé el espacio" />
-              <LinkArrow onClick={() => setRoute("gallery")} label="Galería · Vol. 48 en curso" />
+              <LinkArrow onClick={() => setRoute("quote")} label={t.nav.quote} />
+              <LinkArrow onClick={() => setRoute("info")} label={t.home.cta} />
+              <LinkArrow onClick={() => setRoute("gallery")} label={t.nav.gallery} />
             </div>
 
             <div style={{
@@ -480,12 +498,8 @@ function LinkArrow({ onClick, label, href, target }) {
 /* ---------------- DISCIPLINES ---------------- */
 function Disciplines({ setRoute, t }) {
   const [hover, setHover] = useStateH(null);
-  const items = [
-    { num: "01", k: "Tatuaje",       d: "Estudio residente · artistas guest rotativos · cita previa.", route: "quote" },
-    { num: "02", k: "Galería",       d: "Volumen 48 en curso · texto curatorial · obra a la venta.",   route: "gallery" },
-    { num: "03", k: "Centro Store",  d: "Marcas seleccionadas en showroom · tienda online.",            route: "store" },
-    { num: "04", k: "Talleres",      d: "Programa abierto y residencia de artistas.",                   route: "workshops" },
-  ];
+  const routes = ["quote", "gallery", "store", "workshops"];
+  const items = (t.home.areas || []).map((a, i) => ({ ...a, route: routes[i] }));
 
   return (
     <section style={{ background: "#fff", padding: "clamp(56px, 10vw, 140px) 0 60px", borderTop: "1px solid #000" }}>
@@ -501,8 +515,8 @@ function Disciplines({ setRoute, t }) {
           textTransform: "uppercase",
           fontWeight: 600,
         }}>
-          <span>I — Disciplinas</span>
-          <span style={{ color: "rgba(0,0,0,0.45)" }}>04 · espacios</span>
+          <span>I — {t.home.areaIntro || "Disciplinas"}</span>
+          <span style={{ color: "rgba(0,0,0,0.45)" }}>04 · {t.home.eyebrow || "espacios"}</span>
         </div>
 
         <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
@@ -586,7 +600,7 @@ function NextEvent({ setRoute, t }) {
           textTransform: "uppercase",
           fontWeight: 600,
         }}>
-          <span>II — Próximo</span>
+          <span>II — {t.home.featured || "Próximo"}</span>
           <span style={{ color: "rgba(0,0,0,0.45)" }}>13.06.26 · expo centro</span>
         </div>
 
