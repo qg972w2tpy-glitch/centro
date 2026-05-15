@@ -199,7 +199,7 @@ function LoadingScreen({ onDone }) {
         }
         .ls-face img {
           width: 100%; height: 100%; object-fit: contain;
-          filter: contrast(1.05);
+          filter: invert(1) contrast(1.08);
         }
         .ls-face-f { transform: translateZ(60px); }
         .ls-face-b { transform: translateZ(-60px) rotateY(180deg); }
@@ -251,7 +251,7 @@ function LoadingScreen({ onDone }) {
         }
         .ls-meta {
           display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
-          color: rgba(0,0,0,0.55);
+          color: rgba(255,255,255,0.45);
         }
         .ls-enter {
           display: flex; justify-content: center;

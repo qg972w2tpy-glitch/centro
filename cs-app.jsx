@@ -13,12 +13,12 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 const SLUG_TO_ROUTE = {
   "cotiza": "quote", "tienda": "store", "talleres": "workshops",
   "galeria": "gallery", "eventos": "events", "giftcard": "giftcard",
-  "info": "info", "visita": "guest", "blog": "blog",
+  "info": "info", "visita": "guest", "blog": "blog", "tatuaje": "tattoo",
 };
 const ROUTE_TO_SLUG = {
   "quote": "cotiza", "store": "tienda", "workshops": "talleres",
   "gallery": "galeria", "events": "eventos", "giftcard": "giftcard",
-  "info": "info", "guest": "visita", "blog": "blog",
+  "info": "info", "guest": "visita", "blog": "blog", "tattoo": "tatuaje",
 };
 function pathToRoute(path) {
   const parts = path.replace(/^\//, "").split("/");
@@ -112,6 +112,7 @@ function App() {
   let page = null;
   switch (route) {
     case "home": page = <HomePage setRoute={setRoute} intensity={tweaks.intensity} imagery={tweaks.imageMode} />; break;
+    case "tattoo": page = <TattooPage setRoute={setRoute} />; break;
     case "blog": page = <BlogPage />; break;
     case "quote": page = <Wizard setRoute={setRoute} preselectedArtist={preselectedArtist} />; break;
     case "guest": page = <GuestPage />; break;

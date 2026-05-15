@@ -38,15 +38,38 @@ const I18N = {
     tagline: "Un espacio donde convive la escena",
     location: "Buenos Aires — AR",
     nav: {
-      blog: "Blog",
-      quote: "Cotizá un tatuaje",
+      tattoo: "Tatuaje",
+      quote: "Cotizá tu tatuaje",
       guest: "Quiero tatuar en Centro",
+      aftercare: "Cuidados del tatuaje",
+      blog: "Blog",
       store: "Centro Store",
       workshops: "Talleres",
       gallery: "Galería",
       events: "Eventos",
       giftcard: "Gift Card",
       info: "Más info",
+    },
+    tattoo: {
+      kicker: "Tatuaje",
+      ctaQuote: "Cotizá tu tatuaje",
+      ctaQuoteSub: "Completá el formulario y te respondemos en 48h hábiles",
+      ctaGuest: "Quiero tatuar en Centro",
+      ctaGuestSub: "Residencia para tatuadores — convocatoria abierta",
+      ctaAftercare: "Cuidados del tatuaje",
+      ctaAftercareSub: "Guía de cuidados antes, durante y después del turno",
+      artistsTitle: "Artistas residentes",
+      artistsIntro: "Un colectivo de tatuadores con estilos, técnicas y perspectivas diferentes. Cada uno con agenda propia.",
+      googleTitle: "¿Te tatuaste en Centro?",
+      googleBody: "Si conociste el estudio o te tatuaste con nosotros, agradeceríamos mucho una valoración en Google Maps.",
+      googleCta: "Dejar valoración",
+      aftercareTitle: "Cuidados del tatuaje",
+      slide1: "Arte en piel",
+      slide1sub: "Estudio · Residentes · Buenos Aires",
+      slide2: "Residentes",
+      slide2sub: "Fine line · Blackwork · Tradicional · Ornamental",
+      slide3: "Con agenda",
+      slide3sub: "Presupuesto sin cargo · Respuesta en 48h",
     },
     home: {
       eyebrow: "Estudio · Galería · Showroom · Espacio cultural",
@@ -59,7 +82,7 @@ const I18N = {
       areaIntroBody: "Centro Studio no se define por una sola práctica. Es la convergencia de tatuaje, arte contemporáneo, marcas independientes y formación.",
       cta: "Conocé el espacio",
       visit: "Vení a visitarnos",
-      visitBody: "Pasaje sin nombre 482 — Villa Crespo, Buenos Aires. Lunes a sábados, 12 a 20h.",
+      visitBody: "Av. Córdoba 857 — Retiro, Buenos Aires. Miércoles a sábados, 14 a 19h.",
       newsletter: "Sumate a la lista",
       newsletterBody: "Una vez al mes: nuevas muestras, artistas guest, talleres y aperturas.",
       areas: [
@@ -88,6 +111,7 @@ const I18N = {
       hours: "Mié — Sáb · 14 — 19h",
       contact: "Contacto",
       follow: "Seguinos",
+      maps: "Ver en Google Maps",
       legal: "© 2026 Centro Studio. Todos los derechos reservados.",
       colofon: "Sitio diseñado en Buenos Aires.",
     },
@@ -96,15 +120,38 @@ const I18N = {
     tagline: "A space where the scene lives together",
     location: "Buenos Aires — AR",
     nav: {
+      tattoo: "Tattoo",
+      quote: "Get a tattoo quote",
+      guest: "Tattoo at Centro",
+      aftercare: "Aftercare guide",
       blog: "Journal",
-      quote: "Tattoo Quote",
-      guest: "Guest at Centro",
       store: "Centro Store",
       workshops: "Workshops",
       gallery: "Gallery",
       events: "Events",
       giftcard: "Gift Card",
       info: "More",
+    },
+    tattoo: {
+      kicker: "Tattoo",
+      ctaQuote: "Get a tattoo quote",
+      ctaQuoteSub: "Fill the form and we'll reply within 48 business hours",
+      ctaGuest: "Tattoo at Centro",
+      ctaGuestSub: "Artist residency — open applications",
+      ctaAftercare: "Aftercare guide",
+      ctaAftercareSub: "Before, during and after your session",
+      artistsTitle: "Resident artists",
+      artistsIntro: "A collective of tattoo artists with different styles, techniques and perspectives. Each with their own schedule.",
+      googleTitle: "Got tattooed at Centro?",
+      googleBody: "If you visited the studio or got tattooed with us, we'd really appreciate a rating on Google Maps.",
+      googleCta: "Leave a review",
+      aftercareTitle: "Aftercare",
+      slide1: "Art on skin",
+      slide1sub: "Studio · Residents · Buenos Aires",
+      slide2: "Residents",
+      slide2sub: "Fine line · Blackwork · Traditional · Ornamental",
+      slide3: "By appointment",
+      slide3sub: "Free quote · Reply within 48h",
     },
     home: {
       eyebrow: "Studio · Gallery · Showroom · Cultural Space",
@@ -117,7 +164,7 @@ const I18N = {
       areaIntroBody: "Centro Studio is not defined by a single practice. It is the convergence of tattoo, contemporary art, independent brands and education.",
       cta: "Discover the space",
       visit: "Come visit us",
-      visitBody: "Pasaje sin nombre 482 — Villa Crespo, Buenos Aires. Mon to Sat, 12 — 8pm.",
+      visitBody: "Av. Córdoba 857 — Retiro, Buenos Aires. Wed to Sat, 2 — 7pm.",
       newsletter: "Join the list",
       newsletterBody: "Once a month: new shows, guest artists, workshops and openings.",
       areas: [
@@ -146,6 +193,7 @@ const I18N = {
       hours: "Wed — Sat · 2 — 7pm",
       contact: "Contact",
       follow: "Follow",
+      maps: "View on Google Maps",
       legal: "© 2026 Centro Studio. All rights reserved.",
       colofon: "Designed in Buenos Aires.",
     },
@@ -155,20 +203,124 @@ const I18N = {
 const I18nContext = createContext({ lang: "es", t: I18N.es, setLang: () => {} });
 function useI18n() { return useContext(I18nContext); }
 
-/* ---------------- NAVBAR ---------------- */
-const NAV_KEYS = ["blog", "quote", "guest", "store", "workshops", "gallery", "events", "giftcard", "info"];
+/* ---------------- NAV STRUCTURE ---------------- */
+// top-level keys (tattoo is a dropdown, rest are direct links)
+const NAV_KEYS = ["tattoo", "blog", "store", "workshops", "gallery", "events", "giftcard", "info"];
 const NAV_ROUTES = {
+  tattoo: "tattoo",
   blog: "blog",
-  quote: "quote",
-  guest: "guest",
   store: "store",
   workshops: "workshops",
   gallery: "gallery",
   events: "events",
   giftcard: "giftcard",
   info: "info",
+  quote: "quote",
+  guest: "guest",
 };
 
+/* ---------------- TATTOO DROPDOWN ---------------- */
+function TattooDropdown({ route, setRoute, t }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
+  const active = ["tattoo", "quote", "guest"].includes(route);
+
+  const items = [
+    { k: "quote",    label: t.nav.quote },
+    { k: "guest",    label: t.nav.guest },
+    { k: "aftercare",label: t.nav.aftercare },
+  ];
+
+  const navBtnStyle = (isActive) => ({
+    fontFamily: "var(--sans)",
+    fontSize: 13,
+    fontWeight: isActive ? 900 : 700,
+    letterSpacing: "-0.005em",
+    textTransform: "uppercase",
+    padding: "8px 12px",
+    background: isActive ? "#000" : "transparent",
+    color: isActive ? "#fff" : "#000",
+    transition: "all .15s",
+    whiteSpace: "nowrap",
+    display: "flex",
+    alignItems: "center",
+    gap: 5,
+  });
+
+  return (
+    <div ref={ref} style={{ position: "relative" }}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={navBtnStyle(active)}
+        onMouseEnter={e => { if (!active && !open) e.currentTarget.style.background = "#F4F2EE"; }}
+        onMouseLeave={e => { if (!active && !open) e.currentTarget.style.background = active ? "#000" : "transparent"; }}
+      >
+        {t.nav.tattoo}
+        <span style={{
+          display: "inline-block",
+          fontSize: 9,
+          transition: "transform .22s ease",
+          transform: open ? "rotate(180deg)" : "rotate(0deg)",
+          transformOrigin: "center",
+        }}>▾</span>
+      </button>
+
+      {/* Dropdown panel */}
+      <div style={{
+        position: "absolute",
+        top: "calc(100% + 6px)",
+        left: 0,
+        background: "#fff",
+        border: "1.5px solid #000",
+        minWidth: 230,
+        opacity: open ? 1 : 0,
+        transform: open ? "translateY(0)" : "translateY(-8px)",
+        pointerEvents: open ? "auto" : "none",
+        transition: "opacity .18s ease, transform .18s ease",
+        zIndex: 200,
+        boxShadow: "0 8px 28px rgba(0,0,0,0.14)",
+      }}>
+        {items.map((item, i) => (
+          <button
+            key={item.k}
+            onClick={() => {
+              setRoute(item.k === "aftercare" ? "tattoo" : item.k);
+              setOpen(false);
+            }}
+            style={{
+              display: "block",
+              width: "100%",
+              padding: "13px 18px",
+              textAlign: "left",
+              fontFamily: "var(--sans)",
+              fontSize: 12.5,
+              fontWeight: route === item.k ? 700 : 500,
+              letterSpacing: "0.02em",
+              textTransform: "uppercase",
+              borderTop: i > 0 ? "1px solid var(--hair)" : "none",
+              background: route === item.k ? "#F4F2EE" : "#fff",
+              transition: "background .1s",
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = "#F4F2EE"}
+            onMouseLeave={e => e.currentTarget.style.background = route === item.k ? "#F4F2EE" : "#fff"}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- NAVBAR ---------------- */
 function Navbar({ route, setRoute, time, intensity }) {
   const { t, lang, setLang } = useI18n();
   const [open, setOpen] = useState(false);
@@ -183,58 +335,52 @@ function Navbar({ route, setRoute, time, intensity }) {
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 80,
         background: "#fff",
         borderBottom: "2px solid #000",
-        height: 84,
+        height: 64,
       }}>
         <div style={{
           display: "grid",
           gridTemplateColumns: "auto 1fr auto",
           alignItems: "center",
           height: "100%",
-          padding: "0 24px",
-          gap: 28,
+          padding: "0 20px",
+          gap: 20,
         }}>
           {/* LEFT: Logo + wordmark */}
           <button
             onClick={() => setRoute("home")}
             aria-label="Home"
-            style={{
-              display: "flex", alignItems: "center", gap: 14,
-              flexShrink: 0,
-            }}
+            style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}
           >
-            <img src="assets/centro-logo.png" alt="" style={{ width: 38, height: 38, objectFit: "contain", display: "block" }} />
+            <img src="assets/centro-logo.png" alt="" style={{ width: 32, height: 32, objectFit: "contain", display: "block" }} />
             <span className="nav-wordmark" style={{
               fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
-              fontWeight: 900,
-              fontSize: 20,
-              letterSpacing: "-0.02em",
-              textTransform: "uppercase",
-              lineHeight: 1,
-              whiteSpace: "nowrap",
+              fontWeight: 900, fontSize: 17,
+              letterSpacing: "-0.02em", textTransform: "uppercase",
+              lineHeight: 1, whiteSpace: "nowrap",
             }}>
-              CENTRO<span style={{ display: "inline-block", margin: "0 0.2em" }}>·</span>STUDIO
+              CENTRO<span style={{ display: "inline-block", margin: "0 0.18em" }}>·</span>STUDIO
             </span>
           </button>
 
           {/* CENTER: Desktop nav */}
-          <nav className="nav-desktop" style={{ display: "none", justifyContent: "center", alignItems: "center", gap: 4 }}>
+          <nav className="nav-desktop" style={{ display: "none", justifyContent: "center", alignItems: "center", gap: 2 }}>
             {NAV_KEYS.map(k => {
+              if (k === "tattoo") return (
+                <TattooDropdown key="tattoo" route={route} setRoute={setRoute} t={t} />
+              );
               const active = route === NAV_ROUTES[k];
               return (
                 <button
                   key={k}
                   onClick={() => setRoute(NAV_ROUTES[k])}
                   style={{
-                    fontFamily: "var(--sans)",
-                    fontSize: 13,
+                    fontFamily: "var(--sans)", fontSize: 13,
                     fontWeight: active ? 900 : 700,
-                    letterSpacing: "-0.005em",
-                    textTransform: "uppercase",
+                    letterSpacing: "-0.005em", textTransform: "uppercase",
                     padding: "8px 12px",
                     background: active ? "#000" : "transparent",
                     color: active ? "#fff" : "#000",
-                    transition: "all .15s",
-                    whiteSpace: "nowrap",
+                    transition: "all .15s", whiteSpace: "nowrap",
                   }}
                   onMouseEnter={e => { if (!active) e.currentTarget.style.background = "#F4F2EE"; }}
                   onMouseLeave={e => { if (!active) e.currentTarget.style.background = "transparent"; }}
@@ -246,17 +392,13 @@ function Navbar({ route, setRoute, time, intensity }) {
           </nav>
 
           {/* RIGHT */}
-          <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
             <button
               onClick={() => setLang(lang === "es" ? "en" : "es")}
               style={{
-                fontFamily: "var(--sans)",
-                fontWeight: 900,
-                fontSize: 12,
-                letterSpacing: "0.06em",
-                textTransform: "uppercase",
-                padding: "8px 10px",
-                border: "1.5px solid #000",
+                fontFamily: "var(--sans)", fontWeight: 900, fontSize: 11,
+                letterSpacing: "0.06em", textTransform: "uppercase",
+                padding: "7px 9px", border: "1.5px solid #000",
               }}
               aria-label="Toggle language"
             >
@@ -266,24 +408,17 @@ function Navbar({ route, setRoute, time, intensity }) {
               onClick={() => setOpen(true)}
               className="menu-btn"
               style={{
-                fontFamily: "var(--sans)",
-                fontWeight: 900,
-                fontSize: 14,
-                letterSpacing: "0.02em",
-                textTransform: "uppercase",
-                padding: "10px 18px",
-                background: "#000",
-                color: "#fff",
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
+                fontFamily: "var(--sans)", fontWeight: 900, fontSize: 13,
+                letterSpacing: "0.02em", textTransform: "uppercase",
+                padding: "9px 16px", background: "#000", color: "#fff",
+                display: "flex", alignItems: "center", gap: 8,
               }}
               aria-label="Open menu"
             >
               <span style={{ display: "inline-flex", flexDirection: "column", gap: 3 }}>
-                <span style={{ width: 16, height: 2, background: "#fff" }} />
-                <span style={{ width: 16, height: 2, background: "#fff" }} />
-                <span style={{ width: 16, height: 2, background: "#fff" }} />
+                <span style={{ width: 15, height: 2, background: "#fff" }} />
+                <span style={{ width: 15, height: 2, background: "#fff" }} />
+                <span style={{ width: 15, height: 2, background: "#fff" }} />
               </span>
               MENU
             </button>
@@ -294,7 +429,7 @@ function Navbar({ route, setRoute, time, intensity }) {
       <NavOverlay open={open} setOpen={setOpen} route={route} setRoute={setRoute} />
 
       <style>{`
-        @media (min-width: 1180px) { .nav-desktop { display: flex !important; } }
+        @media (min-width: 1100px) { .nav-desktop { display: flex !important; } }
         @media (max-width: 520px) { .nav-wordmark { display: none !important; } }
       `}</style>
     </>
@@ -303,6 +438,12 @@ function Navbar({ route, setRoute, time, intensity }) {
 
 function NavOverlay({ open, setOpen, route, setRoute }) {
   const { t, lang, setLang } = useI18n();
+  const [tattooOpen, setTattooOpen] = useState(false);
+
+  const go = (r) => { setRoute(r); setOpen(false); setTattooOpen(false); };
+
+  const visibleKeys = NAV_KEYS; // same order as desktop
+
   return (
     <div style={{
       position: "fixed", inset: 0, zIndex: 90,
@@ -315,64 +456,138 @@ function NavOverlay({ open, setOpen, route, setRoute }) {
       <div style={{
         position: "sticky", top: 0,
         display: "flex", justifyContent: "space-between", alignItems: "center",
-        padding: "20px 32px",
+        padding: "18px 28px",
         borderBottom: "1px solid rgba(255,255,255,0.12)",
         background: "#000",
       }}>
-        <button onClick={() => { setRoute("home"); setOpen(false); }} aria-label="Home">
-          <Logo size={26} color="#fff" />
+        <button onClick={() => { go("home"); }} aria-label="Home">
+          <Logo size={24} color="#fff" />
         </button>
-        <button onClick={() => setOpen(false)} className="mono" style={{ fontWeight: 500 }}>Cerrar / Close</button>
+        <button onClick={() => setOpen(false)} className="mono" style={{ fontWeight: 500, color: "#fff" }}>
+          {lang === "es" ? "Cerrar" : "Close"}
+        </button>
       </div>
 
-      <div style={{ padding: "60px 32px 80px", maxWidth: 1400, margin: "0 auto" }}>
-        <div className="meta" style={{ color: "rgba(255,255,255,0.5)", marginBottom: 40 }}>
-          [ Index ]
-        </div>
+      <div style={{ padding: "48px 28px 80px", maxWidth: 1400, margin: "0 auto" }}>
+        <div className="meta" style={{ color: "rgba(255,255,255,0.4)", marginBottom: 32 }}>[ Index ]</div>
+
         <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-          {NAV_KEYS.map((k, i) => (
-            <li key={k} style={{ borderTop: "1px solid rgba(255,255,255,0.12)" }}>
-              <button
-                onClick={() => { setRoute(NAV_ROUTES[k]); setOpen(false); }}
-                style={{
-                  width: "100%", padding: "22px 0",
-                  display: "flex", alignItems: "baseline", justifyContent: "space-between",
-                  color: "#fff", textAlign: "left",
-                  transition: "padding .3s",
-                }}
-                onMouseEnter={e => e.currentTarget.style.paddingLeft = "20px"}
-                onMouseLeave={e => e.currentTarget.style.paddingLeft = "0"}
-              >
-                <span className="display" style={{ fontSize: "clamp(40px, 7vw, 92px)" }}>
-                  {t.nav[k]}
-                </span>
-                <span className="mono" style={{ color: "rgba(255,255,255,0.45)" }}>
-                  {String(i + 1).padStart(2, "0")} / 08
-                </span>
-              </button>
-            </li>
-          ))}
+          {visibleKeys.map((k, i) => {
+            if (k === "tattoo") {
+              return (
+                <li key="tattoo" style={{ borderTop: "1px solid rgba(255,255,255,0.12)" }}>
+                  {/* Main tattoo row */}
+                  <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
+                    <button
+                      onClick={() => go("tattoo")}
+                      style={{
+                        flex: 1, padding: "18px 0", color: "#fff", textAlign: "left",
+                        transition: "padding .3s",
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.paddingLeft = "16px"}
+                      onMouseLeave={e => e.currentTarget.style.paddingLeft = "0"}
+                    >
+                      <span className="display" style={{ fontSize: "clamp(32px, 6vw, 80px)" }}>
+                        {t.nav.tattoo}
+                      </span>
+                    </button>
+                    <button
+                      onClick={() => setTattooOpen(o => !o)}
+                      style={{
+                        color: "#fff", padding: "8px 12px",
+                        fontSize: 18, transition: "transform .22s",
+                        transform: tattooOpen ? "rotate(180deg)" : "rotate(0deg)",
+                      }}
+                    >▾</button>
+                    <span className="mono" style={{ color: "rgba(255,255,255,0.35)", marginLeft: 12 }}>
+                      {String(i + 1).padStart(2, "0")} / {String(NAV_KEYS.length).padStart(2, "0")}
+                    </span>
+                  </div>
+                  {/* Sub-items */}
+                  <div style={{
+                    overflow: "hidden",
+                    maxHeight: tattooOpen ? "240px" : "0",
+                    transition: "max-height .3s ease",
+                  }}>
+                    <div style={{ paddingLeft: 24, paddingBottom: 16, display: "grid", gap: 4 }}>
+                      {[
+                        { k: "quote",     label: t.nav.quote },
+                        { k: "guest",     label: t.nav.guest },
+                        { k: "aftercare", label: t.nav.aftercare, r: "tattoo" },
+                      ].map(item => (
+                        <button
+                          key={item.k}
+                          onClick={() => go(item.r || item.k)}
+                          style={{
+                            color: "rgba(255,255,255,0.7)",
+                            fontFamily: "var(--sans)", fontSize: "clamp(16px, 2.5vw, 22px)",
+                            fontWeight: 500, letterSpacing: "-0.01em",
+                            textAlign: "left", padding: "8px 0",
+                            textTransform: "uppercase",
+                            transition: "color .15s",
+                          }}
+                          onMouseEnter={e => e.currentTarget.style.color = "#fff"}
+                          onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.7)"}
+                        >
+                          — {item.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </li>
+              );
+            }
+
+            return (
+              <li key={k} style={{ borderTop: "1px solid rgba(255,255,255,0.12)" }}>
+                <button
+                  onClick={() => go(NAV_ROUTES[k])}
+                  style={{
+                    width: "100%", padding: "18px 0",
+                    display: "flex", alignItems: "baseline", justifyContent: "space-between",
+                    color: "#fff", textAlign: "left",
+                    transition: "padding .3s",
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.paddingLeft = "16px"}
+                  onMouseLeave={e => e.currentTarget.style.paddingLeft = "0"}
+                >
+                  <span className="display" style={{ fontSize: "clamp(32px, 6vw, 80px)" }}>
+                    {t.nav[k]}
+                  </span>
+                  <span className="mono" style={{ color: "rgba(255,255,255,0.35)" }}>
+                    {String(i + 1).padStart(2, "0")} / {String(NAV_KEYS.length).padStart(2, "0")}
+                  </span>
+                </button>
+              </li>
+            );
+          })}
         </ul>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 32, marginTop: 80, color: "rgba(255,255,255,0.7)" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 28, marginTop: 64, color: "rgba(255,255,255,0.65)" }}>
           <div>
-            <div className="meta" style={{ color: "rgba(255,255,255,0.45)", marginBottom: 10 }}>Dirección</div>
-            <div style={{ whiteSpace: "pre-line" }}>{t.footer.address}</div>
+            <div className="meta" style={{ color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>
+              {lang === "es" ? "Dirección" : "Address"}
+            </div>
+            <div style={{ whiteSpace: "pre-line", lineHeight: 1.6 }}>{t.footer.address}</div>
           </div>
           <div>
-            <div className="meta" style={{ color: "rgba(255,255,255,0.45)", marginBottom: 10 }}>{t.footer.contact}</div>
+            <div className="meta" style={{ color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>{t.footer.contact}</div>
             <div><a href={`mailto:${t.footer.email}`} style={{ color: "#fff" }}>{t.footer.email}</a></div>
-            <div style={{ marginTop: 4 }}><a href={t.footer.mapUrl} target="_blank" rel="noopener" style={{ color: "rgba(255,255,255,0.7)" }}>Ver en Google Maps ↗</a></div>
+            <div style={{ marginTop: 4 }}>
+              <a href={t.footer.mapUrl} target="_blank" rel="noopener" style={{ color: "rgba(255,255,255,0.6)" }}>
+                {t.footer.maps} ↗
+              </a>
+            </div>
           </div>
           <div>
-            <div className="meta" style={{ color: "rgba(255,255,255,0.45)", marginBottom: 10 }}>{t.footer.follow}</div>
+            <div className="meta" style={{ color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>{t.footer.follow}</div>
             <div><a href={t.footer.igUrl} target="_blank" rel="noopener" style={{ color: "#fff" }}>{t.footer.ig} ↗</a></div>
           </div>
           <div>
-            <div className="meta" style={{ color: "rgba(255,255,255,0.45)", marginBottom: 10 }}>Lang</div>
+            <div className="meta" style={{ color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>Lang</div>
             <button
               onClick={() => setLang(lang === "es" ? "en" : "es")}
-              style={{ color: "#fff", fontFamily: "var(--mono)", fontSize: 12 }}
+              style={{ color: "#fff", fontFamily: "var(--mono)", fontSize: 11 }}
             >
               {lang === "es" ? "→ Switch to English" : "→ Cambiar a Español"}
             </button>
@@ -385,28 +600,16 @@ function NavOverlay({ open, setOpen, route, setRoute }) {
 
 /* ---------------- FOOTER ---------------- */
 function Footer({ setRoute }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   return (
     <footer style={{ background: "#000", color: "#fff", marginTop: 0 }}>
-      <div className="container" style={{ padding: "80px 32px 36px" }}>
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 22,
-          marginBottom: 64,
-          flexWrap: "wrap",
-        }}>
-          <Logo size={48} color="#fff" />
+      <div className="container" style={{ padding: "72px 32px 32px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 56, flexWrap: "wrap" }}>
+          <Logo size={44} color="#fff" />
           <h2 className="display" style={{
-            fontSize: "clamp(28px, 4vw, 56px)",
-            margin: 0,
-            color: "#fff",
-            fontWeight: 900,
-            letterSpacing: "-0.02em",
-            lineHeight: 1,
-            display: "inline-flex",
-            alignItems: "baseline",
-            gap: "0.18em",
+            fontSize: "clamp(24px, 3.5vw, 48px)", margin: 0, color: "#fff",
+            fontWeight: 900, letterSpacing: "-0.02em", lineHeight: 1,
+            display: "inline-flex", alignItems: "baseline", gap: "0.18em",
           }}>
             <span>CENTRO</span>
             <span style={{ fontStyle: "italic", fontWeight: 300 }}>studio</span>
@@ -415,34 +618,36 @@ function Footer({ setRoute }) {
 
         <div style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-          gap: 40,
-          paddingTop: 40,
-          borderTop: "1px solid rgba(255,255,255,0.18)",
+          gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
+          gap: 36,
+          paddingTop: 36,
+          borderTop: "1px solid rgba(255,255,255,0.15)",
         }}>
           <div>
-            <div className="meta" style={{ color: "rgba(255,255,255,0.5)", marginBottom: 14 }}>[ Visit ]</div>
-            <div style={{ whiteSpace: "pre-line", lineHeight: 1.6 }}>{t.footer.address}</div>
+            <div className="meta" style={{ color: "rgba(255,255,255,0.45)", marginBottom: 12 }}>
+              {lang === "es" ? "[ Visita ]" : "[ Visit ]"}
+            </div>
+            <div style={{ whiteSpace: "pre-line", lineHeight: 1.65 }}>{t.footer.address}</div>
             <div style={{ marginTop: 10 }}>
-              <a href={t.footer.mapUrl} target="_blank" rel="noopener" style={{ color: "#fff", borderBottom: "1px solid rgba(255,255,255,0.4)", paddingBottom: 2 }}>
-                Google Maps ↗
+              <a href={t.footer.mapUrl} target="_blank" rel="noopener" style={{ color: "#fff", borderBottom: "1px solid rgba(255,255,255,0.35)", paddingBottom: 2 }}>
+                {t.footer.maps} ↗
               </a>
             </div>
-            <div style={{ marginTop: 8, color: "rgba(255,255,255,0.6)" }}>{t.footer.hours}</div>
+            <div style={{ marginTop: 8, color: "rgba(255,255,255,0.55)", fontSize: 13 }}>{t.footer.hours}</div>
           </div>
           <div>
-            <div className="meta" style={{ color: "rgba(255,255,255,0.5)", marginBottom: 14 }}>[ Contact ]</div>
+            <div className="meta" style={{ color: "rgba(255,255,255,0.45)", marginBottom: 12 }}>[ {t.footer.contact} ]</div>
             <div><a href={`mailto:${t.footer.email}`} style={{ color: "#fff" }}>{t.footer.email}</a></div>
             <div style={{ marginTop: 6 }}>
               <a href={t.footer.igUrl} target="_blank" rel="noopener" style={{ color: "#fff" }}>{t.footer.ig}</a>
             </div>
           </div>
           <div>
-            <div className="meta" style={{ color: "rgba(255,255,255,0.5)", marginBottom: 14 }}>[ Index ]</div>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: 4 }}>
-              {NAV_KEYS.slice(0,4).map(k => (
+            <div className="meta" style={{ color: "rgba(255,255,255,0.45)", marginBottom: 12 }}>[ Index ]</div>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: 5 }}>
+              {["tattoo", "blog", "store", "workshops"].map(k => (
                 <li key={k}>
-                  <button onClick={() => setRoute(NAV_ROUTES[k])} style={{ color: "rgba(255,255,255,0.85)" }}>
+                  <button onClick={() => setRoute(NAV_ROUTES[k])} style={{ color: "rgba(255,255,255,0.8)", fontSize: 13 }}>
                     {t.nav[k]}
                   </button>
                 </li>
@@ -450,11 +655,11 @@ function Footer({ setRoute }) {
             </ul>
           </div>
           <div>
-            <div className="meta" style={{ color: "rgba(255,255,255,0.5)", marginBottom: 14 }}>[ More ]</div>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: 4 }}>
-              {NAV_KEYS.slice(4).map(k => (
+            <div className="meta" style={{ color: "rgba(255,255,255,0.45)", marginBottom: 12 }}>[ {lang === "es" ? "Más" : "More"} ]</div>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: 5 }}>
+              {["gallery", "events", "giftcard", "info"].map(k => (
                 <li key={k}>
-                  <button onClick={() => setRoute(NAV_ROUTES[k])} style={{ color: "rgba(255,255,255,0.85)" }}>
+                  <button onClick={() => setRoute(NAV_ROUTES[k])} style={{ color: "rgba(255,255,255,0.8)", fontSize: 13 }}>
                     {t.nav[k]}
                   </button>
                 </li>
@@ -462,24 +667,22 @@ function Footer({ setRoute }) {
             </ul>
           </div>
           <div>
-            <div className="meta" style={{ color: "rgba(255,255,255,0.5)", marginBottom: 14 }}>[ Follow ]</div>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: 6 }}>
-              <li>
-                <a href={t.footer.igUrl} target="_blank" rel="noopener" style={{ color: "#fff" }}>
-                  Instagram — {t.footer.ig} ↗
-                </a>
-              </li>
-              <li style={{ color: "rgba(255,255,255,0.55)", fontSize: 13 }}>Newsletter mensual</li>
-            </ul>
+            <div className="meta" style={{ color: "rgba(255,255,255,0.45)", marginBottom: 12 }}>[ {t.footer.follow} ]</div>
+            <a href={t.footer.igUrl} target="_blank" rel="noopener" style={{ color: "#fff", fontSize: 13 }}>
+              Instagram — {t.footer.ig} ↗
+            </a>
+            <div style={{ marginTop: 8, color: "rgba(255,255,255,0.45)", fontSize: 12 }}>
+              {lang === "es" ? "Newsletter mensual" : "Monthly newsletter"}
+            </div>
           </div>
         </div>
 
         <div style={{
-          display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 12,
-          paddingTop: 32, marginTop: 60,
-          borderTop: "1px solid rgba(255,255,255,0.18)",
-          color: "rgba(255,255,255,0.5)",
-          fontFamily: "var(--mono)", fontSize: 11, letterSpacing: "0.05em",
+          display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 10,
+          paddingTop: 28, marginTop: 52,
+          borderTop: "1px solid rgba(255,255,255,0.15)",
+          color: "rgba(255,255,255,0.4)",
+          fontFamily: "var(--mono)", fontSize: 10.5, letterSpacing: "0.05em",
         }}>
           <span>{t.footer.legal}</span>
           <span>{t.footer.colofon}</span>
@@ -501,44 +704,32 @@ function Placeholder({ label, tag, ratio = "4/5", dark = false, style = {} }) {
 }
 
 /* ---------------- SECTION HEADER ---------------- */
-function SectionHeader({ index, kicker, title, intro, route }) {
+function SectionHeader({ index, kicker, title, intro }) {
   return (
-    <div style={{ paddingTop: "clamp(56px, 8vw, 120px)", paddingBottom: 48 }}>
+    <div style={{ paddingTop: "clamp(48px, 7vw, 100px)", paddingBottom: 40 }}>
       <div className="container">
-        <div style={{
-          display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 32,
-          alignItems: "end",
-        }}>
-          <div style={{ gridColumn: "span 12" }} className="sh-meta-row">
-            <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginBottom: 32 }}>
-              <span className="meta">[ {index} / {kicker} ]</span>
-              <span className="meta">— Centro Studio · BA</span>
-            </div>
-          </div>
-          <h1 className="display sh-title" style={{
-            gridColumn: "span 12",
-            fontSize: "clamp(56px, 11vw, 168px)",
-            margin: 0,
-            display: "flex", alignItems: "flex-start", gap: "0.1em",
-          }}>
-            {title}
-          </h1>
-          {intro && (
-            <p style={{
-              gridColumn: "12 / span 12",
-              fontFamily: "var(--sans)", fontSize: 16, lineHeight: 1.55,
-              maxWidth: 560, margin: "32px 0 0",
-            }} className="sh-intro">
-              {intro}
-            </p>
-          )}
+        <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 10, marginBottom: 24 }}>
+          <span className="meta">[ {index} / {kicker} ]</span>
+          <span className="meta">— Centro Studio · BA</span>
         </div>
+        <h1 className="display" style={{
+          fontSize: "clamp(52px, 10vw, 152px)",
+          margin: 0,
+          display: "flex", alignItems: "flex-start", gap: "0.1em",
+          lineHeight: 0.9,
+        }}>
+          {title}
+        </h1>
+        {intro && (
+          <p style={{
+            fontFamily: "var(--sans)", fontSize: 15, lineHeight: 1.6,
+            maxWidth: 480, margin: "28px 0 0",
+            color: "rgba(0,0,0,0.65)",
+          }}>
+            {intro}
+          </p>
+        )}
       </div>
-      <style>{`
-        @media (min-width: 900px) {
-          .sh-intro { grid-column: 8 / span 5 !important; margin-top: -120px !important; }
-        }
-      `}</style>
     </div>
   );
 }

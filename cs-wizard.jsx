@@ -40,10 +40,9 @@ function Wizard({ setRoute, preselectedArtist }) {
   const next = () => { if (step < total - 1) setStep(s => s + 1); };
   const prev = () => { if (step > 0) setStep(s => s - 1); };
 
-  // Build mailto on submit
-  const submit = () => {
-    if (!canSubmit) return;
-    const T2 = wzES;
+  const [sending, setSending] = useStateW(false);
+
+  const buildEmailText = () => {
     const subj = `Cotizá un tatuaje — ${data.contact.name}`;
     const body =
       `Hola Centro,\n\n` +
@@ -53,7 +52,7 @@ function Wizard({ setRoute, preselectedArtist }) {
       `· Tamaño:         ${data.size || "—"}\n` +
       `· Zona:           ${data.zone || "—"}\n` +
       `· Diseño:         ${data.hasDesign || "—"}\n` +
-      `· Referencias:    ${data.refs.length} archivo(s) (las envío adjuntas en este mismo mail)\n` +
+      `· Referencias:    ${data.refs.length} archivo(s)\n` +
       `· Artista:        ${data.artist || "—"}\n` +
       `· Fechas:         ${data.dates.from || "—"}${data.dates.to ? " → " + data.dates.to : ""}\n\n` +
       `── Contacto ──\n` +
@@ -63,11 +62,53 @@ function Wizard({ setRoute, preselectedArtist }) {
       `── Notas ──\n` +
       `${data.contact.notes || "—"}\n\n` +
       `Gracias.`;
+    return { subj, body };
+  };
+
+  const submit = async () => {
+    if (!canSubmit || sending) return;
+    setSending(true);
+
+    const { subj, body } = buildEmailText();
+
+    // Convert image blobs to base64 for API attachment
+    const attachments = await Promise.all(
+      data.refs.map(r => new Promise(resolve => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", r.url, true);
+        xhr.responseType = "blob";
+        xhr.onload = () => {
+          const reader = new FileReader();
+          reader.onload = () => resolve({ name: r.name, data: reader.result.split(",")[1] });
+          reader.readAsDataURL(xhr.response);
+        };
+        xhr.onerror = () => resolve(null);
+        xhr.send();
+      }))
+    ).then(arr => arr.filter(Boolean));
+
+    try {
+      const resp = await fetch("/api/send-contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subject: subj, text: body, attachments }),
+      });
+      const result = await resp.json().catch(() => ({}));
+
+      if (result.ok) {
+        setSending(false);
+        setSubmitted(true);
+        return;
+      }
+      // API not configured or failed → fall back to mailto:
+    } catch (_) { /* network error — fall back */ }
+
+    // Fallback: open mail client (user attaches images manually)
     const url = "mailto:centrostudio.ar@gmail.com" +
       "?subject=" + encodeURIComponent(subj) +
       "&body=" + encodeURIComponent(body);
-    // open mail client; also mark submitted so UI confirms
     window.location.href = url;
+    setSending(false);
     setSubmitted(true);
   };
 
@@ -129,8 +170,8 @@ function Wizard({ setRoute, preselectedArtist }) {
               {filled ? T.next : T.skip} →
             </button>
           ) : (
-            <button onClick={submit} disabled={!canSubmit} className="btn btn-dark" style={{ opacity: canSubmit ? 1 : 0.3 }}>
-              {T.submit} <Asterisk size={10} color="#fff" />
+            <button onClick={submit} disabled={!canSubmit || sending} className="btn btn-dark" style={{ opacity: canSubmit && !sending ? 1 : 0.3 }}>
+              {sending ? <Asterisk size={10} color="#fff" spin /> : T.submit}
             </button>
           )}
         </div>
@@ -235,36 +276,61 @@ function Step03({ data, setAndAdvance, T }) {
 }
 
 function Step04({ data, setAndAdvance, T }) {
-  const [view, setView] = React.useState("front");
   const [pending, setPending] = React.useState(data.zone);
-  const viewZones = T.zones.filter(z => z.v === view);
+
+  // Deduplicated zone list (same key can appear in front + back)
+  const seen = new Set();
+  const uniqueZones = T.zones.filter(z => { if (seen.has(z.k)) return false; seen.add(z.k); return true; });
+
+  const GROUPS = [
+    { g: T.zoneGroupHead  || "Cabeza y cuello", keys: ["Cabeza", "Cuello", "Nuca"] },
+    { g: T.zoneGroupTorso || "Torso",           keys: ["Hombro", "Pecho", "Costilla", "Abdomen", "Espalda alta", "Lumbar"] },
+    { g: T.zoneGroupArms  || "Brazos",          keys: ["Brazo", "Antebrazo", "Mano"] },
+    { g: T.zoneGroupLegs  || "Piernas",         keys: ["Muslo", "Glúteo", "Isquio", "Rodilla", "Pantorrilla", "Tobillo", "Pie"] },
+  ];
+
   return (
     <div>
       <StepHeader num="04" q={T.q4} sub={T.q4sub} />
-      <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 24, alignItems: "start" }} className="zone-grid">
-        <BodyDiagram selected={pending} onSelect={setPending} view={view} setView={setView} T={T} />
-        <div style={{ display: "grid", gap: 6, maxHeight: 480, overflowY: "auto" }}>
-          {viewZones.map(z => (
-            <button key={z.k + z.v}
-              onClick={() => setPending(z.k)}
-              style={{
-                textAlign: "left", padding: "12px 16px",
-                border: "1px solid var(--hair)",
-                background: pending === z.k ? "#000" : "#fff",
-                color: pending === z.k ? "#fff" : "#000",
-                display: "flex", justifyContent: "space-between", alignItems: "center",
-                transition: "all .15s",
-              }}>
-              <span style={{ fontSize: 14 }}>{z.label || z.k}</span>
-              <span className="mono" style={{ fontSize: 10, opacity: 0.6 }}>
-                {pending === z.k ? "●" : "○"}
-              </span>
-            </button>
-          ))}
-        </div>
+
+      <div style={{ display: "grid", gap: 28 }}>
+        {GROUPS.map(grp => {
+          const grpZones = grp.keys
+            .map(k => uniqueZones.find(z => z.k === k))
+            .filter(Boolean);
+          if (!grpZones.length) return null;
+          return (
+            <div key={grp.g}>
+              <div className="meta" style={{ marginBottom: 10, color: "var(--muted)" }}>{grp.g}</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                {grpZones.map(z => (
+                  <button
+                    key={z.k}
+                    onClick={() => setPending(z.k)}
+                    style={{
+                      padding: "10px 18px",
+                      border: "1.5px solid",
+                      borderColor: pending === z.k ? "#000" : "var(--hair)",
+                      background: pending === z.k ? "#000" : "#fff",
+                      color: pending === z.k ? "#fff" : "#000",
+                      fontSize: 13.5,
+                      fontWeight: pending === z.k ? 700 : 400,
+                      transition: "all .15s",
+                      cursor: "pointer",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {z.label || z.k}
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
+
       {pending && (
-        <div style={{ marginTop: 20, display: "flex", justifyContent: "flex-end" }}>
+        <div style={{ marginTop: 28, display: "flex", justifyContent: "flex-end" }}>
           <button
             onClick={() => setAndAdvance("zone", pending)}
             className="btn btn-dark"
@@ -272,122 +338,6 @@ function Step04({ data, setAndAdvance, T }) {
           >
             {T.confirmZone || "Confirmar zona"} →
           </button>
-        </div>
-      )}
-      <style>{`
-        @media (max-width: 720px) {
-          .zone-grid { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
-    </div>
-  );
-}
-
-function BodyDiagram({ selected, onSelect, view, setView, T }) {
-  const [hovered, setHovered] = React.useState(null);
-
-  const FRONT_DOTS = [
-    { k: "Cabeza",      x: 50,  y: 7  },
-    { k: "Cuello",      x: 50,  y: 15 },
-    { k: "Hombro",      x: 22,  y: 22 },
-    { k: "Pecho",       x: 50,  y: 29 },
-    { k: "Costilla",    x: 27,  y: 38 },
-    { k: "Abdomen",     x: 50,  y: 47 },
-    { k: "Brazo",       x: 17,  y: 33 },
-    { k: "Antebrazo",   x: 14,  y: 43 },
-    { k: "Mano",        x: 13,  y: 53 },
-    { k: "Muslo",       x: 38,  y: 62 },
-    { k: "Rodilla",     x: 38,  y: 72 },
-    { k: "Pantorrilla", x: 38,  y: 82 },
-    { k: "Pie",         x: 38,  y: 92 },
-  ];
-
-  const BACK_DOTS = [
-    { k: "Nuca",         x: 50, y: 10 },
-    { k: "Hombro",       x: 22, y: 22 },
-    { k: "Espalda alta", x: 50, y: 28 },
-    { k: "Brazo",        x: 17, y: 33 },
-    { k: "Antebrazo",    x: 14, y: 43 },
-    { k: "Mano",         x: 13, y: 53 },
-    { k: "Lumbar",       x: 50, y: 44 },
-    { k: "Glúteo",       x: 37, y: 56 },
-    { k: "Isquio",       x: 38, y: 66 },
-    { k: "Rodilla",      x: 38, y: 73 },
-    { k: "Pantorrilla",  x: 38, y: 83 },
-    { k: "Tobillo",      x: 38, y: 92 },
-  ];
-
-  const dots = view === "front" ? FRONT_DOTS : BACK_DOTS;
-  const bgPos = view === "front" ? "0% 0%" : "100% 0%";
-
-  return (
-    <div style={{ background: "var(--warm)", border: "1px solid var(--hair)", position: "relative" }}>
-      <div style={{ display: "flex", gap: 8, padding: "12px 14px 0" }}>
-        <button
-          className={"pill" + (view === "front" ? " active" : "")}
-          onClick={() => setView("front")}
-          style={{ fontSize: 10.5 }}
-        >{T.viewFront || "Frente"}</button>
-        <button
-          className={"pill" + (view === "back" ? " active" : "")}
-          onClick={() => setView("back")}
-          style={{ fontSize: 10.5 }}
-        >{T.viewBack || "Dorso"}</button>
-      </div>
-
-      <div style={{
-        position: "relative",
-        margin: "8px auto 4px",
-        width: "100%",
-        maxWidth: 200,
-        aspectRatio: "1/2",
-        backgroundImage: "url(assets/body-3views.png)",
-        backgroundSize: "300% auto",
-        backgroundPosition: bgPos,
-        backgroundRepeat: "no-repeat",
-        transition: "background-position 0.35s ease",
-        overflow: "hidden",
-      }}>
-        {dots.map(dot => {
-          const isSel = selected === dot.k;
-          const isHov = hovered === dot.k;
-          const zLabel = (T.zones.find(z => z.k === dot.k && z.v === view) || {}).label || dot.k;
-          return (
-            <button
-              key={dot.k + view}
-              title={zLabel}
-              onClick={() => onSelect(dot.k)}
-              onMouseEnter={() => setHovered(dot.k)}
-              onMouseLeave={() => setHovered(null)}
-              style={{
-                position: "absolute",
-                left: `${dot.x}%`, top: `${dot.y}%`,
-                transform: "translate(-50%, -50%)",
-                width: isSel ? 18 : (isHov ? 15 : 11),
-                height: isSel ? 18 : (isHov ? 15 : 11),
-                borderRadius: "50%",
-                background: isSel ? "#000" : (isHov ? "rgba(0,0,0,0.75)" : "rgba(0,0,0,0.38)"),
-                border: isSel ? "2px solid #fff" : "1.5px solid rgba(0,0,0,0.55)",
-                boxShadow: isSel ? "0 0 0 3px #000" : (isHov ? "0 0 0 2px rgba(0,0,0,0.3)" : "none"),
-                cursor: "pointer",
-                transition: "all 0.15s ease",
-                padding: 0,
-              }}
-            />
-          );
-        })}
-      </div>
-
-      {selected && (
-        <div style={{
-          margin: "0 14px 14px",
-          background: "#000", color: "#fff",
-          padding: "9px 14px", fontSize: 11, fontWeight: 700,
-          letterSpacing: "0.08em", textTransform: "uppercase",
-          display: "flex", justifyContent: "space-between",
-        }}>
-          <span>[ {T.zoneLabel || "Zona"} ]</span>
-          <span style={{ fontStyle: "italic", fontWeight: 400 }}>{selected}</span>
         </div>
       )}
     </div>
@@ -719,6 +669,10 @@ const wzES = {
   viewBack: "Dorso",
   zoneLabel: "Zona seleccionada",
   confirmZone: "Confirmar zona",
+  zoneGroupHead: "Cabeza y cuello",
+  zoneGroupTorso: "Torso",
+  zoneGroupArms: "Brazos",
+  zoneGroupLegs: "Piernas",
   zones: [
     { k: "Cabeza",       v: "front", label: "Cabeza" },
     { k: "Cuello",       v: "front", label: "Cuello" },
@@ -828,6 +782,10 @@ const wzEN = Object.assign({}, wzES, {
   q4: "Body zone?", q4sub: "Tap the figure or pick from the list.",
   viewFront: "Front", viewBack: "Back", zoneLabel: "Zone",
   confirmZone: "Confirm zone",
+  zoneGroupHead: "Head & neck",
+  zoneGroupTorso: "Torso",
+  zoneGroupArms: "Arms",
+  zoneGroupLegs: "Legs",
   zones: [
     { k: "Cabeza",       v: "front", label: "Head" },
     { k: "Cuello",       v: "front", label: "Neck" },
