@@ -315,7 +315,7 @@ function TattooGoogleCTA({ T }) {
               {T.googleBody}
             </p>
             <a
-              href="https://maps.google.com/?q=Av.+Cordoba+857,+Retiro,+CABA,+Argentina"
+              href="https://www.google.com/maps/place/Centro+Studio/@-34.5987693,-58.3790961,17z/data=!3m1!4b1!4m6!3m5!1s0x95bccb1be0e97623:0x5a726210ae16aa48!8m2!3d-34.5987693!4d-58.3790961!16s%2Fg%2F11m5vh2hcp"
               target="_blank"
               rel="noopener"
               className="btn btn-dark"
