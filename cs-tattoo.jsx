@@ -2,7 +2,7 @@
 const TATTOO_ARTISTS = [
   { k: "panchogattoni", name: "Francisco Gattoni",    role: "Resident", styles: "Tradicional · Blackwork",  img: "assets/artists/pancho.jpg",    ig: "panchogattoni" },
   { k: "inksomnio",     name: "Agustina Cistaro",     role: "Resident", styles: "Fine line · Ornamental",   img: "assets/artists/inksomnio.jpg", ig: "inksomnio" },
-  { k: "mutar",         name: "Katja Sol Müller",     role: "Resident", styles: "Fine line · Ornamental",   img: "assets/artists/mutar.jpg",     ig: "mutar" },
+  { k: "mutar",         name: "Katja Sol Müller",     role: "Guest",    styles: "Fine line · Ornamental",   img: "assets/artists/mutar.jpg",     ig: "mutar" },
   { k: "coti",          name: "Constanza Rossi",      role: "Resident", styles: "Ilustrativo",              img: "assets/artists/coti.jpg",      ig: "coti" },
   { k: "milepokes",     name: "Milena Presta",        role: "Resident", styles: "Handpoke · Ilustrativo",   img: "assets/artists/mile.jpg",      ig: "milepokes" },
   { k: "guadatatua",    name: "Guadalupe Barrientos", role: "Resident", styles: "Tradicional",              img: "assets/artists/guada.jpg",     ig: "guadatatua" },

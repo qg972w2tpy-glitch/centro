@@ -758,7 +758,7 @@ const wzES = {
   artists: [
     { k: "panchogattoni", role: "Resident", styles: "Tradicional blackwork",    img: "assets/artists/pancho.jpg",     sub: "Francisco Gattoni" },
     { k: "inksomnio",     role: "Resident", styles: "Fineline / Ornamental",   img: "assets/artists/inksomnio.jpg", sub: "Agustina Cistaro" },
-    { k: "mutar",         role: "Resident", styles: "Fineline / Ornamental",   img: "assets/artists/mutar.jpg",      sub: "Katja Sol Müller" },
+    { k: "mutar",         role: "Guest",    styles: "Fineline / Ornamental",   img: "assets/artists/mutar.jpg",      sub: "Katja Sol Müller" },
     { k: "coti",          role: "Resident", styles: "Ilustrativo",              img: "assets/artists/coti.jpg",       sub: "Constanza Rossi" },
     { k: "milepokes",     role: "Resident", styles: "Handpoke ilustrativo",     img: "assets/artists/mile.jpg",       sub: "Milena Presta" },
     { k: "guadatatua",    role: "Resident", styles: "Tradicional",              img: "assets/artists/guada.jpg",      sub: "Guadalupe Barrientos" },
