@@ -37,16 +37,21 @@ export default async function handler(req, res) {
     }
 
     const json = await resp.json();
-    const posts = (json.items || []).map(item => ({
-      cat: item.fields.category || "Notas",
-      title: item.fields.title || "",
-      excerpt: item.fields.excerpt || "",
-      read: item.fields.readTime || "5 min",
-      date: item.fields.publishDate
-        ? new Date(item.fields.publishDate).toLocaleDateString("es-AR", { day: "2-digit", month: "short", year: "numeric" })
-        : "",
-      featured: item.fields.featured || false,
-    }));
+    const posts = (json.items || []).map(item => {
+      const f = item.fields;
+      const rawDate = f.publishDate || f.publishdate;
+      const rawCat = f.category || "";
+      return {
+        cat: rawCat ? rawCat.charAt(0).toUpperCase() + rawCat.slice(1) : "Notas",
+        title: f.title || "",
+        excerpt: f.excerpt || "",
+        read: f.readTime || f.readtime || "5 min",
+        date: rawDate
+          ? new Date(rawDate).toLocaleDateString("es-AR", { day: "2-digit", month: "short", year: "numeric" })
+          : "",
+        featured: f.featured || false,
+      };
+    });
 
     return res.status(200).json({ ok: true, posts });
   } catch (err) {
