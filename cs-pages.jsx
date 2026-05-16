@@ -69,10 +69,59 @@ const BLOG_ENTRIES = [
 ];
 const CATS = ["Todas", "Entrevista", "Notas", "Procesos", "Artistas"];
 
+function BlogPostDetail({ post, onBack }) {
+  React.useEffect(() => { window.scrollTo({ top: 0, behavior: "smooth" }); }, []);
+  const paragraphs = (post.body || "").split(/\n\n+/).filter(Boolean);
+  const lines = (post.body || "").split(/\n/).filter(Boolean);
+  const blocks = paragraphs.length > 0 ? paragraphs : lines;
+
+  return (
+    <div className="page-fade" style={{ paddingTop: 64, paddingBottom: 80 }}>
+      <div className="container" style={{ maxWidth: 800 }}>
+        <button onClick={onBack} style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 40, fontFamily: "var(--mono)", fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", cursor: "pointer", background: "none", border: "none", padding: 0 }}>
+          ← Volver al blog
+        </button>
+
+        {post.cover && (
+          <div style={{ marginBottom: 40, aspectRatio: "16/9", overflow: "hidden", background: "var(--warm)" }}>
+            <img src={post.cover} alt={post.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+          </div>
+        )}
+
+        <div style={{ display: "flex", gap: 16, marginBottom: 20 }}>
+          <span className="meta">[ {post.cat} ]</span>
+          {post.date && <span className="meta">— {post.date}</span>}
+          {post.read && <span className="meta">{post.read} lectura</span>}
+        </div>
+
+        <h1 className="display" style={{ fontSize: "clamp(36px, 5vw, 72px)", margin: "0 0 40px", lineHeight: 1 }}>
+          {post.title}
+        </h1>
+
+        {post.excerpt && (
+          <p style={{ fontSize: 20, lineHeight: 1.5, color: "rgba(0,0,0,0.65)", borderLeft: "3px solid #000", paddingLeft: 20, margin: "0 0 48px", fontStyle: "italic" }}>
+            {post.excerpt}
+          </p>
+        )}
+
+        {blocks.length > 0 ? (
+          <div style={{ fontSize: 17, lineHeight: 1.75, color: "rgba(0,0,0,0.82)" }}>
+            {blocks.map((block, i) => (
+              <p key={i} style={{ margin: "0 0 24px" }}>{block}</p>
+            ))}
+          </div>
+        ) : (
+          <p style={{ color: "var(--muted)", fontStyle: "italic" }}>Contenido no disponible.</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function BlogPage() {
-  useReveal();
   const [cat, setCat] = React.useState("Todas");
   const [entries, setEntries] = React.useState(BLOG_ENTRIES);
+  const [selected, setSelected] = React.useState(null);
 
   React.useEffect(() => {
     fetch("/api/blog-posts")
@@ -80,6 +129,10 @@ function BlogPage() {
       .then(d => { if (d.ok && d.posts.length > 0) setEntries(d.posts); })
       .catch(() => {});
   }, []);
+
+  if (selected) {
+    return <BlogPostDetail post={selected} onBack={() => { setSelected(null); window.scrollTo({ top: 0 }); }} />;
+  }
 
   const featured = entries[0];
   const rest = entries.slice(1);
@@ -91,9 +144,13 @@ function BlogPage() {
         intro="Editorial digital del espacio. Entrevistas, notas, procesos y materiales de archivo. Publicado mensualmente." />
 
       <div className="container" style={{ marginTop: 40 }}>
-        <article style={{ display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 32, paddingBottom: 60, borderBottom: "1px solid var(--hair)", cursor: "pointer" }}>
+        <article
+          onClick={() => setSelected(featured)}
+          style={{ display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 32, paddingBottom: 60, borderBottom: "1px solid var(--hair)", cursor: "pointer" }}>
           <div style={{ gridColumn: "span 12" }} className="bf-img">
-            <Placeholder label={"portada — " + featured.title.toLowerCase().slice(0, 40)} tag={featured.cat.toUpperCase()} ratio="16/10" />
+            {featured.cover
+              ? <div style={{ aspectRatio: "16/10", overflow: "hidden", background: "var(--warm)" }}><img src={featured.cover} alt={featured.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /></div>
+              : <Placeholder label={"portada — " + featured.title.toLowerCase().slice(0, 40)} tag={featured.cat.toUpperCase()} ratio="16/10" />}
           </div>
           <div style={{ gridColumn: "span 12" }} className="bf-text">
             <div style={{ display: "flex", gap: 16, marginBottom: 20 }}>
@@ -134,9 +191,11 @@ function BlogPage() {
       <div className="container" style={{ marginTop: 32 }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 32 }}>
           {filtered.map((e, i) => (
-            <article key={i} style={{ cursor: "pointer" }}>
+            <article key={i} onClick={() => setSelected(e)} style={{ cursor: "pointer" }}>
               <div style={{ position: "relative", overflow: "hidden" }} className="blog-card-img">
-                <Placeholder label={e.title.toLowerCase().slice(0, 32)} tag={e.cat.toUpperCase()} ratio="4/5" />
+                {e.cover
+                  ? <div style={{ aspectRatio: "4/5", overflow: "hidden", background: "var(--warm)" }}><img src={e.cover} alt={e.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /></div>
+                  : <Placeholder label={e.title.toLowerCase().slice(0, 32)} tag={e.cat.toUpperCase()} ratio="4/5" />}
               </div>
               <div style={{ padding: "16px 0 0" }}>
                 <div className="meta" style={{ marginBottom: 8, display: "flex", gap: 12 }}>

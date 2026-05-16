@@ -37,14 +37,28 @@ export default async function handler(req, res) {
     }
 
     const json = await resp.json();
+
+    // Build asset URL map from includes
+    const assetMap = {};
+    ((json.includes && json.includes.Asset) || []).forEach(a => {
+      if (a.fields && a.fields.file && a.fields.file.url) {
+        assetMap[a.sys.id] = "https:" + a.fields.file.url;
+      }
+    });
+
     const posts = (json.items || []).map(item => {
       const f = item.fields;
       const rawDate = f.publishDate || f.publishdate;
       const rawCat = f.category || "";
+      const coverRef = f.coverImage || f.coverimage;
+      const coverId = coverRef && coverRef.sys ? coverRef.sys.id : null;
       return {
+        id: item.sys.id,
         cat: rawCat ? rawCat.charAt(0).toUpperCase() + rawCat.slice(1) : "Notas",
         title: f.title || "",
         excerpt: f.excerpt || "",
+        body: f.body || "",
+        cover: coverId ? (assetMap[coverId] || null) : null,
         read: f.readTime || f.readtime || "5 min",
         date: rawDate
           ? new Date(rawDate).toLocaleDateString("es-AR", { day: "2-digit", month: "short", year: "numeric" })
