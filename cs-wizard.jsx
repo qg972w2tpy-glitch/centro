@@ -84,7 +84,7 @@ function Wizard({ setRoute, preselectedArtist }) {
         xhr.onerror = () => resolve(null);
         xhr.send();
       }))
-    ).then(arr => arr.filter(Boolean)));
+    ).then(arr => arr.filter(Boolean))];
 
     try {
       const resp = await fetch("/api/send-contact", {
