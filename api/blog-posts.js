@@ -25,7 +25,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const url = `https://cdn.contentful.com/spaces/${spaceId}/entries?content_type=blogpost&order=-fields.publishDate&limit=50`;
+    const url = `https://cdn.contentful.com/spaces/${spaceId}/entries?content_type=blogpost&order=-fields.publishdate&limit=50`;
     const resp = await fetch(url, {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -33,7 +33,7 @@ export default async function handler(req, res) {
     if (!resp.ok) {
       const err = await resp.text();
       console.error("Contentful error:", err);
-      return res.status(200).json({ ok: false, reason: "contentful_error" });
+      return res.status(200).json({ ok: false, reason: "contentful_error", detail: err });
     }
 
     const json = await resp.json();
