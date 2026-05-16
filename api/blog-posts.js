@@ -59,6 +59,7 @@ export default async function handler(req, res) {
         excerpt: f.excerpt || "",
         body: f.body || "",
         cover: coverId ? (assetMap[coverId] || null) : null,
+        author: f.author || "",
         read: f.readTime || f.readtime || "5 min",
         date: rawDate
           ? new Date(rawDate).toLocaleDateString("es-AR", { day: "2-digit", month: "short", year: "numeric" })

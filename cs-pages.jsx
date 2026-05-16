@@ -139,15 +139,27 @@ function BlogPostDetail({ post, assets, onBack }) {
           </div>
         )}
 
-        <div style={{ display: "flex", gap: 16, marginBottom: 20 }}>
+        <div style={{ display: "flex", gap: 16, marginBottom: 20, flexWrap: "wrap" }}>
           <span className="meta">[ {post.cat} ]</span>
           {post.date && <span className="meta">— {post.date}</span>}
           {post.read && <span className="meta">{post.read} lectura</span>}
         </div>
 
-        <h1 className="display" style={{ fontSize: "clamp(36px, 5vw, 72px)", margin: "0 0 40px", lineHeight: 1 }}>
+        <h1 className="display" style={{ fontSize: "clamp(36px, 5vw, 72px)", margin: "0 0 24px", lineHeight: 1 }}>
           {post.title}
         </h1>
+
+        {post.author && (
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 40, paddingBottom: 24, borderBottom: "1px solid var(--hair)" }}>
+            <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#000", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ color: "#fff", fontSize: 13, fontWeight: 700 }}>{post.author.charAt(0).toUpperCase()}</span>
+            </div>
+            <div>
+              <div style={{ fontSize: 13.5, fontWeight: 600 }}>{post.author}</div>
+              <div className="meta">Autor</div>
+            </div>
+          </div>
+        )}
 
         {post.excerpt && (
           <p style={{ fontSize: 20, lineHeight: 1.5, color: "rgba(0,0,0,0.65)", borderLeft: "3px solid #000", paddingLeft: 20, margin: "0 0 48px", fontStyle: "italic" }}>
@@ -260,7 +272,10 @@ function BlogPage() {
                 </div>
                 <h3 className="display" style={{ fontSize: 26, lineHeight: 1.15, margin: "0 0 8px" }}>{e.title}</h3>
                 <p style={{ fontSize: 14, color: "rgba(0,0,0,0.65)", lineHeight: 1.5, margin: 0 }}>{e.excerpt}</p>
-                <div className="mono" style={{ marginTop: 12, color: "var(--muted)" }}>{e.read} →</div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 12 }}>
+                  <div className="mono" style={{ color: "var(--muted)" }}>{e.read} →</div>
+                  {e.author && <div className="meta">{e.author}</div>}
+                </div>
               </div>
             </article>
           ))}
