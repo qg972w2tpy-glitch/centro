@@ -71,8 +71,17 @@ const CATS = ["Todas", "Entrevista", "Notas", "Procesos", "Artistas"];
 
 function BlogPage() {
   const [cat, setCat] = React.useState("Todas");
-  const featured = BLOG_ENTRIES[0];
-  const rest = BLOG_ENTRIES.slice(1);
+  const [entries, setEntries] = React.useState(BLOG_ENTRIES);
+
+  React.useEffect(() => {
+    fetch("/api/blog-posts")
+      .then(r => r.json())
+      .then(d => { if (d.ok && d.posts.length > 0) setEntries(d.posts); })
+      .catch(() => {});
+  }, []);
+
+  const featured = entries[0];
+  const rest = entries.slice(1);
   const filtered = cat === "Todas" ? rest : rest.filter(e => e.cat === cat);
 
   return (

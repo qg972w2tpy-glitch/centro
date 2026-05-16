@@ -74,7 +74,7 @@ function buyMailto(w) {
     `${w.trastienda ? "· Disponible en trastienda\n" : ""}` +
     `\nQuisiera saber:\n[ ] precio y disponibilidad\n[ ] medios de pago\n[ ] envío o retiro en el espacio\n[ ] coordinar visita\n\n` +
     `Mis datos:\nNombre:\nTeléfono:\nCiudad:\n\nGracias.`;
-  return "mailto:centrostudio.ar@gmail.com" +
+  return "mailto:abrilmilenabarboza@gmail.com" +
     "?subject=" + encodeURIComponent(subject) +
     "&body=" + encodeURIComponent(body);
 }
@@ -165,8 +165,44 @@ function GalleryPage() {
         `}</style>
       </div>
 
+      {/* Open Call */}
+      <div className="container" style={{ marginTop: 80 }}>
+        <div style={{
+          display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 32,
+          padding: "60px 48px", border: `2px solid ${bordo}`,
+          background: "#0c0c0c", color: "#fff",
+        }}>
+          <div style={{ gridColumn: "span 12" }} className="ga-side">
+            <div className="meta" style={{ marginBottom: 16, color: `${bordo}cc`, letterSpacing: "0.12em" }}>[ Open call · Vol. 49 ]</div>
+            <h3 className="display" style={{ fontSize: "clamp(32px, 4.5vw, 58px)", margin: "0 0 12px", lineHeight: 1, color: "#fff" }}>
+              Ya tenemos fecha para <em style={{ color: "#e87070" }}>el próximo volumen.</em>
+            </h3>
+          </div>
+          <div style={{ gridColumn: "span 12" }} className="ga-side">
+            <p style={{ fontSize: 16, lineHeight: 1.65, color: "rgba(255,255,255,0.75)", margin: "0 0 10px", maxWidth: 500 }}>
+              Estamos buscando artistas para formar parte de la próxima exposición de Centro.
+              Si hacés obra — pintura, ilustración, fotografía, objeto, técnica mixta — y te gustaría mostrarla en el espacio, este es tu momento.
+            </p>
+            <p style={{ fontSize: 15, lineHeight: 1.55, color: "rgba(255,255,255,0.5)", margin: "0 0 28px", maxWidth: 500 }}>
+              Completá el formulario con tu propuesta. Las respuestas están abiertas hasta cubrir el cupo.
+            </p>
+            <a
+              href="https://docs.google.com/forms/d/1LKYjOX2kKbuXIE7LM7i4GhrisQz65tlJVyEp_4xIchs/edit"
+              target="_blank" rel="noopener"
+              className="btn"
+              style={{ background: "#fff", color: "#000", borderColor: "#fff", textDecoration: "none", display: "inline-flex" }}
+            >
+              Aplicar al Vol. 49 →
+            </a>
+          </div>
+        </div>
+        <style>{`
+          @media (min-width: 900px) { .ga-side { grid-column: span 6 !important; } }
+        `}</style>
+      </div>
+
       {/* Selección de obras */}
-      <div className="container" style={{ marginTop: 120 }}>
+      <div className="container" style={{ marginTop: 80 }}>
         <div style={{
           display: "flex", justifyContent: "space-between", alignItems: "baseline",
           paddingBottom: 24, borderBottom: `2px solid ${bordo}`, flexWrap: "wrap", gap: 12,
@@ -237,35 +273,6 @@ function GalleryPage() {
       </div>
 
 
-      {/* Apply CTA */}
-      <div className="container" style={{ marginTop: 120 }}>
-        <div style={{
-          display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 32,
-          padding: "60px 48px", border: `1px solid ${bordo}`,
-          background: `${bordo}08`,
-        }}>
-          <div style={{ gridColumn: "span 12" }} className="ga-side">
-            <div className="meta" style={{ marginBottom: 16, color: bordo }}>[ Open call ]</div>
-            <h3 className="display" style={{ fontSize: "clamp(36px, 5vw, 64px)", margin: 0, lineHeight: 1 }}>
-              <em style={{ color: bordo }}>Aplicá</em> como artista
-            </h3>
-          </div>
-          <div style={{ gridColumn: "span 12" }} className="ga-side">
-            <p style={{ fontSize: 16, lineHeight: 1.55, color: "rgba(0,0,0,0.78)", margin: "0 0 24px", maxWidth: 460 }}>
-              Recibimos propuestas de artistas para próximos volúmenes. Mandanos tu portfolio y un texto breve sobre la obra que querrías mostrar.
-            </p>
-            <a href={"mailto:centrostudio.ar@gmail.com?subject=" + encodeURIComponent("Aplicación — próximo Vol. de Galería")}
-              className="btn btn-dark" style={{ background: bordo, borderColor: bordo, textDecoration: "none" }}>
-              Aplicar ahora →
-            </a>
-          </div>
-        </div>
-        <style>{`
-          @media (min-width: 900px) {
-            .ga-side { grid-column: span 6 !important; }
-          }
-        `}</style>
-      </div>
     </div>
   );
 }

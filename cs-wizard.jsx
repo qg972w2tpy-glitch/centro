@@ -14,6 +14,7 @@ function Wizard({ setRoute, preselectedArtist }) {
     refs: [],
     artist: preselectedArtist || null,
     dates: { from: "", to: "" },
+    sizeImage: null,
     contact: { name: "", ig: "", notes: "" },
   });
   const [submitted, setSubmitted] = useStateW(false);
@@ -26,8 +27,8 @@ function Wizard({ setRoute, preselectedArtist }) {
     switch (step) {
       case 0: return data.first !== null;
       case 1: return data.style !== null;
-      case 2: return data.size !== null;
-      case 3: return data.zone !== null;
+      case 2: return data.zone !== null;
+      case 3: return data.size !== null;
       case 4: return data.hasDesign !== null;
       case 5: return data.refs.length > 0;
       case 6: return data.artist !== null;
@@ -69,7 +70,8 @@ function Wizard({ setRoute, preselectedArtist }) {
     const { subj, body } = buildEmailText();
 
     // Convert image blobs to base64 for API attachment
-    const attachments = await Promise.all(
+    const sizeAttachment = data.sizeImage ? [data.sizeImage] : [];
+    const attachments = [...sizeAttachment, ...await Promise.all(
       data.refs.map(r => new Promise(resolve => {
         const xhr = new XMLHttpRequest();
         xhr.open("GET", r.url, true);
@@ -82,7 +84,7 @@ function Wizard({ setRoute, preselectedArtist }) {
         xhr.onerror = () => resolve(null);
         xhr.send();
       }))
-    ).then(arr => arr.filter(Boolean));
+    ).then(arr => arr.filter(Boolean)));
 
     try {
       const resp = await fetch("/api/send-contact", {
@@ -142,8 +144,8 @@ function Wizard({ setRoute, preselectedArtist }) {
         <div key={step} className="page-fade" style={{ minHeight: 380 }}>
           {step === 0 && <Step01 data={data} set={set} setAndAdvance={setAndAdvance} T={T} />}
           {step === 1 && <Step02 data={data} set={set} setAndAdvance={setAndAdvance} T={T} />}
-          {step === 2 && <Step03 data={data} set={set} setAndAdvance={setAndAdvance} T={T} />}
-          {step === 3 && <Step04 data={data} set={set} setAndAdvance={setAndAdvance} T={T} />}
+          {step === 2 && <Step04 data={data} set={set} setAndAdvance={setAndAdvance} T={T} />}
+          {step === 3 && <Step03Visual data={data} set={set} T={T} />}
           {step === 4 && <Step05 data={data} set={set} setAndAdvance={setAndAdvance} T={T} />}
           {step === 5 && <Step06 data={data} set={set} T={T} />}
           {step === 6 && <Step07 data={data} set={set} setAndAdvance={setAndAdvance} T={T} preselectedArtist={preselectedArtist} />}
@@ -258,26 +260,194 @@ function Step02({ data, setAndAdvance, T }) {
   );
 }
 
-function Step03({ data, setAndAdvance, T }) {
+const ZONE_BOX = {
+  "Cabeza":       { x: 39, y: 1,   w: 22, h: 23, side: "front" },
+  "Cuello":       { x: 44, y: 23,  w: 12, h: 9,  side: "front" },
+  "Nuca":         { x: 44, y: 23,  w: 12, h: 9,  side: "back"  },
+  "Hombro":       { x: 10, y: 31,  w: 80, h: 12, side: "front" },
+  "Pecho":        { x: 28, y: 44,  w: 44, h: 26, side: "front" },
+  "Costilla":     { x: 25, y: 62,  w: 50, h: 20, side: "front" },
+  "Abdomen":      { x: 28, y: 72,  w: 44, h: 18, side: "front" },
+  "Espalda alta": { x: 27, y: 34,  w: 46, h: 34, side: "back"  },
+  "Lumbar":       { x: 27, y: 68,  w: 46, h: 22, side: "back"  },
+  "Glúteo":       { x: 21, y: 90,  w: 58, h: 26, side: "back"  },
+  "Brazo":        { x: 9,  y: 38,  w: 12, h: 50, side: "front" },
+  "Antebrazo":    { x: 7,  y: 88,  w: 11, h: 48, side: "front" },
+  "Mano":         { x: 5,  y: 135, w: 13, h: 18, side: "front" },
+  "Muslo":        { x: 17, y: 118, w: 30, h: 54, side: "front" },
+  "Isquio":       { x: 17, y: 148, w: 30, h: 28, side: "back"  },
+  "Rodilla":      { x: 15, y: 172, w: 30, h: 16, side: "front" },
+  "Pantorrilla":  { x: 13, y: 190, w: 32, h: 36, side: "back"  },
+  "Tobillo":      { x: 16, y: 220, w: 28, h: 10, side: "front" },
+  "Pie":          { x: 11, y: 226, w: 36, h: 14, side: "front" },
+};
+
+function BodySVG({ zb, side }) {
+  const S = "#0c0c0c", W = 1.2, F = "#F5F2EE";
+  const sh = { fill: F, stroke: S, strokeWidth: W };
+  return (
+    <>
+      {zb && <rect x={zb.x} y={zb.y} width={zb.w} height={zb.h} fill="rgba(220,38,38,0.13)" stroke="rgba(220,38,38,0)" strokeWidth="0" />}
+      <text x="50" y="6" textAnchor="middle" fontSize="4.5" fill="rgba(0,0,0,0.35)" fontFamily="Arial,sans-serif" letterSpacing="0.15em">
+        {side === "back" ? "DORSO" : "FRENTE"}
+      </text>
+      <ellipse cx="50" cy="13" rx="11" ry="12" {...sh} />
+      <polygon points="44,24 56,24 57,32 43,32" {...sh} />
+      <polygon points="22,33 78,33 74,92 26,92" {...sh} />
+      <polygon points="22,33 10,39 8,92 18,92 20,44" {...sh} />
+      <polygon points="78,33 90,39 92,92 82,92 80,44" {...sh} />
+      <polygon points="8,92 6,140 17,140 18,92" {...sh} />
+      <polygon points="92,92 94,140 83,140 82,92" {...sh} />
+      <ellipse cx="11" cy="147" rx="7" ry="8" {...sh} />
+      <ellipse cx="89" cy="147" rx="7" ry="8" {...sh} />
+      <polygon points="26,92 20,120 80,120 74,92" {...sh} />
+      <polygon points="20,120 16,176 47,176 48,120" {...sh} />
+      <polygon points="80,120 84,176 53,176 52,120" {...sh} />
+      <polygon points="16,176 14,192 47,192 47,176" {...sh} />
+      <polygon points="84,176 86,192 53,192 53,176" {...sh} />
+      <polygon points="14,192 12,228 45,228 47,192" {...sh} />
+      <polygon points="86,192 88,228 55,228 53,192" {...sh} />
+      <ellipse cx="28" cy="233" rx="18" ry="8" {...sh} />
+      <ellipse cx="72" cy="233" rx="18" ry="8" {...sh} />
+    </>
+  );
+}
+
+function Step03Visual({ data, set, T }) {
+  const { useRef: useRefV, useState: useStateV, useEffect: useEffectV } = React;
+  const zone = data.zone;
+  const zb = ZONE_BOX[zone] || { x: 28, y: 44, w: 44, h: 26, side: "front" };
+
+  const initSize = Math.max(Math.min(zb.w, zb.h) * 0.85, 8);
+  const initX = zb.x + (zb.w - initSize) / 2;
+  const initY = zb.y + (zb.h - initSize) / 2;
+
+  const [slider, setSlider] = useStateV(35);
+  const [pos, setPos] = useStateV({ x: initX, y: initY });
+  const [dragging, setDragging] = useStateV(false);
+  const [dragRef, setDragRef] = useStateV(null);
+  const svgRef = useRefV(null);
+
+  const rectSize = 4 + (slider / 100) * 50;
+  const cmApprox = Math.round(2 + (slider / 100) * 28);
+  const sizeLabel = cmApprox <= 5 ? "Pequeño · discreto" : cmApprox <= 14 ? "Mediano · estándar" : "Grande · panel";
+
+  useEffectV(() => {
+    set("size", `~${cmApprox}cm`);
+  }, [slider]);
+
+  useEffectV(() => {
+    set("size", `~${cmApprox}cm`);
+  }, []);
+
+  const toSVG = (e) => {
+    const svgEl = svgRef.current;
+    if (!svgEl) return { x: 0, y: 0 };
+    const pt = svgEl.createSVGPoint();
+    const src = e.touches ? e.touches[0] : e;
+    pt.x = src.clientX; pt.y = src.clientY;
+    return pt.matrixTransform(svgEl.getScreenCTM().inverse());
+  };
+
+  const onStart = (e) => {
+    e.preventDefault();
+    const p = toSVG(e);
+    setDragging(true);
+    setDragRef({ ox: p.x - pos.x, oy: p.y - pos.y });
+  };
+  const onMove = (e) => {
+    if (!dragging || !dragRef) return;
+    const p = toSVG(e);
+    setPos({
+      x: Math.max(0, Math.min(100 - rectSize, p.x - dragRef.ox)),
+      y: Math.max(0, Math.min(242 - rectSize, p.y - dragRef.oy)),
+    });
+  };
+  const onEnd = () => { setDragging(false); setDragRef(null); };
+
+  const captureImage = async () => {
+    const svgEl = svgRef.current;
+    if (!svgEl) return null;
+    const serialized = new XMLSerializer().serializeToString(svgEl);
+    const encoded = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(serialized);
+    return new Promise(resolve => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 400; canvas.height = 970;
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, 400, 970);
+      const img = new Image();
+      img.onload = () => { ctx.drawImage(img, 0, 0, 400, 970); resolve(canvas.toDataURL("image/png").split(",")[1]); };
+      img.onerror = () => resolve(null);
+      img.src = encoded;
+    });
+  };
+
+  useEffectV(() => {
+    const timer = setTimeout(async () => {
+      const b64 = await captureImage();
+      if (b64) set("sizeImage", { name: "tatuaje-tamanio.png", data: b64 });
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [slider, pos]);
+
+  const rx = pos.x, ry = pos.y, rs = rectSize;
+
   return (
     <div>
       <StepHeader num="03" q={T.q3} sub={T.q3sub} />
-      <ChoiceGrid cols={3}>
-        {T.sizes.map((s, i) => (
-          <button key={s.k}
-            className={"choice" + (data.size === s.k ? " selected" : "")}
-            onClick={() => setAndAdvance("size", s.k)}>
-            <span className="num">{String(i+1).padStart(2,"0")} · {s.cm}</span>
-            <span className="display" style={{ fontSize: 28, lineHeight: 1 }}>{s.k}</span>
-            <div style={{
-              height: 4, width: `${30 + i * 30}%`,
-              background: data.size === s.k ? "rgba(255,255,255,0.7)" : "#000",
-              marginTop: 8,
-            }} />
-            <span style={{ fontSize: 13, opacity: 0.7, marginTop: 4 }}>{s.d}</span>
-          </button>
-        ))}
-      </ChoiceGrid>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 32, maxWidth: 640 }} className="size-vis-grid">
+        <div style={{ border: "1px solid var(--hair)", background: "#fafaf8", position: "relative" }}>
+          <svg
+            ref={svgRef}
+            viewBox="0 0 100 242"
+            style={{ width: "100%", display: "block", cursor: dragging ? "grabbing" : "default", touchAction: "none" }}
+            onMouseMove={onMove} onMouseUp={onEnd} onMouseLeave={onEnd}
+            onTouchMove={onMove} onTouchEnd={onEnd}
+          >
+            <BodySVG zb={zb} side={zb.side} />
+            <g onMouseDown={onStart} onTouchStart={onStart} style={{ cursor: "grab" }}>
+              <rect x={rx - 2} y={ry - 2} width={rs + 4} height={rs + 4}
+                fill="none" stroke="rgba(200,30,30,0.85)" strokeWidth="1" />
+              <rect x={rx} y={ry} width={rs} height={rs}
+                fill="rgba(220,38,38,0.07)" stroke="rgba(200,30,30,0.85)" strokeWidth="0.8"
+                strokeDasharray="3,2" />
+              <line x1={rx + rs/2 - 3} y1={ry + rs/2} x2={rx + rs/2 + 3} y2={ry + rs/2}
+                stroke="rgba(200,30,30,0.7)" strokeWidth="0.7" />
+              <line x1={rx + rs/2} y1={ry + rs/2 - 3} x2={rx + rs/2} y2={ry + rs/2 + 3}
+                stroke="rgba(200,30,30,0.7)" strokeWidth="0.7" />
+            </g>
+          </svg>
+        </div>
+
+        <div style={{ display: "grid", gap: 24 }}>
+          <div>
+            <div className="meta" style={{ marginBottom: 8 }}>Tamaño aproximado</div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+              <span className="display" style={{ fontSize: 52, lineHeight: 1 }}>~{cmApprox}</span>
+              <span className="display" style={{ fontSize: 22, opacity: 0.5 }}>cm</span>
+            </div>
+            <div className="meta" style={{ marginTop: 6, color: "var(--muted)" }}>{sizeLabel}</div>
+          </div>
+
+          <div>
+            <div className="meta" style={{ marginBottom: 10 }}>Escala</div>
+            <input type="range" min="5" max="95" value={slider}
+              onChange={e => setSlider(+e.target.value)}
+              style={{ width: "100%", accentColor: "#000", cursor: "pointer" }} />
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4 }}>
+              <span className="meta">Pequeño</span>
+              <span className="meta">Grande</span>
+            </div>
+          </div>
+
+          <div style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.5, padding: "12px 16px", background: "var(--warm)" }}>
+            Arrastrá el recuadro para ubicar la zona exacta. El slider ajusta el tamaño.
+          </div>
+        </div>
+      </div>
+      <style>{`
+        @media (min-width: 640px) { .size-vis-grid { grid-template-columns: 1fr 240px !important; } }
+      `}</style>
     </div>
   );
 }
