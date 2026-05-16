@@ -97,11 +97,17 @@ function TattooHero({ setRoute, T }) {
       flexDirection: "column",
       justifyContent: "flex-end",
     }}>
-      {/* Textural background */}
-      <div style={{
-        position: "absolute", inset: 0, zIndex: 1,
-        background: "radial-gradient(ellipse at 30% 60%, #1a1208 0%, #0c0c0c 60%)",
-      }} />
+      {/* Video background */}
+      <video
+        src="assets/videoportada.mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 0 }}
+      />
+      {/* Dark overlay */}
+      <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "rgba(0,0,0,0.52)" }} />
       <div style={{
         position: "absolute", inset: 0, zIndex: 2, pointerEvents: "none",
         backgroundImage: "repeating-linear-gradient(0deg,transparent,transparent 79px,rgba(255,255,255,0.018) 79px,rgba(255,255,255,0.018) 80px),repeating-linear-gradient(90deg,transparent,transparent 79px,rgba(255,255,255,0.018) 79px,rgba(255,255,255,0.018) 80px)",
