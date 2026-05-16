@@ -337,78 +337,18 @@ function Navbar({ route, setRoute, time, intensity }) {
         borderBottom: "2px solid #000",
         height: 64,
       }}>
-        <div className="nav-grid" style={{
+        {/* Always: [MENU] [LOGO centered] [ES/EN] */}
+        <div style={{
           display: "grid",
-          gridTemplateColumns: "auto 1fr auto",
+          gridTemplateColumns: "1fr auto 1fr",
           alignItems: "center",
           height: "100%",
           padding: "0 20px",
-          gap: 20,
         }}>
-          {/* Desktop LEFT / Mobile CENTER: Logo + wordmark */}
-          <button
-            className="nav-logo-btn"
-            onClick={() => setRoute("home")}
-            aria-label="Home"
-            style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}
-          >
-            <img src="assets/centro-logo.png" alt="" style={{ width: 32, height: 32, objectFit: "contain", display: "block" }} />
-            <span className="nav-wordmark" style={{
-              fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
-              fontWeight: 900, fontSize: 17,
-              letterSpacing: "-0.02em", textTransform: "uppercase",
-              lineHeight: 1, whiteSpace: "nowrap",
-            }}>
-              CENTRO<span style={{ display: "inline-block", margin: "0 0.18em" }}>·</span>STUDIO
-            </span>
-          </button>
-
-          {/* CENTER: Desktop nav */}
-          <nav className="nav-desktop" style={{ display: "none", justifyContent: "center", alignItems: "center", gap: 2 }}>
-            {NAV_KEYS.map(k => {
-              if (k === "tattoo") return (
-                <TattooDropdown key="tattoo" route={route} setRoute={setRoute} t={t} />
-              );
-              const active = route === NAV_ROUTES[k];
-              return (
-                <button
-                  key={k}
-                  onClick={() => setRoute(NAV_ROUTES[k])}
-                  style={{
-                    fontFamily: "var(--sans)", fontSize: 13,
-                    fontWeight: active ? 900 : 700,
-                    letterSpacing: "-0.005em", textTransform: "uppercase",
-                    padding: "8px 12px",
-                    background: active ? "#000" : "transparent",
-                    color: active ? "#fff" : "#000",
-                    transition: "all .15s", whiteSpace: "nowrap",
-                  }}
-                  onMouseEnter={e => { if (!active) e.currentTarget.style.background = "#F4F2EE"; }}
-                  onMouseLeave={e => { if (!active) e.currentTarget.style.background = "transparent"; }}
-                >
-                  {t.nav[k]}
-                </button>
-              );
-            })}
-          </nav>
-
-          {/* Desktop RIGHT: lang + hamburger */}
-          <div className="nav-right" style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-            <button
-              className="nav-lang-btn"
-              onClick={() => setLang(lang === "es" ? "en" : "es")}
-              style={{
-                fontFamily: "var(--sans)", fontWeight: 900, fontSize: 11,
-                letterSpacing: "0.06em", textTransform: "uppercase",
-                padding: "7px 9px", border: "1.5px solid #000",
-              }}
-              aria-label="Toggle language"
-            >
-              {lang === "es" ? "ES/en" : "es/EN"}
-            </button>
+          {/* LEFT: Hamburger */}
+          <div style={{ display: "flex", alignItems: "center" }}>
             <button
               onClick={() => setOpen(true)}
-              className="menu-btn"
               style={{
                 fontFamily: "var(--sans)", fontWeight: 900, fontSize: 13,
                 letterSpacing: "0.02em", textTransform: "uppercase",
@@ -422,7 +362,39 @@ function Navbar({ route, setRoute, time, intensity }) {
                 <span style={{ width: 15, height: 2, background: "#fff" }} />
                 <span style={{ width: 15, height: 2, background: "#fff" }} />
               </span>
-              MENU
+              <span className="nav-menu-label">MENU</span>
+            </button>
+          </div>
+
+          {/* CENTER: Logo */}
+          <button
+            onClick={() => setRoute("home")}
+            aria-label="Home"
+            style={{ display: "flex", alignItems: "center", gap: 10 }}
+          >
+            <img src="assets/centro-logo.png" alt="" style={{ width: 32, height: 32, objectFit: "contain", display: "block" }} />
+            <span className="nav-wordmark" style={{
+              fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+              fontWeight: 900, fontSize: 17,
+              letterSpacing: "-0.02em", textTransform: "uppercase",
+              lineHeight: 1, whiteSpace: "nowrap",
+            }}>
+              CENTRO<span style={{ display: "inline-block", margin: "0 0.18em" }}>·</span>STUDIO
+            </span>
+          </button>
+
+          {/* RIGHT: Language toggle */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
+            <button
+              onClick={() => setLang(lang === "es" ? "en" : "es")}
+              style={{
+                fontFamily: "var(--sans)", fontWeight: 900, fontSize: 11,
+                letterSpacing: "0.06em", textTransform: "uppercase",
+                padding: "7px 9px", border: "1.5px solid #000",
+              }}
+              aria-label="Toggle language"
+            >
+              {lang === "es" ? "ES/en" : "es/EN"}
             </button>
           </div>
         </div>
@@ -431,34 +403,9 @@ function Navbar({ route, setRoute, time, intensity }) {
       <NavOverlay open={open} setOpen={setOpen} route={route} setRoute={setRoute} />
 
       <style>{`
-        @media (min-width: 1100px) { .nav-desktop { display: flex !important; } }
-
-        /* Mobile nav: hamburger left · logo center · lang right */
-        @media (max-width: 1099px) {
-          .nav-grid {
-            grid-template-columns: auto 1fr auto !important;
-          }
-          .nav-logo-btn {
-            order: 2;
-            justify-self: center;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-          }
-          .nav-right {
-            order: 3;
-          }
-          .menu-btn {
-            order: 1;
-            padding: 9px 12px !important;
-          }
-          .menu-btn span:last-child { display: none; }
-          .nav-lang-btn { order: 2; }
+        @media (max-width: 600px) {
+          .nav-menu-label { display: none; }
           .nav-wordmark { display: none !important; }
-        }
-        @media (min-width: 1100px) {
-          .nav-logo-btn { position: static; transform: none; }
-          .nav-wordmark { display: inline !important; }
         }
       `}</style>
     </>

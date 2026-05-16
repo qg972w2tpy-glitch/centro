@@ -225,24 +225,34 @@ function Step02({ data, setAndAdvance, T }) {
     <div>
       <StepHeader num="02" q={T.q2} sub={T.q2sub} />
       <ChoiceGrid cols={3}>
-        {T.styles.map((s, i) => (
-          <button key={s.k}
-            className={"choice" + (data.style === s.k ? " selected" : "")}
-            onClick={() => setAndAdvance("style", s.k)}
-            style={{ padding: 0, overflow: "hidden" }}>
-            <div style={{ aspectRatio: "1/1", overflow: "hidden", background: "#0c0c0c" }}>
-              <img src={s.img} alt={s.k} style={{
-                width: "100%", height: "100%", objectFit: "cover",
-                display: "block",
-              }} />
-            </div>
-            <div style={{ padding: "14px 16px" }}>
-              <div className="num">{String(i+1).padStart(2,"0")}</div>
-              <div style={{ fontWeight: 600, fontSize: 15, marginTop: 4 }}>{s.k}</div>
-              <div style={{ fontSize: 12, opacity: 0.65, marginTop: 2 }}>{s.d}</div>
-            </div>
-          </button>
-        ))}
+        {T.styles.map((s, i) => {
+          const noImg = s.img === "assets/styles/notclear.jpg";
+          return (
+            <button key={s.k}
+              className={"choice" + (data.style === s.k ? " selected" : "")}
+              onClick={() => setAndAdvance("style", s.k)}
+              style={noImg ? {} : { padding: 0, overflow: "hidden" }}>
+              {noImg ? (
+                <>
+                  <span className="num">— {T.noStyleLabel || "Sin preferencia"}</span>
+                  <span className="display" style={{ fontSize: 22 }}>{s.k}</span>
+                  <span style={{ fontSize: 12, opacity: 0.7 }}>{s.d}</span>
+                </>
+              ) : (
+                <>
+                  <div style={{ aspectRatio: "1/1", overflow: "hidden", background: "#0c0c0c" }}>
+                    <img src={s.img} alt={s.k} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                  </div>
+                  <div style={{ padding: "14px 16px" }}>
+                    <div className="num">{String(i).padStart(2,"0")}</div>
+                    <div style={{ fontWeight: 600, fontSize: 15, marginTop: 4 }}>{s.k}</div>
+                    <div style={{ fontSize: 12, opacity: 0.65, marginTop: 2 }}>{s.d}</div>
+                  </div>
+                </>
+              )}
+            </button>
+          );
+        })}
       </ChoiceGrid>
     </div>
   );
