@@ -70,6 +70,7 @@ const BLOG_ENTRIES = [
 const CATS = ["Todas", "Entrevista", "Notas", "Procesos", "Artistas"];
 
 function BlogPage() {
+  useReveal();
   const [cat, setCat] = React.useState("Todas");
   const [entries, setEntries] = React.useState(BLOG_ENTRIES);
 
