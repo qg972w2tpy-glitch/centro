@@ -205,7 +205,7 @@ function BlogPage() {
 
   const featured = entries[0];
   const rest = entries.slice(1);
-  const filtered = cat === "Todas" ? rest : rest.filter(e => e.cat === cat);
+  const filtered = cat === "Todas" ? rest : entries.filter(e => e.cat === cat);
 
   return (
     <div className="page-fade" style={{ paddingTop: 64, paddingBottom: 80 }}>
