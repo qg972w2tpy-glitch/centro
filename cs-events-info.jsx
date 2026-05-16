@@ -95,13 +95,12 @@ function InfoPage({ subroute, setSubroute }) {
   return (
     <div className="page-fade" style={{ paddingTop: 64, paddingBottom: 80 }}>
       <SectionHeader index="07" kicker="Más info" title={<>Información<Asterisk size={48} /></>}
-        intro="Sobre el espacio, contacto y guía de cuidados del tatuaje." />
+        intro="Sobre el espacio y contacto." />
 
       <div className="container" style={{ marginTop: 32, display: "flex", gap: 8, flexWrap: "wrap", borderBottom: "1px solid var(--hair)", paddingBottom: 20 }}>
         {[
           { k: "about", l: "A · Sobre Centro" },
           { k: "contact", l: "B · Contacto" },
-          { k: "care", l: "C · Cuidados del tatuaje" },
         ].map(t => (
           <button key={t.k}
             className={"pill" + (subroute === t.k ? " active" : "")}
@@ -113,7 +112,6 @@ function InfoPage({ subroute, setSubroute }) {
 
       {subroute === "about" && <About />}
       {subroute === "contact" && <Contact />}
-      {subroute === "care" && <Care />}
     </div>
   );
 }

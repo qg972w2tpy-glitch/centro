@@ -337,7 +337,7 @@ function Navbar({ route, setRoute, time, intensity }) {
         borderBottom: "2px solid #000",
         height: 64,
       }}>
-        <div style={{
+        <div className="nav-grid" style={{
           display: "grid",
           gridTemplateColumns: "auto 1fr auto",
           alignItems: "center",
@@ -345,8 +345,9 @@ function Navbar({ route, setRoute, time, intensity }) {
           padding: "0 20px",
           gap: 20,
         }}>
-          {/* LEFT: Logo + wordmark */}
+          {/* Desktop LEFT / Mobile CENTER: Logo + wordmark */}
           <button
+            className="nav-logo-btn"
             onClick={() => setRoute("home")}
             aria-label="Home"
             style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}
@@ -391,9 +392,10 @@ function Navbar({ route, setRoute, time, intensity }) {
             })}
           </nav>
 
-          {/* RIGHT */}
-          <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+          {/* Desktop RIGHT: lang + hamburger */}
+          <div className="nav-right" style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
             <button
+              className="nav-lang-btn"
               onClick={() => setLang(lang === "es" ? "en" : "es")}
               style={{
                 fontFamily: "var(--sans)", fontWeight: 900, fontSize: 11,
@@ -430,7 +432,34 @@ function Navbar({ route, setRoute, time, intensity }) {
 
       <style>{`
         @media (min-width: 1100px) { .nav-desktop { display: flex !important; } }
-        @media (max-width: 520px) { .nav-wordmark { display: none !important; } }
+
+        /* Mobile nav: hamburger left · logo center · lang right */
+        @media (max-width: 1099px) {
+          .nav-grid {
+            grid-template-columns: auto 1fr auto !important;
+          }
+          .nav-logo-btn {
+            order: 2;
+            justify-self: center;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+          }
+          .nav-right {
+            order: 3;
+          }
+          .menu-btn {
+            order: 1;
+            padding: 9px 12px !important;
+          }
+          .menu-btn span:last-child { display: none; }
+          .nav-lang-btn { order: 2; }
+          .nav-wordmark { display: none !important; }
+        }
+        @media (min-width: 1100px) {
+          .nav-logo-btn { position: static; transform: none; }
+          .nav-wordmark { display: inline !important; }
+        }
       `}</style>
     </>
   );

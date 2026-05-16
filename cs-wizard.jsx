@@ -14,7 +14,7 @@ function Wizard({ setRoute, preselectedArtist }) {
     refs: [],
     artist: preselectedArtist || null,
     dates: { from: "", to: "" },
-    contact: { name: "", ig: "" },
+    contact: { name: "", ig: "", notes: "" },
   });
   const [submitted, setSubmitted] = useStateW(false);
 
@@ -276,48 +276,32 @@ function Step04({ data, setAndAdvance, T }) {
   const seen = new Set();
   const uniqueZones = T.zones.filter(z => { if (seen.has(z.k)) return false; seen.add(z.k); return true; });
 
-  const GROUPS = [
-    { g: T.zoneGroupHead  || "Cabeza y cuello", keys: ["Cabeza", "Cuello", "Nuca"] },
-    { g: T.zoneGroupTorso || "Torso",           keys: ["Hombro", "Pecho", "Costilla", "Abdomen", "Espalda alta", "Lumbar"] },
-    { g: T.zoneGroupArms  || "Brazos",          keys: ["Brazo", "Antebrazo", "Mano"] },
-    { g: T.zoneGroupLegs  || "Piernas",         keys: ["Muslo", "Glúteo", "Isquio", "Rodilla", "Pantorrilla", "Tobillo", "Pie"] },
-  ];
-
   return (
     <div>
       <StepHeader num="04" q={T.q4} sub={T.q4sub} />
-      <div style={{ display: "grid", gap: 28, maxHeight: "58vh", overflowY: "auto", paddingRight: 8 }}>
-        {GROUPS.map(grp => {
-          const grpZones = grp.keys.map(k => uniqueZones.find(z => z.k === k)).filter(Boolean);
-          if (!grpZones.length) return null;
-          return (
-            <div key={grp.g}>
-              <div className="meta" style={{ marginBottom: 10, color: "var(--muted)" }}>{grp.g}</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                {grpZones.map(z => (
-                  <button
-                    key={z.k}
-                    onClick={() => setAndAdvance("zone", z.k)}
-                    style={{
-                      padding: "10px 18px",
-                      border: "1.5px solid",
-                      borderColor: data.zone === z.k ? "#000" : "var(--hair)",
-                      background: data.zone === z.k ? "#000" : "#fff",
-                      color: data.zone === z.k ? "#fff" : "#000",
-                      fontSize: 13.5,
-                      fontWeight: data.zone === z.k ? 700 : 400,
-                      transition: "all .15s",
-                      cursor: "pointer",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {z.label || z.k}
-                  </button>
-                ))}
-              </div>
-            </div>
-          );
-        })}
+      <div style={{ maxHeight: "58vh", overflowY: "auto", paddingRight: 8 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+          {uniqueZones.map(z => (
+            <button
+              key={z.k}
+              onClick={() => setAndAdvance("zone", z.k)}
+              style={{
+                padding: "10px 18px",
+                border: "1.5px solid",
+                borderColor: data.zone === z.k ? "#000" : "var(--hair)",
+                background: data.zone === z.k ? "#000" : "#fff",
+                color: data.zone === z.k ? "#fff" : "#000",
+                fontSize: 13.5,
+                fontWeight: data.zone === z.k ? 700 : 400,
+                transition: "all .15s",
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {z.label || z.k}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -541,6 +525,10 @@ function Step09({ data, set, T }) {
               />
             </div>
           </div>
+          <div>
+            <label className="meta" style={{ display: "block", marginBottom: 4 }}>{T.fNotes}</label>
+            <textarea className="field" value={data.contact.notes || ""} onChange={e => update("notes", e.target.value)} rows={3} placeholder={T.fNotesPlaceholder} />
+          </div>
         </div>
         <Summary data={data} T={T} />
       </div>
@@ -613,6 +601,7 @@ const wzES = {
   q2: "¿Qué estilo te interesa?",
   q2sub: "Elegí uno. Si tenés dudas, en el paso 5 podés dejarlo abierto.",
   styles: [
+    { k: "No lo tengo claro",  d: "Te ayudamos a encontrar el estilo",      img: "assets/styles/notclear.jpg" },
     { k: "Fine line",          d: "Líneas finas, detalle delicado",        img: "assets/styles/fineline.jpg" },
     { k: "Blackwork",          d: "Negro sólido, fuerte presencia",         img: "assets/styles/blackwork.jpg" },
     { k: "Tradicional negro",  d: "Old school, paleta cerrada en negro",    img: "assets/styles/tradicional-negro.jpg" },
@@ -704,8 +693,8 @@ const wzES = {
   q9: "Datos de contacto",
   q9sub: "Solo lo necesario para responderte.",
   fName: "Nombre", fIg: "Instagram",
+  fNotes: "Algo extra o comentario (opcional)", fNotesPlaceholder: "Zona específica, restricciones, dudas...",
   fEmail: "Email", fPhone: "Teléfono / WhatsApp",
-  fNotes: "Algo más que quieras contarnos",
   summary: "Resumen",
   sumFirst: "Primer tatuaje", sumStyle: "Estilo", sumSize: "Tamaño",
   sumZone: "Zona", sumDesign: "Diseño", sumRefs: "Referencias",
@@ -713,8 +702,8 @@ const wzES = {
   files: "archivo(s)",
   thanksA: "Recibimos",
   thanksB: "tu solicitud.",
-  thanksBody: "Acabamos de abrir tu cliente de mail con todos los datos pre-cargados. Adjuntá las referencias y dale Enviar — te respondemos con presupuesto y propuesta de turno.",
-  thanksTime: "Tiempo de respuesta: hasta 48h hábiles.",
+  thanksBody: "Ya recibimos todos tus datos y te vamos a estar contactando dentro de las próximas 48hs.",
+  thanksTime: "",
   thanksWA: "Continuá por WhatsApp",
   thanksHome: "Volver al inicio",
 };
@@ -796,8 +785,8 @@ const wzEN = Object.assign({}, wzES, {
   dateNote: "We schedule by email within 48 business hours.",
   q9: "Contact details", q9sub: "Only what we need to reply.",
   fName: "Name", fIg: "Instagram",
+  fNotes: "Anything else? (optional)", fNotesPlaceholder: "Specific area, restrictions, questions...",
   fEmail: "Email", fPhone: "Phone / WhatsApp",
-  fNotes: "Anything else?",
   summary: "Summary",
   sumFirst: "First tattoo", sumStyle: "Style", sumSize: "Size",
   sumZone: "Zone", sumDesign: "Design", sumRefs: "References",
