@@ -25,7 +25,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const url = `https://cdn.contentful.com/spaces/${spaceId}/entries?content_type=blogpost&order=-fields.publishdate&limit=50`;
+    const url = `https://cdn.contentful.com/spaces/${spaceId}/entries?content_type=blogpost&order=-fields.publishdate&limit=50&include=2`;
     const resp = await fetch(url, {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -67,7 +67,7 @@ export default async function handler(req, res) {
       };
     });
 
-    return res.status(200).json({ ok: true, posts });
+    return res.status(200).json({ ok: true, posts, assets: assetMap });
   } catch (err) {
     console.error("Fetch error:", err);
     return res.status(200).json({ ok: false, reason: "network_error" });

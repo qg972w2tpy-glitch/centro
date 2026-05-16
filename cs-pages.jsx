@@ -57,6 +57,58 @@ function AutoBanner({ images, interval = 5000, ratio = "21/9", label, tag }) {
   );
 }
 
+/* ============== BLOG RICH TEXT RENDERER ============== */
+function renderRichText(node, assets, key) {
+  if (!node) return null;
+  const ch = (n, k) => (n.content || []).map((c, i) => renderRichText(c, assets, `${k}-${i}`));
+  switch (node.nodeType) {
+    case "document":
+      return React.createElement(React.Fragment, { key }, ch(node, key));
+    case "paragraph":
+      return React.createElement("p", { key, style: { margin: "0 0 22px", lineHeight: 1.75, fontSize: 17, color: "rgba(0,0,0,0.82)" } }, ch(node, key));
+    case "heading-1":
+      return React.createElement("h2", { key, className: "display", style: { fontSize: "clamp(28px,3.5vw,52px)", margin: "48px 0 16px", lineHeight: 1.05 } }, ch(node, key));
+    case "heading-2":
+      return React.createElement("h3", { key, className: "display", style: { fontSize: "clamp(22px,2.8vw,38px)", margin: "40px 0 14px", lineHeight: 1.1 } }, ch(node, key));
+    case "heading-3":
+      return React.createElement("h4", { key, style: { fontSize: 20, fontWeight: 700, margin: "32px 0 10px", letterSpacing: "-0.02em" } }, ch(node, key));
+    case "text": {
+      let v = node.value;
+      if (!v) return null;
+      const marks = (node.marks || []).map(m => m.type);
+      if (marks.includes("bold")) v = React.createElement("strong", { key }, v);
+      if (marks.includes("italic")) v = React.createElement("em", { key }, v);
+      if (marks.includes("underline")) v = React.createElement("u", { key }, v);
+      if (marks.includes("code")) v = React.createElement("code", { key, style: { background: "var(--warm)", padding: "2px 7px", fontFamily: "monospace", fontSize: "0.9em" } }, v);
+      return v;
+    }
+    case "hyperlink":
+      return React.createElement("a", { key, href: node.data.uri, target: "_blank", rel: "noopener", style: { textDecoration: "underline", color: "inherit" } }, ch(node, key));
+    case "unordered-list":
+      return React.createElement("ul", { key, style: { paddingLeft: 22, margin: "0 0 22px" } }, ch(node, key));
+    case "ordered-list":
+      return React.createElement("ol", { key, style: { paddingLeft: 22, margin: "0 0 22px" } }, ch(node, key));
+    case "list-item":
+      return React.createElement("li", { key, style: { marginBottom: 8, lineHeight: 1.65 } }, ch(node, key));
+    case "hr":
+      return React.createElement("hr", { key, style: { border: "none", borderTop: "1px solid var(--hair)", margin: "40px 0" } });
+    case "blockquote":
+      return React.createElement("blockquote", { key, style: { borderLeft: "3px solid #000", paddingLeft: 24, margin: "0 0 24px", fontStyle: "italic", color: "rgba(0,0,0,0.6)" } }, ch(node, key));
+    case "embedded-asset-block": {
+      const id = node.data && node.data.target && node.data.target.sys ? node.data.target.sys.id : null;
+      const url = id ? assets[id] : null;
+      if (!url) return null;
+      if (/\.(mp4|webm|mov|avi)$/i.test(url)) {
+        return React.createElement("video", { key, src: url, controls: true, style: { width: "100%", margin: "32px 0", display: "block" } });
+      }
+      return React.createElement("img", { key, src: url, alt: "", style: { width: "100%", margin: "32px 0", display: "block" } });
+    }
+    default:
+      if (node.content) return React.createElement(React.Fragment, { key }, ch(node, key));
+      return null;
+  }
+}
+
 /* ============== BLOG ============== */
 const BLOG_ENTRIES = [
   { cat: "Entrevista", title: "Lucía Vega: dibujar en piel como acto de presencia", excerpt: "La residente del estudio reflexiona sobre fine line, intuición y la importancia del primer trazo.", read: "8 min", date: "28 Abr 2026", featured: true },
@@ -69,11 +121,10 @@ const BLOG_ENTRIES = [
 ];
 const CATS = ["Todas", "Entrevista", "Notas", "Procesos", "Artistas"];
 
-function BlogPostDetail({ post, onBack }) {
+function BlogPostDetail({ post, assets, onBack }) {
   React.useEffect(() => { window.scrollTo({ top: 0, behavior: "smooth" }); }, []);
-  const paragraphs = (post.body || "").split(/\n\n+/).filter(Boolean);
-  const lines = (post.body || "").split(/\n/).filter(Boolean);
-  const blocks = paragraphs.length > 0 ? paragraphs : lines;
+  const isRichText = post.body && typeof post.body === "object" && post.body.nodeType === "document";
+  const blocks = !isRichText && post.body ? post.body.split(/\n\n+/).filter(Boolean) : [];
 
   return (
     <div className="page-fade" style={{ paddingTop: 64, paddingBottom: 80 }}>
@@ -104,11 +155,11 @@ function BlogPostDetail({ post, onBack }) {
           </p>
         )}
 
-        {blocks.length > 0 ? (
+        {isRichText ? (
+          <div>{renderRichText(post.body, assets || {}, "rt")}</div>
+        ) : blocks.length > 0 ? (
           <div style={{ fontSize: 17, lineHeight: 1.75, color: "rgba(0,0,0,0.82)" }}>
-            {blocks.map((block, i) => (
-              <p key={i} style={{ margin: "0 0 24px" }}>{block}</p>
-            ))}
+            {blocks.map((block, i) => <p key={i} style={{ margin: "0 0 24px" }}>{block}</p>)}
           </div>
         ) : (
           <p style={{ color: "var(--muted)", fontStyle: "italic" }}>Contenido no disponible.</p>
@@ -122,16 +173,22 @@ function BlogPage() {
   const [cat, setCat] = React.useState("Todas");
   const [entries, setEntries] = React.useState(BLOG_ENTRIES);
   const [selected, setSelected] = React.useState(null);
+  const [assets, setAssets] = React.useState({});
 
   React.useEffect(() => {
     fetch("/api/blog-posts")
       .then(r => r.json())
-      .then(d => { if (d.ok && d.posts.length > 0) setEntries(d.posts); })
+      .then(d => {
+        if (d.ok && d.posts.length > 0) {
+          setEntries(d.posts);
+          if (d.assets) setAssets(d.assets);
+        }
+      })
       .catch(() => {});
   }, []);
 
   if (selected) {
-    return <BlogPostDetail post={selected} onBack={() => { setSelected(null); window.scrollTo({ top: 0 }); }} />;
+    return <BlogPostDetail post={selected} assets={assets} onBack={() => { setSelected(null); window.scrollTo({ top: 0 }); }} />;
   }
 
   const featured = entries[0];
