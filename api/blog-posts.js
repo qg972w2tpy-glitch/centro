@@ -25,7 +25,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const url = `https://cdn.contentful.com/spaces/${spaceId}/entries?content_type=blogPost&order=-fields.publishDate&limit=50`;
+    const url = `https://cdn.contentful.com/spaces/${spaceId}/entries?content_type=blogpost&order=-fields.publishDate&limit=50`;
     const resp = await fetch(url, {
       headers: { Authorization: `Bearer ${token}` },
     });
