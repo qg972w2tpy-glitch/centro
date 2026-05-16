@@ -91,8 +91,7 @@ function BlogPage() {
         intro="Editorial digital del espacio. Entrevistas, notas, procesos y materiales de archivo. Publicado mensualmente." />
 
       <div className="container" style={{ marginTop: 40 }}>
-        <article style={{ display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 32, paddingBottom: 60, borderBottom: "1px solid var(--hair)", cursor: "pointer" }}
-          className="reveal">
+        <article style={{ display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 32, paddingBottom: 60, borderBottom: "1px solid var(--hair)", cursor: "pointer" }}>
           <div style={{ gridColumn: "span 12" }} className="bf-img">
             <Placeholder label={"portada — " + featured.title.toLowerCase().slice(0, 40)} tag={featured.cat.toUpperCase()} ratio="16/10" />
           </div>
@@ -135,7 +134,7 @@ function BlogPage() {
       <div className="container" style={{ marginTop: 32 }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 32 }}>
           {filtered.map((e, i) => (
-            <article key={i} className="reveal" style={{ cursor: "pointer" }}>
+            <article key={i} style={{ cursor: "pointer" }}>
               <div style={{ position: "relative", overflow: "hidden" }} className="blog-card-img">
                 <Placeholder label={e.title.toLowerCase().slice(0, 32)} tag={e.cat.toUpperCase()} ratio="4/5" />
               </div>
