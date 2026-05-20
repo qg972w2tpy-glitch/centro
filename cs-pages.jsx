@@ -57,6 +57,14 @@ function AutoBanner({ images, interval = 5000, ratio = "21/9", label, tag }) {
   );
 }
 
+/* ============== BLOG HELPERS ============== */
+function slugify(title) {
+  return title.toLowerCase()
+    .normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
 /* ============== BLOG RICH TEXT RENDERER ============== */
 function renderRichText(node, assets, key) {
   if (!node) return null;
@@ -128,7 +136,7 @@ function BlogPostDetail({ post, assets, onBack }) {
 
   return (
     <div className="page-fade" style={{ paddingTop: 64, paddingBottom: 80 }}>
-      <div className="container" style={{ maxWidth: 800 }}>
+      <div style={{ maxWidth: 720, margin: "0 auto", padding: "0 clamp(16px, 5vw, 48px)", boxSizing: "border-box" }}>
         <button onClick={onBack} style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 40, fontFamily: "var(--mono)", fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--muted)", cursor: "pointer", background: "none", border: "none", padding: 0 }}>
           ← Volver al blog
         </button>
@@ -186,6 +194,10 @@ function BlogPage() {
   const [entries, setEntries] = React.useState(BLOG_ENTRIES);
   const [selected, setSelected] = React.useState(null);
   const [assets, setAssets] = React.useState({});
+  const [pendingSlug] = React.useState(() => {
+    const parts = window.location.pathname.replace(/^\//, "").split("/");
+    return parts[0] === "blog" && parts[1] ? decodeURIComponent(parts[1]) : null;
+  });
 
   React.useEffect(() => {
     fetch("/api/blog-posts")
@@ -199,8 +211,37 @@ function BlogPage() {
       .catch(() => {});
   }, []);
 
+  React.useEffect(() => {
+    if (pendingSlug && !selected) {
+      const found = entries.find(e => slugify(e.title) === pendingSlug);
+      if (found) setSelected(found);
+    }
+  }, [pendingSlug, entries]);
+
+  React.useEffect(() => {
+    const handler = () => {
+      const parts = window.location.pathname.replace(/^\//, "").split("/");
+      if (parts[0] === "blog" && !parts[1]) {
+        setSelected(null);
+        window.scrollTo({ top: 0 });
+      }
+    };
+    window.addEventListener("popstate", handler);
+    return () => window.removeEventListener("popstate", handler);
+  }, []);
+
+  const selectPost = (e) => {
+    setSelected(e);
+    window.history.pushState({}, "", `/blog/${slugify(e.title)}`);
+    window.scrollTo({ top: 0 });
+  };
+
   if (selected) {
-    return <BlogPostDetail post={selected} assets={assets} onBack={() => { setSelected(null); window.scrollTo({ top: 0 }); }} />;
+    return <BlogPostDetail post={selected} assets={assets} onBack={() => {
+      setSelected(null);
+      window.history.pushState({}, "", "/blog");
+      window.scrollTo({ top: 0 });
+    }} />;
   }
 
   const featured = entries[0];
@@ -214,7 +255,7 @@ function BlogPage() {
 
       <div className="container" style={{ marginTop: 40 }}>
         <article
-          onClick={() => setSelected(featured)}
+          onClick={() => selectPost(featured)}
           style={{ display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 32, paddingBottom: 60, borderBottom: "1px solid var(--hair)", cursor: "pointer" }}>
           <div style={{ gridColumn: "span 12" }} className="bf-img">
             {featured.cover
@@ -260,7 +301,7 @@ function BlogPage() {
       <div className="container" style={{ marginTop: 32 }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 32 }}>
           {filtered.map((e, i) => (
-            <article key={i} onClick={() => setSelected(e)} style={{ cursor: "pointer" }}>
+            <article key={i} onClick={() => selectPost(e)} style={{ cursor: "pointer" }}>
               <div style={{ position: "relative", overflow: "hidden" }} className="blog-card-img">
                 {e.cover
                   ? <div style={{ aspectRatio: "4/5", overflow: "hidden", background: "var(--warm)" }}><img src={e.cover} alt={e.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /></div>
