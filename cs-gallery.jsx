@@ -173,7 +173,7 @@ function GalleryPage() {
           background: "#0c0c0c", color: "#fff",
         }}>
           <div style={{ gridColumn: "span 12" }} className="ga-side">
-            <div className="meta" style={{ marginBottom: 16, color: `${bordo}cc`, letterSpacing: "0.12em" }}>[ Open call · Vol. 49 ]</div>
+            <div className="meta" style={{ marginBottom: 16, color: `${bordo}cc`, letterSpacing: "0.12em" }}>[ Open call · Vol. 48 ]</div>
             <h3 className="display" style={{ fontSize: "clamp(32px, 4.5vw, 58px)", margin: "0 0 12px", lineHeight: 1, color: "#fff" }}>
               Ya tenemos fecha para <em style={{ color: "#e87070" }}>el próximo volumen.</em>
             </h3>
@@ -192,7 +192,7 @@ function GalleryPage() {
               className="btn"
               style={{ background: "#fff", color: "#000", borderColor: "#fff", textDecoration: "none", display: "inline-flex" }}
             >
-              Aplicar al Vol. 49 →
+              Aplicar al Vol. 48 →
             </a>
           </div>
         </div>
