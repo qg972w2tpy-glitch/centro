@@ -1,17 +1,17 @@
 // Tattoo page — hero, CTAs, resident artists, Google review, aftercare
 const TATTOO_ARTISTS = [
-  { k: "panchogattoni", name: "Francisco Gattoni",    role: "Resident", styles: "Tradicional · Blackwork",  img: "assets/artists/pancho.jpg",    ig: "panchogattoni" },
-  { k: "inksomnio",     name: "Agustina Cistaro",     role: "Resident", styles: "Fine line · Ornamental",   img: "assets/artists/inksomnio.jpg", ig: "inksomnio" },
-  { k: "mutar",         name: "Katja Sol Müller",     role: "Guest",    styles: "Fine line · Ornamental",   img: "assets/artists/mutar.jpg",     ig: "mutar" },
-  { k: "coti",          name: "Constanza Rossi",      role: "Resident", styles: "Ilustrativo",              img: "assets/artists/coti.jpg",      ig: "coti" },
-  { k: "milepokes",     name: "Milena Presta",        role: "Resident", styles: "Handpoke · Ilustrativo",   img: "assets/artists/mile.jpg",      ig: "milepokes" },
-  { k: "guadatatua",    name: "Guadalupe Barrientos", role: "Resident", styles: "Tradicional",              img: "assets/artists/guada.jpg",     ig: "guadatatua" },
-  { k: "maxis.sb",      name: "Maxi SB",              role: "Resident", styles: "Lettering · Fine line",    img: "assets/artists/maxi.jpg",      ig: "maxis.sb" },
-  { k: "fiebre",        name: "Nazareno González",    role: "Resident", styles: "Blackwork · Ilustrativo",  img: "assets/artists/naza.jpg",      ig: "fiebre" },
-  { k: "nella369",      name: "Agustín Nella",        role: "Resident", styles: "Gótico · Tribal",          img: "assets/artists/nella.jpg",     ig: "nella369" },
-  { k: "sufrodeamor",   name: "Camila Piña",          role: "Resident", styles: "Fine line · Ornamental",   img: "assets/artists/cami.jpg",      ig: "sufrodeamor" },
-  { k: "c4talina",      name: "Catalina León",        role: "Resident", styles: "Blackwork",                img: "assets/artists/cata.jpg",      ig: "c4talina" },
-  { k: "facundo.void",  name: "Facundo",              role: "Resident", styles: "Fine line · Dotwork",      img: "assets/artists/facu.jpg",      ig: "facundo.void" },
+  { k: "panchogattoni", name: "Francisco Gattoni",    role: "Resident", styles: "Tradicional · Blackwork",  img: "/assets/artists/pancho.jpg",    ig: "panchogattoni" },
+  { k: "inksomnio",     name: "Agustina Cistaro",     role: "Resident", styles: "Fine line · Ornamental",   img: "/assets/artists/inksomnio.jpg", ig: "inksomnio" },
+  { k: "mutar",         name: "Katja Sol Müller",     role: "Guest",    styles: "Fine line · Ornamental",   img: "/assets/artists/mutar.jpg",     ig: "mutar" },
+  { k: "coti",          name: "Constanza Rossi",      role: "Resident", styles: "Ilustrativo",              img: "/assets/artists/coti.jpg",      ig: "coti" },
+  { k: "milepokes",     name: "Milena Presta",        role: "Resident", styles: "Handpoke · Ilustrativo",   img: "/assets/artists/mile.jpg",      ig: "milepokes" },
+  { k: "guadatatua",    name: "Guadalupe Barrientos", role: "Resident", styles: "Tradicional",              img: "/assets/artists/guada.jpg",     ig: "guadatatua" },
+  { k: "maxis.sb",      name: "Maxi SB",              role: "Resident", styles: "Lettering · Fine line",    img: "/assets/artists/maxi.jpg",      ig: "maxis.sb" },
+  { k: "fiebre",        name: "Nazareno González",    role: "Resident", styles: "Blackwork · Ilustrativo",  img: "/assets/artists/naza.jpg",      ig: "fiebre" },
+  { k: "nella369",      name: "Agustín Nella",        role: "Resident", styles: "Gótico · Tribal",          img: "/assets/artists/nella.jpg",     ig: "nella369" },
+  { k: "sufrodeamor",   name: "Camila Piña",          role: "Resident", styles: "Fine line · Ornamental",   img: "/assets/artists/cami.jpg",      ig: "sufrodeamor" },
+  { k: "c4talina",      name: "Catalina León",        role: "Resident", styles: "Blackwork",                img: "/assets/artists/cata.jpg",      ig: "c4talina" },
+  { k: "facundo.void",  name: "Facundo",              role: "Resident", styles: "Fine line · Dotwork",      img: "/assets/artists/facu.jpg",      ig: "facundo.void" },
 ];
 
 // deterministic rotation — no Math.random on render
@@ -99,7 +99,7 @@ function TattooHero({ setRoute, T }) {
     }}>
       {/* Video background */}
       <video
-        src="assets/videoportada.mp4"
+        src="/assets/videoportada.mp4"
         autoPlay
         muted
         loop

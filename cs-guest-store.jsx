@@ -6,9 +6,9 @@ const GUEST_WPP_HREF = "https://wa.me/5492804777018?text=" +
 
 function GuestPage() {
   const espacio = [
-    "assets/espacio/espacio-01.jpg",
-    "assets/espacio/espacio-02.jpg",
-    "assets/espacio/espacio-03.jpg",
+    "/assets/espacio/espacio-01.jpg",
+    "/assets/espacio/espacio-02.jpg",
+    "/assets/espacio/espacio-03.jpg",
   ];
 
   return (
@@ -106,26 +106,26 @@ function GuestPage() {
 
 /* ============== STORE ============== */
 const BRANDS = [
-  { k: "Simon Raffo",      cat: "Indumentaria",          img: "assets/brands/simon-raffo.jpg" },
-  { k: "Barro.vtg",        cat: "Vintage",                img: "assets/brands/barro.jpg" },
-  { k: "Misceláneos",      cat: "Vintage",                img: "assets/brands/miscelaneos.jpg" },
-  { k: "Deportivo.vtg",    cat: "Vintage",                img: "assets/brands/deportivo.jpg" },
-  { k: "Coldsoul",         cat: "Indumentaria",          img: "assets/brands/coldsoul.jpg" },
-  { k: "Indawoods",        cat: "Indumentaria",          img: "assets/brands/indawoods.jpg" },
-  { k: "Radix",            cat: "Indumentaria",          img: "assets/brands/radix.jpg" },
-  { k: "Primitivefuture",  cat: "Indumentaria",          img: "assets/brands/primitivefuture.jpg" },
-  { k: "Vision.origen",    cat: "Indumentaria",          img: "assets/brands/visionorigen.jpg" },
-  { k: "Sagrada joyas",    cat: "Joyería",                img: "assets/brands/sagrada.jpg" },
-  { k: "Nine999",          cat: "Indumentaria",          img: "assets/brands/nine.jpg" },
-  { k: "Kuro archives",    cat: "Indumentaria · Chile",  img: "assets/brands/kuro.jpg" },
-  { k: "Hesh",             cat: "Indumentaria · Uruguay",img: "assets/brands/hesh.jpg" },
+  { k: "Simon Raffo",      cat: "Indumentaria",          img: "/assets/brands/simon-raffo.jpg" },
+  { k: "Barro.vtg",        cat: "Vintage",                img: "/assets/brands/barro.jpg" },
+  { k: "Misceláneos",      cat: "Vintage",                img: "/assets/brands/miscelaneos.jpg" },
+  { k: "Deportivo.vtg",    cat: "Vintage",                img: "/assets/brands/deportivo.jpg" },
+  { k: "Coldsoul",         cat: "Indumentaria",          img: "/assets/brands/coldsoul.jpg" },
+  { k: "Indawoods",        cat: "Indumentaria",          img: "/assets/brands/indawoods.jpg" },
+  { k: "Radix",            cat: "Indumentaria",          img: "/assets/brands/radix.jpg" },
+  { k: "Primitivefuture",  cat: "Indumentaria",          img: "/assets/brands/primitivefuture.jpg" },
+  { k: "Vision.origen",    cat: "Indumentaria",          img: "/assets/brands/visionorigen.jpg" },
+  { k: "Sagrada joyas",    cat: "Joyería",                img: "/assets/brands/sagrada.jpg" },
+  { k: "Nine999",          cat: "Indumentaria",          img: "/assets/brands/nine.jpg" },
+  { k: "Kuro archives",    cat: "Indumentaria · Chile",  img: "/assets/brands/kuro.jpg" },
+  { k: "Hesh",             cat: "Indumentaria · Uruguay",img: "/assets/brands/hesh.jpg" },
 ];
 
 function StorePage() {
   const showroom = [
-    "assets/showroom/showroom-01.jpg",
-    "assets/espacio/espacio-02.jpg",
-    "assets/espacio/espacio-03.jpg",
+    "/assets/showroom/showroom-01.jpg",
+    "/assets/espacio/espacio-02.jpg",
+    "/assets/espacio/espacio-03.jpg",
   ];
   return (
     <div className="page-fade" style={{ paddingTop: 64, paddingBottom: 80 }}>

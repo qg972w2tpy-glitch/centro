@@ -341,7 +341,7 @@ function GiftCardFace({ fg, logoFilter }) {
       boxShadow: "0 28px 64px rgba(0,0,0,0.38), 0 6px 16px rgba(0,0,0,0.16)",
     }}>
       <div style={{ position: "absolute", left: 22, top: 16, fontSize: 8, letterSpacing: "0.22em", textTransform: "uppercase", opacity: 0.45, fontFamily: "var(--mono)" }}>Gift Card</div>
-      <img src="assets/centro-logo.png" alt="" style={{ position: "absolute", right: 20, top: 13, height: 24, filter: logoFilter, opacity: 0.85 }} />
+      <img src="/assets/centro-logo.png" alt="" style={{ position: "absolute", right: 20, top: 13, height: 24, filter: logoFilter, opacity: 0.85 }} />
       <div style={{ position: "absolute", left: 22, top: 46, width: 38, height: 29, borderRadius: 4, background: chipGrad, boxShadow: "inset 0 1px 0 rgba(255,255,255,0.4)" }}>
         <div style={{ position: "absolute", inset: "4px 5px", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 2 }} />
       </div>
@@ -381,7 +381,7 @@ function GiftCardBack() {
       </div>
       <div style={{ position: "absolute", left: 20, right: 20, bottom: 12, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ fontFamily: '"Courier New", monospace', fontSize: 8, color: "rgba(255,255,255,0.35)", letterSpacing: "0.1em" }}>•••• •••• •••• XXXX</div>
-        <img src="assets/centro-logo.png" alt="" style={{ height: 14, filter: "invert(1)", opacity: 0.28 }} />
+        <img src="/assets/centro-logo.png" alt="" style={{ height: 14, filter: "invert(1)", opacity: 0.28 }} />
       </div>
       <div style={{ position: "absolute", left: 0, right: 0, bottom: 3, fontSize: 5.5, letterSpacing: "0.04em", color: "rgba(255,255,255,0.14)", fontFamily: "var(--sans)", textAlign: "center" }}>
         centrostudio.ar · Retiro, CABA

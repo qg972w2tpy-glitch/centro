@@ -6,7 +6,7 @@ function Logo({ size = 28, color = "#000" }) {
   const isWhite = color !== "#000" && color !== "currentColor";
   return (
     <img
-      src="assets/centro-logo.png"
+      src="/assets/centro-logo.png"
       alt="Centro Studio"
       style={{
         height: size,
@@ -372,7 +372,7 @@ function Navbar({ route, setRoute, time, intensity }) {
             aria-label="Home"
             style={{ display: "flex", alignItems: "center", gap: 10 }}
           >
-            <img src="assets/centro-logo.png" alt="" style={{ width: 32, height: 32, objectFit: "contain", display: "block" }} />
+            <img src="/assets/centro-logo.png" alt="" style={{ width: 32, height: 32, objectFit: "contain", display: "block" }} />
             <span className="nav-wordmark" style={{
               fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
               fontWeight: 900, fontSize: 17,

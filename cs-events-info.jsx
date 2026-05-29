@@ -34,7 +34,7 @@ function EventsPage() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 32 }}>
             <div style={{ gridColumn: "span 12" }} className="ev-img">
               <div style={{ aspectRatio: "3/2", overflow: "hidden", background: "#0a0a0a", border: "1px solid #000" }}>
-                <img src="assets/event/event-03.jpg" alt={list[0].k} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                <img src="/assets/event/event-03.jpg" alt={list[0].k} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
               </div>
             </div>
             <div style={{ gridColumn: "span 12" }} className="ev-text">
@@ -153,7 +153,7 @@ function About() {
       </div>
       <div style={{ marginTop: 80 }}>
         <div style={{ aspectRatio: "21/9", overflow: "hidden", background: "#0a0a0a", border: "1px solid #000" }}>
-          <img src="assets/espacio/espacio-01.jpg" alt="Centro Studio" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+          <img src="/assets/espacio/espacio-01.jpg" alt="Centro Studio" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
         </div>
       </div>
       <style>{`
@@ -191,7 +191,7 @@ function Contact() {
         </div>
         <div style={{ gridColumn: "span 12" }} className="ct-side">
           <div style={{ aspectRatio: "3/4", overflow: "hidden", background: "#0a0a0a" }}>
-            <img src="assets/espacio/espacio-02.jpg" alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+            <img src="/assets/espacio/espacio-02.jpg" alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
           </div>
         </div>
       </div>

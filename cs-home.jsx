@@ -81,10 +81,10 @@ function LoadingScreen({ onDone }) {
         <div className="ls-3d">
           <div className="ls-cube">
             {/* 6 faces of a flat-ish disc — rotates around Y */}
-            <div className="ls-face ls-face-f"><img src="assets/centro-logo.png" alt="" /></div>
-            <div className="ls-face ls-face-b"><img src="assets/centro-logo.png" alt="" /></div>
-            <div className="ls-face ls-face-l"><img src="assets/centro-logo.png" alt="" /></div>
-            <div className="ls-face ls-face-r"><img src="assets/centro-logo.png" alt="" /></div>
+            <div className="ls-face ls-face-f"><img src="/assets/centro-logo.png" alt="" /></div>
+            <div className="ls-face ls-face-b"><img src="/assets/centro-logo.png" alt="" /></div>
+            <div className="ls-face ls-face-l"><img src="/assets/centro-logo.png" alt="" /></div>
+            <div className="ls-face ls-face-r"><img src="/assets/centro-logo.png" alt="" /></div>
           </div>
         </div>
         <div className="ls-shadow" />
@@ -420,7 +420,7 @@ function Hero({ setRoute, time, t }) {
           background: "#000",
           overflow: "hidden",
         }}>
-          <img src="assets/espacio/espacio-01.jpg" alt="" style={{
+          <img src="/assets/espacio/espacio-01.jpg" alt="" style={{
             width: "100%",
             height: "100%",
             objectFit: "cover",
@@ -611,7 +611,7 @@ function NextEvent({ setRoute, t }) {
           alignItems: "end",
         }}>
           <div className="next-img" style={{ aspectRatio: "4 / 5", overflow: "hidden", background: "#0a0a0a" }}>
-            <img src="assets/event/event-03.jpg" alt="expo centro" style={{
+            <img src="/assets/event/event-03.jpg" alt="expo centro" style={{
               width: "100%", height: "100%", objectFit: "cover",
               filter: "grayscale(1) contrast(1.05)",
             }} />

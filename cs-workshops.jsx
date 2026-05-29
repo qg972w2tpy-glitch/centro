@@ -26,7 +26,7 @@ function WorkshopsPage() {
           {/* Smaller image — flyer */}
           <div style={{ gridColumn: "span 12" }} className="ws-img">
             <div style={{ aspectRatio: "4 / 5", overflow: "hidden", background: "#0c0c0c", border: "1px solid #000" }}>
-              <img src="assets/taller-coti.jpg" alt="Taller de pintura — Costanza Rossi"
+              <img src="/assets/taller-coti.jpg" alt="Taller de pintura — Costanza Rossi"
                 style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
             </div>
           </div>

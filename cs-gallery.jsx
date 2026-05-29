@@ -43,24 +43,24 @@ function GalleryCarousel({ images, interval = 3000 }) {
 }
 
 const VOL48_OBRAS = [
-  { img: "assets/obras/abril-amorosa.png",    artist: "Abril Barboza",         ig: "@abrilamorosa",       title: "Nunca volví a sentirme inmortal", year: 2024, tech: "Acrílico sobre lienzo",       dims: "140 × 70 cm",  trastienda: false },
-  { img: "assets/obras/lara-belaglovski.png", artist: "Lara Belaglovsky",      ig: "@bravelar4",          title: "El tercer piso",                  year: 2024, tech: "Óleo sobre tela",             dims: "65 × 50 cm",   trastienda: false, rotation: 180 },
-  { img: "assets/obras/carbon-based-kid.png", artist: "Julián Caprara Gatti",  ig: "@carbon.based.kid",   title: "Mi amor, mi amor",                year: 2024, tech: "Óleo sobre madera",           dims: "23 × 20 cm",   trastienda: false, rotation: -90 },
-  { img: "assets/obras/coti.png",             artist: "Costanza Rossi",        ig: "@cowgirlcoti",        title: "Primicias del ritual",            year: 2026, tech: "Óleo sobre lienzo",           dims: "60 × 70 cm",   trastienda: false },
-  { img: "assets/obras/cronico.png",          artist: "Nahuel Olivera",        ig: "@_cronico_",          title: "Mi ira en HD",                    year: 2025, tech: "Acrílico sobre lienzo",       dims: "100 × 80 cm",  trastienda: false },
-  { img: "assets/obras/ailen-guerra.png",     artist: "Ailen Guerra",          ig: "@ailenguerraart",     title: "Ignorant",                        year: 2024, tech: "Óleo sobre lienzo de algodón",dims: "150 × 150 cm", trastienda: false },
-  { img: "assets/obras/miguel.png",           artist: "M. Kittlein",           ig: "@m_kittlein",         title: "Lachechism",                      year: "2021/2026", tech: "Óleo sobre tela",      dims: "180 × 100 cm", trastienda: false },
-  { img: "assets/obras/sofia-igenes.png",     artist: "Sofía Igenes",          ig: "@sofiaigenes",        title: "Concepción del hogar",            year: 2025, tech: "Óleo sobre tela",             dims: "50 × 50 cm",   trastienda: false, rotation: 180 },
-  { img: "assets/obras/invloon.png",          artist: "Valentina Sol Andrés",  ig: "@invloon",            title: "Panteón de los heridos",          year: 2024, tech: "Óleo sobre plástico",         dims: "23 × 39 cm",   trastienda: true  },
-  { img: "assets/obras/guadeeh.jpg",          artist: "Guade Estienne",        ig: "@guadeeeh",           title: "El mar entre nosotros",           year: 2025, tech: "Óleo sobre tela",             dims: "60 × 60 cm",   trastienda: true  },
-  { img: "assets/obras/pilar-frelliaro.png",  artist: "Pilar Frelliaro",       ig: "@pilarfrelliaro",     title: "Todo esto es efímero",            year: 2025, tech: "Acrílico sobre MDF entelado", dims: "41 × 29 cm",   trastienda: false },
-  { img: "assets/obras/willy-fishman.png",    artist: "Willy Fishman",         ig: "@willy_fishman",      title: "Bananafishbones",                 year: 2026, tech: "Acuarela sobre papel",        dims: "30 × 13 cm",   trastienda: true  },
-  { img: "assets/obras/collector.png",        artist: "Mox S. (Collector)",    ig: "@______collector",    title: "GeneSis",                         year: 2026, tech: "Técnica mixta",               dims: "51 × 59 cm",   trastienda: false },
-  { img: "assets/obras/carlitos-wake.png",    artist: "Carlos Wake Carrera",   ig: "@carlitos_wake",      title: "Mahakala 1",                      year: 2025, tech: "Tinta y acuarela sobre papel",dims: "50 × 70 cm",   trastienda: true  },
-  { img: "assets/obras/skate-rat.png",        artist: "Skate Rat",             ig: "@skate.rat.tattoo",   title: "S/T",                             year: 2026, tech: "Aerógrafo y acrílico s/papel madera", dims: "76 × 55 cm", trastienda: true },
-  { img: "assets/obras/lauta-suas.png",       artist: "Lautaro Suasnabar",     ig: "@lauta_suas",         title: "Ensalada de frutas",              year: 2026, tech: "Acuarela y tinta china",      dims: "70 × 50 cm",   trastienda: false },
-  { img: "assets/obras/maxis.png",            artist: "Maxis",                 ig: "@maxis.sb",           title: "Relación sana",                   year: 2025, tech: "Lapicera sobre papel",        dims: "50 × 40 cm",   trastienda: false },
-  { img: "assets/obras/situacion.png",        artist: "Situación",             ig: "@situaciooooooon",    title: "Situaciones paralelas",           year: 2026, tech: "Técnica mixta",               dims: "—",            trastienda: true  },
+  { img: "/assets/obras/abril-amorosa.png",    artist: "Abril Barboza",         ig: "@abrilamorosa",       title: "Nunca volví a sentirme inmortal", year: 2024, tech: "Acrílico sobre lienzo",       dims: "140 × 70 cm",  trastienda: false },
+  { img: "/assets/obras/lara-belaglovski.png", artist: "Lara Belaglovsky",      ig: "@bravelar4",          title: "El tercer piso",                  year: 2024, tech: "Óleo sobre tela",             dims: "65 × 50 cm",   trastienda: false, rotation: 180 },
+  { img: "/assets/obras/carbon-based-kid.png", artist: "Julián Caprara Gatti",  ig: "@carbon.based.kid",   title: "Mi amor, mi amor",                year: 2024, tech: "Óleo sobre madera",           dims: "23 × 20 cm",   trastienda: false, rotation: -90 },
+  { img: "/assets/obras/coti.png",             artist: "Costanza Rossi",        ig: "@cowgirlcoti",        title: "Primicias del ritual",            year: 2026, tech: "Óleo sobre lienzo",           dims: "60 × 70 cm",   trastienda: false },
+  { img: "/assets/obras/cronico.png",          artist: "Nahuel Olivera",        ig: "@_cronico_",          title: "Mi ira en HD",                    year: 2025, tech: "Acrílico sobre lienzo",       dims: "100 × 80 cm",  trastienda: false },
+  { img: "/assets/obras/ailen-guerra.png",     artist: "Ailen Guerra",          ig: "@ailenguerraart",     title: "Ignorant",                        year: 2024, tech: "Óleo sobre lienzo de algodón",dims: "150 × 150 cm", trastienda: false },
+  { img: "/assets/obras/miguel.png",           artist: "M. Kittlein",           ig: "@m_kittlein",         title: "Lachechism",                      year: "2021/2026", tech: "Óleo sobre tela",      dims: "180 × 100 cm", trastienda: false },
+  { img: "/assets/obras/sofia-igenes.png",     artist: "Sofía Igenes",          ig: "@sofiaigenes",        title: "Concepción del hogar",            year: 2025, tech: "Óleo sobre tela",             dims: "50 × 50 cm",   trastienda: false, rotation: 180 },
+  { img: "/assets/obras/invloon.png",          artist: "Valentina Sol Andrés",  ig: "@invloon",            title: "Panteón de los heridos",          year: 2024, tech: "Óleo sobre plástico",         dims: "23 × 39 cm",   trastienda: true  },
+  { img: "/assets/obras/guadeeh.jpg",          artist: "Guade Estienne",        ig: "@guadeeeh",           title: "El mar entre nosotros",           year: 2025, tech: "Óleo sobre tela",             dims: "60 × 60 cm",   trastienda: true  },
+  { img: "/assets/obras/pilar-frelliaro.png",  artist: "Pilar Frelliaro",       ig: "@pilarfrelliaro",     title: "Todo esto es efímero",            year: 2025, tech: "Acrílico sobre MDF entelado", dims: "41 × 29 cm",   trastienda: false },
+  { img: "/assets/obras/willy-fishman.png",    artist: "Willy Fishman",         ig: "@willy_fishman",      title: "Bananafishbones",                 year: 2026, tech: "Acuarela sobre papel",        dims: "30 × 13 cm",   trastienda: true  },
+  { img: "/assets/obras/collector.png",        artist: "Mox S. (Collector)",    ig: "@______collector",    title: "GeneSis",                         year: 2026, tech: "Técnica mixta",               dims: "51 × 59 cm",   trastienda: false },
+  { img: "/assets/obras/carlitos-wake.png",    artist: "Carlos Wake Carrera",   ig: "@carlitos_wake",      title: "Mahakala 1",                      year: 2025, tech: "Tinta y acuarela sobre papel",dims: "50 × 70 cm",   trastienda: true  },
+  { img: "/assets/obras/skate-rat.png",        artist: "Skate Rat",             ig: "@skate.rat.tattoo",   title: "S/T",                             year: 2026, tech: "Aerógrafo y acrílico s/papel madera", dims: "76 × 55 cm", trastienda: true },
+  { img: "/assets/obras/lauta-suas.png",       artist: "Lautaro Suasnabar",     ig: "@lauta_suas",         title: "Ensalada de frutas",              year: 2026, tech: "Acuarela y tinta china",      dims: "70 × 50 cm",   trastienda: false },
+  { img: "/assets/obras/maxis.png",            artist: "Maxis",                 ig: "@maxis.sb",           title: "Relación sana",                   year: 2025, tech: "Lapicera sobre papel",        dims: "50 × 40 cm",   trastienda: false },
+  { img: "/assets/obras/situacion.png",        artist: "Situación",             ig: "@situaciooooooon",    title: "Situaciones paralelas",           year: 2026, tech: "Técnica mixta",               dims: "—",            trastienda: true  },
 ];
 
 function buyMailto(w) {
@@ -80,13 +80,13 @@ function buyMailto(w) {
 }
 
 const EVENT_PHOTOS = [
-  "assets/event/event-03.jpg",
-  "assets/event/event-04.jpg",
-  "assets/event/event-05.jpg",
-  "assets/event/event-06.jpg",
-  "assets/event/event-07.jpg",
-  "assets/event/event-01.jpg",
-  "assets/event/event-02.jpg",
+  "/assets/event/event-03.jpg",
+  "/assets/event/event-04.jpg",
+  "/assets/event/event-05.jpg",
+  "/assets/event/event-06.jpg",
+  "/assets/event/event-07.jpg",
+  "/assets/event/event-01.jpg",
+  "/assets/event/event-02.jpg",
 ];
 
 function GalleryPage() {
@@ -107,7 +107,7 @@ function GalleryPage() {
           border: `1px solid ${bordo}`,
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 22, flexWrap: "wrap" }}>
-            <img src="assets/vol48-logo.png" alt="Vol. 48"
+            <img src="/assets/vol48-logo.png" alt="Vol. 48"
               style={{ height: 64, filter: "brightness(0) invert(1)" }} />
             <div>
               <div className="mono" style={{ fontSize: 11, letterSpacing: "0.1em", opacity: 0.8 }}>VOL. 48 · RE-COLECCIÓN</div>
