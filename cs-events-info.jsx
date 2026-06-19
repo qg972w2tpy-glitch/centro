@@ -1,76 +1,108 @@
 // Events + Info pages
 
-const EVENTS = [
-  { k: "Expo Centro",                              date: "13 Junio 2026", time: "—",   status: "upcoming", desc: "Día de puertas abiertas: estudio, galería y showroom funcionando en simultáneo.", cat: "Expo" },
-  { k: "Segunda presentación · Galería Vol. 48",   date: "09 Julio 2026", time: "20h", status: "upcoming", desc: "Cierre de Re-colección con nueva lectura de obra y comunidad.",                       cat: "Galería" },
-  { k: "Inauguración Galería Vol. 48",             date: "09 Mayo 2026",  time: "20h", status: "past",     desc: "Apertura de Re-colección. Cuatro semanas de obra y comunidad.",                       cat: "Galería" },
-  { k: "Inauguración Centro Studio",               date: "21 Febrero 2026", time: "—", status: "past",     desc: "Apertura del nuevo espacio en Av. Córdoba 857 · Retiro.",                              cat: "Apertura" },
+const UPCOMING_EVENTS = [
+  { k: "Galería Vol. 49 · Segunda edición", date: "Por confirmar", time: "19 a 00hs", desc: "Segunda edición del ciclo. Galería, showroom y comunidad en simultáneo.", cat: "Galería" },
+  { k: "Segunda presentación · Galería Vol. 48", date: "09 Julio 2026", time: "20h", desc: "Cierre de Re-colección con nueva lectura de obra y comunidad.", cat: "Galería" },
+];
+
+const PAST_EVENTS = [
+  { k: "Mercado Central Vol. 1", date: "13 Junio 2026", time: "—", desc: "Primera edición del mercado de marcas, arte y comunidad en Centro Studio.", cat: "Mercado", video: "/assets/event/videoevento.mov" },
+  { k: "Inauguración Galería Vol. 48", date: "09 Mayo 2026", time: "20h", desc: "Apertura de Re-colección. Cuatro semanas de obra y comunidad.", cat: "Galería" },
+  { k: "Inauguración Centro Studio", date: "21 Febrero 2026", time: "—", desc: "Apertura del nuevo espacio en Av. Córdoba 857 · Retiro.", cat: "Apertura" },
 ];
 
 function EventsPage() {
-  const [tab, setTab] = React.useState("upcoming");
-  const list = EVENTS.filter(e => e.status === tab);
-
   return (
     <div className="page-fade" style={{ paddingTop: 64, paddingBottom: 80 }}>
       <SectionHeader index="06" kicker="Events" title={<>Calendario<Asterisk size={48} /></>}
         intro="Aperturas y presentaciones del año. Programación rotativa." />
 
-      <div className="container" style={{ marginTop: 32, display: "flex", gap: 8, borderBottom: "1px solid var(--hair)", paddingBottom: 16 }}>
-        {[
-          { k: "upcoming", l: "Próximos" },
-          { k: "past",     l: "Pasados" },
-        ].map(t => (
-          <button key={t.k}
-            className={"pill" + (tab === t.k ? " active" : "")}
-            onClick={() => setTab(t.k)}>
-            {t.l}
-          </button>
-        ))}
-      </div>
-
-      {tab === "upcoming" && list.length > 0 && (
-        <div className="container" style={{ marginTop: 40 }}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 32 }}>
-            <div style={{ gridColumn: "span 12" }} className="ev-img">
-              <div style={{ aspectRatio: "3/2", overflow: "hidden", background: "#0a0a0a", border: "1px solid #000" }}>
-                <img src="/assets/event/event-03.jpg" alt={list[0].k} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-              </div>
-            </div>
-            <div style={{ gridColumn: "span 12" }} className="ev-text">
-              <div className="meta" style={{ marginBottom: 14 }}>[ Próximo · 01 ]</div>
-              <h2 className="display" style={{ fontSize: "clamp(36px, 5vw, 64px)", margin: 0, lineHeight: 1.05 }}>
-                {list[0].k}
-              </h2>
-              <div className="display" style={{ fontSize: 28, marginTop: 16, fontStyle: "italic" }}>
-                {list[0].date}{list[0].time !== "—" ? " · " + list[0].time : ""}
-              </div>
-              <p style={{ fontSize: 16, lineHeight: 1.55, color: "rgba(0,0,0,0.7)", marginTop: 24, maxWidth: 460 }}>
-                {list[0].desc}
-              </p>
+      {/* Próximo destacado */}
+      <div className="container" style={{ marginTop: 40 }}>
+        <div className="meta" style={{ marginBottom: 24 }}>[ Próximo ]</div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 32 }}>
+          <div style={{ gridColumn: "span 12" }} className="ev-img">
+            <div style={{ aspectRatio: "3/2", overflow: "hidden", background: "#0a0a0a", border: "1px solid #000" }}>
+              <img src="/assets/event/event-03.jpg" alt={UPCOMING_EVENTS[0].k} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
             </div>
           </div>
-          <style>{`
-            @media (min-width: 900px) {
-              .ev-img { grid-column: 1 / span 7 !important; }
-              .ev-text { grid-column: 8 / span 5 !important; padding-top: 40px; }
-            }
-          `}</style>
+          <div style={{ gridColumn: "span 12" }} className="ev-text">
+            <div className="meta" style={{ marginBottom: 14 }}>[ Próximo · 01 ]</div>
+            <h2 className="display" style={{ fontSize: "clamp(36px, 5vw, 64px)", margin: 0, lineHeight: 1.05 }}>
+              {UPCOMING_EVENTS[0].k}
+            </h2>
+            <div className="display" style={{ fontSize: 28, marginTop: 16, fontStyle: "italic" }}>
+              {UPCOMING_EVENTS[0].date} · {UPCOMING_EVENTS[0].time}
+            </div>
+            <p style={{ fontSize: 16, lineHeight: 1.55, color: "rgba(0,0,0,0.7)", marginTop: 24, maxWidth: 460 }}>
+              {UPCOMING_EVENTS[0].desc}
+            </p>
+          </div>
+        </div>
+        <style>{`
+          @media (min-width: 900px) {
+            .ev-img { grid-column: 1 / span 7 !important; }
+            .ev-text { grid-column: 8 / span 5 !important; padding-top: 40px; }
+          }
+        `}</style>
+      </div>
+
+      {/* Resto de próximos */}
+      {UPCOMING_EVENTS.slice(1).length > 0 && (
+        <div className="container" style={{ marginTop: 60 }}>
+          <div className="meta" style={{ marginBottom: 16 }}>[ Agenda ]</div>
+          {UPCOMING_EVENTS.slice(1).map((e, i) => (
+            <div key={i} style={{ display: "grid", gridTemplateColumns: "auto 1fr auto", gap: 32, alignItems: "baseline", padding: "32px 0", borderTop: "1px solid var(--hair)" }}>
+              <div style={{ minWidth: 160 }}>
+                <div className="display" style={{ fontSize: 32, lineHeight: 1 }}>{e.date.split(" ")[0]} {e.date.split(" ")[1]}</div>
+                <div className="meta" style={{ marginTop: 6 }}>{e.time}</div>
+              </div>
+              <div>
+                <div className="meta" style={{ marginBottom: 6 }}>{e.cat}</div>
+                <div className="display" style={{ fontSize: "clamp(24px, 3vw, 36px)", lineHeight: 1.1 }}>{e.k}</div>
+                <p style={{ fontSize: 14, color: "rgba(0,0,0,0.65)", marginTop: 10, maxWidth: 540 }}>{e.desc}</p>
+              </div>
+              <span className="mono" style={{ color: "var(--muted)", whiteSpace: "nowrap" }}>{e.date.split(" ")[2]}</span>
+            </div>
+          ))}
         </div>
       )}
 
-      <div className="container" style={{ marginTop: 80 }}>
-        <div className="meta" style={{ marginBottom: 16 }}>
-          {tab === "upcoming" ? "[ Agenda ]" : "[ Archivo ]"}
+      {/* Pasados */}
+      <div className="container" style={{ marginTop: 100 }}>
+        <div className="meta" style={{ marginBottom: 24, paddingBottom: 16, borderBottom: "1px solid var(--hair)" }}>[ Pasados ]</div>
+
+        {/* Video destacado — Mercado Central Vol. 1 */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 32, marginTop: 40 }}>
+          <div style={{ gridColumn: "span 12" }} className="ev-past-vid">
+            <video
+              src={PAST_EVENTS[0].video}
+              autoPlay
+              playsInline
+              loop
+              style={{ width: "100%", aspectRatio: "16/9", objectFit: "cover", display: "block", background: "#0a0a0a", border: "1px solid #000" }}
+            />
+          </div>
+          <div style={{ gridColumn: "span 12" }} className="ev-past-text">
+            <div className="meta" style={{ marginBottom: 14 }}>[ Edición pasada · {PAST_EVENTS[0].date} ]</div>
+            <h2 className="display" style={{ fontSize: "clamp(36px, 5vw, 64px)", margin: 0, lineHeight: 1.05 }}>
+              {PAST_EVENTS[0].k}
+            </h2>
+            <p style={{ fontSize: 16, lineHeight: 1.55, color: "rgba(0,0,0,0.7)", marginTop: 24, maxWidth: 460 }}>
+              {PAST_EVENTS[0].desc}
+            </p>
+          </div>
         </div>
-        {list.slice(tab === "upcoming" ? 1 : 0).map((e, i) => (
-          <div key={i} style={{
-            display: "grid",
-            gridTemplateColumns: "auto 1fr auto",
-            gap: 32, alignItems: "baseline",
-            padding: "32px 0",
-            borderTop: "1px solid var(--hair)",
-          }}>
+        <style>{`
+          @media (min-width: 900px) {
+            .ev-past-vid { grid-column: 1 / span 7 !important; }
+            .ev-past-text { grid-column: 8 / span 5 !important; padding-top: 40px; }
+          }
+        `}</style>
+
+        {/* Resto del archivo */}
+        {PAST_EVENTS.slice(1).map((e, i) => (
+          <div key={i} style={{ display: "grid", gridTemplateColumns: "auto 1fr auto", gap: 32, alignItems: "baseline", padding: "32px 0", borderTop: "1px solid var(--hair)", marginTop: i === 0 ? 60 : 0 }}>
             <div style={{ minWidth: 160 }}>
               <div className="display" style={{ fontSize: 32, lineHeight: 1 }}>{e.date.split(" ")[0]} {e.date.split(" ")[1]}</div>
               <div className="meta" style={{ marginTop: 6 }}>{e.time}</div>
@@ -80,9 +112,7 @@ function EventsPage() {
               <div className="display" style={{ fontSize: "clamp(24px, 3vw, 36px)", lineHeight: 1.1 }}>{e.k}</div>
               <p style={{ fontSize: 14, color: "rgba(0,0,0,0.65)", marginTop: 10, maxWidth: 540 }}>{e.desc}</p>
             </div>
-            <span className="mono" style={{ color: "var(--muted)", whiteSpace: "nowrap" }}>
-              {e.date.split(" ")[2]}
-            </span>
+            <span className="mono" style={{ color: "var(--muted)", whiteSpace: "nowrap" }}>{e.date.split(" ")[2]}</span>
           </div>
         ))}
       </div>
