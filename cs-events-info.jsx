@@ -6,7 +6,7 @@ const UPCOMING_EVENTS = [
 ];
 
 const PAST_EVENTS = [
-  { k: "Mercado Central Vol. 1", date: "13 Junio 2026", time: "—", desc: "Primera edición del mercado de marcas, arte y comunidad en Centro Studio.", cat: "Mercado", video: "/assets/event/videoevento.mov" },
+  { k: "Mercado Central Vol. 1", date: "13 Junio 2026", time: "—", desc: "Primera edición del mercado de marcas, arte y comunidad en Centro Studio.", cat: "Mercado", video: "/assets/event/videoevento.mp4" },
   { k: "Inauguración Galería Vol. 48", date: "09 Mayo 2026", time: "20h", desc: "Apertura de Re-colección. Cuatro semanas de obra y comunidad.", cat: "Galería" },
   { k: "Inauguración Centro Studio", date: "21 Febrero 2026", time: "—", desc: "Apertura del nuevo espacio en Av. Córdoba 857 · Retiro.", cat: "Apertura" },
 ];
