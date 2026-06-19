@@ -51,16 +51,19 @@ const VOL48_OBRAS = [
   { img: "/assets/obras/ailen-guerra.png",     artist: "Ailen Guerra",          ig: "@ailenguerraart",     title: "Ignorant",                        year: 2024, tech: "Óleo sobre lienzo de algodón",dims: "150 × 150 cm", trastienda: false },
   { img: "/assets/obras/miguel.png",           artist: "M. Kittlein",           ig: "@m_kittlein",         title: "Lachechism",                      year: "2021/2026", tech: "Óleo sobre tela",      dims: "180 × 100 cm", trastienda: false },
   { img: "/assets/obras/sofia-igenes.png",     artist: "Sofía Igenes",          ig: "@sofiaigenes",        title: "Concepción del hogar",            year: 2025, tech: "Óleo sobre tela",             dims: "50 × 50 cm",   trastienda: false, rotation: 180 },
-  { img: "/assets/obras/invloon.png",          artist: "Valentina Sol Andrés",  ig: "@invloon",            title: "Panteón de los heridos",          year: 2024, tech: "Óleo sobre plástico",         dims: "23 × 39 cm",   trastienda: true  },
-  { img: "/assets/obras/guadeeh.jpg",          artist: "Guade Estienne",        ig: "@guadeeeh",           title: "El mar entre nosotros",           year: 2025, tech: "Óleo sobre tela",             dims: "60 × 60 cm",   trastienda: true  },
+  { img: "/assets/obras/invloon.png",          artist: "Valentina Sol Andrés",  ig: "@invloon",            title: "Panteón de los heridos",          year: 2024, tech: "Óleo sobre plástico",         dims: "23 × 39 cm",   trastienda: false },
+  { img: "/assets/obras/guadeeh.jpg",          artist: "Guade Estienne",        ig: "@guadeeeh",           title: "El mar entre nosotros",           year: 2025, tech: "Óleo sobre tela",             dims: "60 × 60 cm",   trastienda: false, vendido: true },
   { img: "/assets/obras/pilar-frelliaro.png",  artist: "Pilar Frelliaro",       ig: "@pilarfrelliaro",     title: "Todo esto es efímero",            year: 2025, tech: "Acrílico sobre MDF entelado", dims: "41 × 29 cm",   trastienda: false },
-  { img: "/assets/obras/willy-fishman.png",    artist: "Willy Fishman",         ig: "@willy_fishman",      title: "Bananafishbones",                 year: 2026, tech: "Acuarela sobre papel",        dims: "30 × 13 cm",   trastienda: true  },
+  { img: "/assets/obras/willy-fishman.png",    artist: "Willy Fishman",         ig: "@willy_fishman",      title: "Bananafishbones",                 year: 2026, tech: "Acuarela sobre papel",        dims: "30 × 13 cm",   trastienda: false },
   { img: "/assets/obras/collector.png",        artist: "Mox S. (Collector)",    ig: "@______collector",    title: "GeneSis",                         year: 2026, tech: "Técnica mixta",               dims: "51 × 59 cm",   trastienda: false },
-  { img: "/assets/obras/carlitos-wake.png",    artist: "Carlos Wake Carrera",   ig: "@carlitos_wake",      title: "Mahakala 1",                      year: 2025, tech: "Tinta y acuarela sobre papel",dims: "50 × 70 cm",   trastienda: true  },
-  { img: "/assets/obras/skate-rat.png",        artist: "Skate Rat",             ig: "@skate.rat.tattoo",   title: "S/T",                             year: 2026, tech: "Aerógrafo y acrílico s/papel madera", dims: "76 × 55 cm", trastienda: true },
+  { img: "/assets/obras/carlitos-wake.png",    artist: "Carlos Wake Carrera",   ig: "@carlitos_wake",      title: "Mahakala 1",                      year: 2025, tech: "Tinta y acuarela sobre papel",dims: "50 × 70 cm",   trastienda: false },
+  { img: "/assets/obras/skate-rat.png",        artist: "Skate Rat",             ig: "@skate.rat.tattoo",   title: "S/T",                             year: 2026, tech: "Aerógrafo y acrílico s/papel madera", dims: "76 × 55 cm", trastienda: false },
   { img: "/assets/obras/lauta-suas.png",       artist: "Lautaro Suasnabar",     ig: "@lauta_suas",         title: "Ensalada de frutas",              year: 2026, tech: "Acuarela y tinta china",      dims: "70 × 50 cm",   trastienda: false },
   { img: "/assets/obras/maxis.png",            artist: "Maxis",                 ig: "@maxis.sb",           title: "Relación sana",                   year: 2025, tech: "Lapicera sobre papel",        dims: "50 × 40 cm",   trastienda: false },
-  { img: "/assets/obras/situacion.png",        artist: "Situación",             ig: "@situaciooooooon",    title: "Situaciones paralelas",           year: 2026, tech: "Técnica mixta",               dims: "—",            trastienda: true  },
+  { img: "/assets/obras/situacion.png",        artist: "Situación",             ig: "@situaciooooooon",    title: "Situaciones paralelas",           year: 2026, tech: "Técnica mixta",               dims: "—",            trastienda: false },
+  { img: "/assets/obras/disle.jpeg",           artist: "Dislexical",            ig: "@disleeeeeee",        title: "CULTO AL MACHO",                  year: "2025-2026", tech: "Videoperformance, sangre falsa, tinta de tatuaje y acrílico sobre tela", dims: "—", trastienda: false },
+  { img: "/assets/obras/maruts.jpeg",          artist: "Vladimir Maruts Ballet", ig: "@maruts_ballet",     title: "gypsy tunning",                   year: 2025, tech: "Tapizado de colectivo",       dims: "80 × 150 cm",  trastienda: false },
+  { img: "/assets/obras/merycuneo.jpg",        artist: "Mery Cuneo",            ig: "@err0rdetype0",       title: "Par de Grifos",                   year: 2024, tech: "Acrílico sobre lienzo",       dims: "30 × 24 cm",   trastienda: false },
 ];
 
 function buyMailto(w) {
@@ -234,12 +237,12 @@ function GalleryPage() {
                   }} />
                 <span className="mono" style={{
                   position: "absolute", top: 10, left: 10,
-                  background: w.trastienda ? bordo : "#fff",
-                  color: w.trastienda ? "#fff" : "#000",
-                  border: w.trastienda ? `1px solid ${bordo}` : "1px solid #000",
+                  background: w.vendido ? "#222" : "#fff",
+                  color: w.vendido ? "#fff" : "#000",
+                  border: w.vendido ? "1px solid #222" : "1px solid #000",
                   padding: "4px 8px", fontSize: 10, letterSpacing: "0.08em",
                 }}>
-                  {w.trastienda ? "● TRASTIENDA" : "● DISPONIBLE"}
+                  {w.vendido ? "● VENDIDO" : "● DISPONIBLE"}
                 </span>
               </div>
 
@@ -260,13 +263,23 @@ function GalleryPage() {
                 <dt className="meta">Medidas</dt><dd style={{ margin: 0 }} className="mono">{w.dims}</dd>
               </dl>
 
-              <a href={buyMailto(w)} className="btn" style={{
-                textDecoration: "none", fontSize: 12, padding: "10px 14px",
-                borderColor: bordo, color: bordo,
-                alignSelf: "flex-start",
-              }}>
-                Consultar / Comprar →
-              </a>
+              {w.vendido ? (
+                <span className="btn mono" style={{
+                  fontSize: 12, padding: "10px 14px",
+                  borderColor: "#999", color: "#999",
+                  alignSelf: "flex-start", cursor: "default", opacity: 0.6,
+                }}>
+                  Vendido
+                </span>
+              ) : (
+                <a href={buyMailto(w)} className="btn" style={{
+                  textDecoration: "none", fontSize: 12, padding: "10px 14px",
+                  borderColor: bordo, color: bordo,
+                  alignSelf: "flex-start",
+                }}>
+                  Consultar / Comprar →
+                </a>
+              )}
             </article>
           ))}
         </div>
