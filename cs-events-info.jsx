@@ -75,13 +75,33 @@ function EventsPage() {
         {/* Video destacado — Mercado Central Vol. 1 */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 32, marginTop: 40 }}>
           <div style={{ gridColumn: "span 12" }} className="ev-past-vid">
-            <video
-              src={PAST_EVENTS[0].video}
-              autoPlay
-              playsInline
-              loop
-              style={{ width: "100%", aspectRatio: "16/9", objectFit: "cover", display: "block", background: "#0a0a0a", border: "1px solid #000" }}
-            />
+            {(() => {
+              const [muted, setMuted] = React.useState(true);
+              return (
+                <div style={{ position: "relative" }}>
+                  <video
+                    src={PAST_EVENTS[0].video}
+                    autoPlay
+                    playsInline
+                    loop
+                    muted={muted}
+                    style={{ width: "100%", aspectRatio: "16/9", objectFit: "cover", display: "block", background: "#0a0a0a", border: "1px solid #000" }}
+                  />
+                  <button
+                    onClick={() => setMuted(m => !m)}
+                    style={{
+                      position: "absolute", bottom: 14, right: 14,
+                      background: "rgba(0,0,0,0.65)", color: "#fff",
+                      border: "1px solid rgba(255,255,255,0.3)",
+                      padding: "6px 12px", fontSize: 11,
+                      fontFamily: "var(--mono)", letterSpacing: "0.08em",
+                      cursor: "pointer",
+                    }}>
+                    {muted ? "🔇 SIN SONIDO" : "🔊 CON SONIDO"}
+                  </button>
+                </div>
+              );
+            })()}
           </div>
           <div style={{ gridColumn: "span 12" }} className="ev-past-text">
             <div className="meta" style={{ marginBottom: 14 }}>[ Edición pasada · {PAST_EVENTS[0].date} ]</div>
