@@ -119,6 +119,7 @@ const BRANDS = [
   { k: "Nine999",          cat: "Indumentaria",          img: "/assets/brands/nine.jpg" },
   { k: "Kuro archives",    cat: "Indumentaria · Chile",  img: "/assets/brands/kuro.jpg" },
   { k: "Hesh",             cat: "Indumentaria · Uruguay",img: "/assets/brands/hesh.jpg" },
+  { k: "Embac",            cat: "Indumentaria",          img: "/assets/brands/embac.png" },
 ];
 
 function StorePage() {
