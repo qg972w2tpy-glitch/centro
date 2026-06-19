@@ -600,8 +600,8 @@ function NextEvent({ setRoute, t }) {
           textTransform: "uppercase",
           fontWeight: 600,
         }}>
-          <span>II — {t.home.featured || "Próximo"}</span>
-          <span style={{ color: "rgba(0,0,0,0.45)" }}>13.06.26 · expo centro</span>
+          <span>II — Último evento</span>
+          <span style={{ color: "rgba(0,0,0,0.45)" }}>13.06.26 · mercado central vol. 1</span>
         </div>
 
         <div className="next-grid" style={{
@@ -610,11 +610,34 @@ function NextEvent({ setRoute, t }) {
           gap: 40,
           alignItems: "end",
         }}>
-          <div className="next-img" style={{ aspectRatio: "4 / 5", overflow: "hidden", background: "#0a0a0a" }}>
-            <img src="/assets/event/event-03.jpg" alt="expo centro" style={{
-              width: "100%", height: "100%", objectFit: "cover",
-              filter: "grayscale(1) contrast(1.05)",
-            }} />
+          <div className="next-img" style={{ aspectRatio: "4 / 5", overflow: "hidden", background: "#0a0a0a", position: "relative" }}>
+            {(() => {
+              const [muted, setMuted] = React.useState(true);
+              return (
+                <>
+                  <video
+                    src="/assets/event/videoevento.mp4"
+                    autoPlay
+                    playsInline
+                    loop
+                    muted={muted}
+                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                  />
+                  <button
+                    onClick={() => setMuted(m => !m)}
+                    style={{
+                      position: "absolute", bottom: 14, right: 14,
+                      background: "rgba(0,0,0,0.65)", color: "#fff",
+                      border: "1px solid rgba(255,255,255,0.3)",
+                      padding: "6px 12px", fontSize: 11,
+                      fontFamily: "var(--mono)", letterSpacing: "0.08em",
+                      cursor: "pointer",
+                    }}>
+                    {muted ? "🔇 SIN SONIDO" : "🔊 CON SONIDO"}
+                  </button>
+                </>
+              );
+            })()}
           </div>
 
           <div className="next-text" style={{ paddingBottom: 12 }}>
@@ -627,20 +650,20 @@ function NextEvent({ setRoute, t }) {
               textTransform: "uppercase",
               margin: 0,
             }}>
-              Expo<br/>
-              <span style={{ fontWeight: 200, fontStyle: "italic", textTransform: "lowercase" }}>centro</span>
+              Mercado<br/>
+              <span style={{ fontWeight: 200, fontStyle: "italic", textTransform: "lowercase" }}>central vol. 1</span>
             </h2>
 
             <div style={{ marginTop: 28, display: "grid", gap: 16, maxWidth: 460 }}>
               <p style={{ fontSize: 16, lineHeight: 1.55, color: "rgba(0,0,0,0.78)", margin: 0 }}>
-                Día de puertas abiertas: estudio, galería y showroom funcionando en simultáneo. Comunidad, marcas y obras nuevas.
+                Primera edición del mercado de marcas, arte y comunidad en Centro Studio.
               </p>
 
               <dl style={{ margin: "12px 0 0", display: "grid", gridTemplateColumns: "auto 1fr", rowGap: 8, columnGap: 24, fontSize: 13 }}>
                 <dt style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(0,0,0,0.5)" }}>Fecha</dt>
-                <dd style={{ margin: 0 }}>Sábado 13 Junio 2026</dd>
+                <dd style={{ margin: 0 }}>Viernes 13 Junio 2026</dd>
                 <dt style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(0,0,0,0.5)" }}>Próximo</dt>
-                <dd style={{ margin: 0 }}>09 Jul · 2da presentación Vol. 48</dd>
+                <dd style={{ margin: 0 }}>Vol. 49 · Segunda edición · 19 a 00hs</dd>
                 <dt style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(0,0,0,0.5)" }}>Lugar</dt>
                 <dd style={{ margin: 0 }}>Av. Córdoba 857 · Retiro, CABA</dd>
               </dl>
