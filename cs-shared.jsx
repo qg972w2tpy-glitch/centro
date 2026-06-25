@@ -35,7 +35,7 @@ function Asterisk({ size = 14, color = "currentColor", spin = false, className =
 /* ---------------- I18N ---------------- */
 const I18N = {
   es: {
-    tagline: "Un espacio donde convive la escena",
+    tagline: "Estudio · Galería · Comunidad",
     location: "Buenos Aires — AR",
     nav: {
       tattoo: "Tatuaje",
@@ -75,7 +75,7 @@ const I18N = {
       eyebrow: "Estudio · Galería · Showroom · Espacio cultural",
       heroLine1: "Centro",
       heroLine2: "Studio",
-      heroSub: "Un espacio donde convive la escena.",
+      heroSub: "Estudio · Galería · Comunidad.",
       heroBody: "Tatuaje, arte, marcas y comunidad bajo un mismo techo, en el corazón de Buenos Aires.",
       scroll: "Scroll",
       areaIntro: "Cuatro disciplinas, un mismo espacio curado",
@@ -93,8 +93,8 @@ const I18N = {
       ],
       manifesto: [
         "No somos un estudio.",
-        "Somos un espacio cultural",
-        "donde convive la escena.",
+        "Somos estudio, galería",
+        "y comunidad.",
       ],
       featured: "Próximo evento",
       featuredEvent: "Apertura — Galería Vol. 48",

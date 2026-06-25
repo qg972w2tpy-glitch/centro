@@ -10,7 +10,7 @@ const TATTOO_ARTISTS = [
   { k: "fiebre",        name: "Nazareno González",    role: "Resident", styles: "Blackwork · Ilustrativo",  img: "/assets/artists/naza.jpg",      ig: "fiebre" },
   { k: "nella369",      name: "Agustín Nella",        role: "Resident", styles: "Gótico · Tribal",          img: "/assets/artists/nella.jpg",     ig: "nella369" },
   { k: "sufrodeamor",   name: "Camila Piña",          role: "Resident", styles: "Fine line · Ornamental",   img: "/assets/artists/cami.jpg",      ig: "sufrodeamor" },
-  { k: "c4talina",      name: "Catalina León",        role: "Resident", styles: "Blackwork",                img: "/assets/artists/cata.jpg",      ig: "c4talina" },
+  { k: "c4talina",      name: "Catalina",             role: "Resident", styles: "Blackwork",                img: "/assets/artists/cata.jpg",      ig: "c4talina" },
   { k: "facundo.void",  name: "Facundo",              role: "Resident", styles: "Fine line · Dotwork",      img: "/assets/artists/facu.jpg",      ig: "facundo.void" },
 ];
 

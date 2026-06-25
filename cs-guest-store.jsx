@@ -171,7 +171,24 @@ function StorePage() {
           ))}
         </div>
 
-        <div style={{ marginTop: 40, textAlign: "right" }}>
+        <div style={{ marginTop: 40, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+            <a
+              href={"https://wa.me/5492804777018?text=" + encodeURIComponent("Hola Centro, quiero sumar mi marca al showroom.")}
+              target="_blank" rel="noopener"
+              className="btn"
+            >
+              Quiero mi marca en Centro →
+            </a>
+            <a
+              href="https://www.instagram.com/centro___store/"
+              target="_blank" rel="noopener"
+              className="btn"
+              style={{ borderColor: "var(--hair-strong)", color: "rgba(0,0,0,0.6)" }}
+            >
+              @centro___store ↗
+            </a>
+          </div>
           <a href="#" className="btn btn-dark">Comprar online →</a>
         </div>
       </div>

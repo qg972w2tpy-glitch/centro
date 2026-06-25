@@ -766,7 +766,7 @@ const wzES = {
     { k: "fiebre",        role: "Resident", styles: "Blackwork ilustrativo",    img: "/assets/artists/naza.jpg",       sub: "Nazareno González" },
     { k: "nella369",      role: "Resident", styles: "Gótico · Tribal",          img: "/assets/artists/nella.jpg",      sub: "Agustín Nella" },
     { k: "sufrodeamor",   role: "Resident", styles: "Fine line · Ornamental",   img: "/assets/artists/cami.jpg",       sub: "Camila Piña" },
-    { k: "c4talina",      role: "Resident", styles: "Blackwork",                img: "/assets/artists/cata.jpg",       sub: "Catalina León" },
+    { k: "c4talina",      role: "Resident", styles: "Blackwork",                img: "/assets/artists/cata.jpg",       sub: "Catalina" },
     { k: "facundo.void",  role: "Resident", styles: "Fine line · Dotwork",      img: "/assets/artists/facu.jpg" },
   ],
   awayNote: "Actualmente de viaje",

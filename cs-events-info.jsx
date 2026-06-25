@@ -173,9 +173,9 @@ function About() {
         <div style={{ gridColumn: "span 12" }} className="ab-side">
           <div className="meta" style={{ marginBottom: 16 }}>[ A · Sobre Centro ]</div>
           <h2 className="display" style={{ fontSize: "clamp(40px, 6vw, 80px)", margin: 0, lineHeight: 0.98 }}>
-            Un espacio<br/>
-            <em>que convive</em><br/>
-            con la escena.<Asterisk size={28} />
+            Estudio.<br/>
+            <em>Galería.</em><br/>
+            Comunidad.<Asterisk size={28} />
           </h2>
         </div>
         <div style={{ gridColumn: "span 12" }} className="ab-side">
