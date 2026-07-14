@@ -1,4 +1,4 @@
-// Gallery page — Vol. 48 Re-colección — bordo accents, editorial trash
+// Gallery page — Vol. 48 Entre oro, hielo y hueso — gold accents, editorial trash
 
 function GalleryCarousel({ images, interval = 3000 }) {
   const [idx, setIdx] = React.useState(0);
@@ -37,44 +37,51 @@ function GalleryCarousel({ images, interval = 3000 }) {
         background: "rgba(0,0,0,0.65)", color: "#fff",
         padding: "6px 10px", fontSize: 10, letterSpacing: "0.1em",
         fontFamily: "var(--mono)", textTransform: "uppercase",
-      }}>— Apertura Vol. 48 · 09 mayo</div>
+      }}>— Apertura Vol. 48 · 09 julio</div>
     </div>
   );
 }
 
 const VOL48_OBRAS = [
-  { img: "/assets/obras/abril-amorosa.png",    artist: "Abril Barboza",         ig: "@abrilamorosa",       title: "Nunca volví a sentirme inmortal", year: 2024, tech: "Acrílico sobre lienzo",       dims: "140 × 70 cm",  trastienda: false },
-  { img: "/assets/obras/lara-belaglovski.png", artist: "Lara Belaglovsky",      ig: "@bravelar4",          title: "El tercer piso",                  year: 2024, tech: "Óleo sobre tela",             dims: "65 × 50 cm",   trastienda: false, rotation: 180 },
-  { img: "/assets/obras/carbon-based-kid.png", artist: "Julián Caprara Gatti",  ig: "@carbon.based.kid",   title: "Mi amor, mi amor",                year: 2024, tech: "Óleo sobre madera",           dims: "23 × 20 cm",   trastienda: false, rotation: -90 },
-  { img: "/assets/obras/coti.png",             artist: "Costanza Rossi",        ig: "@cowgirlcoti",        title: "Primicias del ritual",            year: 2026, tech: "Óleo sobre lienzo",           dims: "60 × 70 cm",   trastienda: false },
-  { img: "/assets/obras/cronico.png",          artist: "Nahuel Olivera",        ig: "@_cronico_",          title: "Mi ira en HD",                    year: 2025, tech: "Acrílico sobre lienzo",       dims: "100 × 80 cm",  trastienda: false },
-  { img: "/assets/obras/ailen-guerra.png",     artist: "Ailen Guerra",          ig: "@ailenguerraart",     title: "Ignorant",                        year: 2024, tech: "Óleo sobre lienzo de algodón",dims: "150 × 150 cm", trastienda: false },
-  { img: "/assets/obras/miguel.png",           artist: "M. Kittlein",           ig: "@m_kittlein",         title: "Lachechism",                      year: "2021/2026", tech: "Óleo sobre tela",      dims: "180 × 100 cm", trastienda: false },
-  { img: "/assets/obras/sofia-igenes.png",     artist: "Sofía Igenes",          ig: "@sofiaigenes",        title: "Concepción del hogar",            year: 2025, tech: "Óleo sobre tela",             dims: "50 × 50 cm",   trastienda: false, rotation: 180 },
-  { img: "/assets/obras/invloon.png",          artist: "Valentina Sol Andrés",  ig: "@invloon",            title: "Panteón de los heridos",          year: 2024, tech: "Óleo sobre plástico",         dims: "23 × 39 cm",   trastienda: false },
-  { img: "/assets/obras/guadeeh.jpg",          artist: "Guade Estienne",        ig: "@guadeeeh",           title: "El mar entre nosotros",           year: 2025, tech: "Óleo sobre tela",             dims: "60 × 60 cm",   trastienda: false, vendido: true },
-  { img: "/assets/obras/pilar-frelliaro.png",  artist: "Pilar Frelliaro",       ig: "@pilarfrelliaro",     title: "Todo esto es efímero",            year: 2025, tech: "Acrílico sobre MDF entelado", dims: "41 × 29 cm",   trastienda: false },
-  { img: "/assets/obras/willy-fishman.png",    artist: "Willy Fishman",         ig: "@willy_fishman",      title: "Bananafishbones",                 year: 2026, tech: "Acuarela sobre papel",        dims: "30 × 13 cm",   trastienda: false },
-  { img: "/assets/obras/collector.png",        artist: "Mox S. (Collector)",    ig: "@______collector",    title: "GeneSis",                         year: 2026, tech: "Técnica mixta",               dims: "51 × 59 cm",   trastienda: false },
-  { img: "/assets/obras/carlitos-wake.png",    artist: "Carlos Wake Carrera",   ig: "@carlitos_wake",      title: "Mahakala 1",                      year: 2025, tech: "Tinta y acuarela sobre papel",dims: "50 × 70 cm",   trastienda: false },
-  { img: "/assets/obras/skate-rat.png",        artist: "Skate Rat",             ig: "@skate.rat.tattoo",   title: "S/T",                             year: 2026, tech: "Aerógrafo y acrílico s/papel madera", dims: "76 × 55 cm", trastienda: false },
-  { img: "/assets/obras/lauta-suas.png",       artist: "Lautaro Suasnabar",     ig: "@lauta_suas",         title: "Ensalada de frutas",              year: 2026, tech: "Acuarela y tinta china",      dims: "70 × 50 cm",   trastienda: false },
-  { img: "/assets/obras/maxis.png",            artist: "Maxis",                 ig: "@maxis.sb",           title: "Relación sana",                   year: 2025, tech: "Lapicera sobre papel",        dims: "50 × 40 cm",   trastienda: false },
-  { img: "/assets/obras/situacion.png",        artist: "Situación",             ig: "@situaciooooooon",    title: "Situaciones paralelas",           year: 2026, tech: "Técnica mixta",               dims: "—",            trastienda: false },
-  { img: "/assets/obras/disle.jpeg",           artist: "Dislexical",            ig: "@disleeeeeee",        title: "CULTO AL MACHO",                  year: "2025-2026", tech: "Videoperformance, sangre falsa, tinta de tatuaje y acrílico sobre tela", dims: "—", trastienda: false },
-  { img: "/assets/obras/maruts.jpeg",          artist: "Vladimir Maruts Ballet", ig: "@maruts_ballet",     title: "gypsy tunning",                   year: 2025, tech: "Tapizado de colectivo",       dims: "80 × 150 cm",  trastienda: false },
-  { img: "/assets/obras/merycuneo.jpg",        artist: "Mery Cuneo",            ig: "@err0rdetype0",       title: "Par de Grifos",                   year: 2024, tech: "Acrílico sobre lienzo",       dims: "30 × 24 cm",   trastienda: false },
+  { img: "/assets/obras48/melon-manga.jpg",            artist: "Melón Manga",                    ig: "@melon_manga",                        title: "Ventana Interfaz",                        year: 2026, tech: "Instalación — ventana recuperada, 6 monitores CRT de 9\", video monocanal en loop", dims: "—" },
+  { img: "/assets/obras48/morena-spagnolo.jpg",        artist: "Morena Spagnolo",                ig: "@______collector",                    title: "S/T",                                     year: 2026, tech: "Acrílico sobre papel",                dims: "120 × 86 cm" },
+  { img: "/assets/obras48/rubi-kees.jpg",              artist: "Rubi Kees / Morena Spagnolo",    ig: "@rubi_____________ / @______collector", title: "S/T",                                   year: 2026, tech: "Tropical tricot, pelo artificial, lienzo", dims: "250 × 116 cm" },
+  { img: "/assets/obras48/juana-frontera.jpg",         artist: "Juana Frontera",                 ig: "@juanafrontera_",                     title: "Después del bosque",                      year: 2026, tech: "Ensamblaje escultórico",              dims: "160 × 110 cm" },
+  { img: "/assets/obras48/pilar-frelliaro.jpg",        artist: "Pilar Frelliaro",                ig: "@pilarfrelliaro",                     title: "el valor de lo sutil",                    year: 2025, tech: "Acrílico sobre lienzo",               dims: "59 × 90 cm" },
+  { img: "/assets/obras48/agustin-sirai.jpg",          artist: "Agustín Sirai",                  ig: "@agustinsirai",                       title: "Pieza",                                   year: 2025, tech: "Acrílico sobre papel",                dims: "35 × 42 cm" },
+  { img: "/assets/obras48/maruts-ballet.jpg",          artist: "Vladimir Maruts Ballet",         ig: "@maruts_ballet",                      title: "gypsy tunning",                           year: 2025, tech: "Tapizado de colectivo",               dims: "80 × 150 cm" },
+  { img: "/assets/obras48/camila-lezcano.jpg",         artist: "Camila Lezcano",                 ig: "@cami.lezca",                         title: "Polvo de estrellas",                      year: 2025, tech: "Acrílico sobre bastidor con marco de cartón", dims: "50 × 60 × 7 cm" },
+  { img: "/assets/obras48/guade-estienne.jpg",         artist: "Guadalupe Estienne",             ig: "@guadeeeh",                           title: "Que gane el quiero, la guerra del puedo", year: 2026, tech: "Óleo sobre lienzo",                   dims: "50 × 65 cm" },
+  { img: "/assets/obras48/sofia-igenes.jpg",           artist: "Sofía Igenes",                   ig: "@sofiaigenes",                        title: "la promesa del orden",                    year: 2026, tech: "Óleo sobre tela",                     dims: "40 × 20 cm" },
+  { img: "/assets/obras48/gustavo-poester.jpg",        artist: "Gustavo Poester",                ig: "@gupoester",                          title: "Catedral",                                year: 2026, tech: "Óleo sobre tela",                     dims: "90 × 120 cm" },
+  { img: "/assets/obras48/bruna-izquierdo.jpg",        artist: "Bruna Izquierdo",                ig: "@anurb.izquierdo",                    title: "Objetos de Contacto Alternativo",         year: 2024, tech: "Cerámica",                            dims: "Medidas variables" },
+  { img: "/assets/obras48/cassas-oreilly.jpg",         artist: "Ignacio Cassas y Sofía OReilly", ig: "@ignaciocassas / @sofiaoreilly",      title: "Ojalá poder escribir sobre un lago",      year: 2026, tech: "Acrílico sobre lienzo",               dims: "200 × 160 cm" },
+  { img: "/assets/obras48/abril-galmes-cultura.jpg",   artist: "Abril Galmes",                   ig: "@abrilgalmes",                        title: "Cultura de lo Nacional",                  year: 2026, tech: "Óleo sobre lienzo",                   dims: "50 × 70 cm" },
+  { img: "/assets/obras48/abril-galmes-sin-titulo.jpg", artist: "Abril Galmes",                  ig: "@abrilgalmes",                        title: "Sin título",                              year: 2026, tech: "Óleo sobre lienzo",                   dims: "100 × 150 cm" },
+  { img: "/assets/obras48/maria-cuneo.jpg",            artist: "Maria Cuneo",                    ig: "@err0rdetype0",                       title: "El Triunfo de mi muerte",                 year: 2024, tech: "Acrílico sobre lienzo",               dims: "32 × 27 cm" },
+  { img: "/assets/obras48/guido-orlando.jpg",          artist: "Guido Orlando",                  ig: "@elfalsificadorr",                    title: "La helada cautiva",                       year: 2026, tech: "Témpera y acuarela sobre papel",      dims: "35 × 50 cm" },
+  { img: "/assets/obras48/abril-amorosa.jpg",          artist: "Abril Barboza",                  ig: "@abrilamorosa",                       title: "Para todas aquellas personas que aun amo", year: 2025, tech: "Óleo sobre lienzo",                  dims: "100 × 100 cm" },
+  { img: "/assets/obras48/eva-moro-tesoro.jpg",        artist: "Eva Moro Cafiero",               ig: "@evamcaf",                            title: "Tesoro",                                  year: 2025, tech: "Prospección paleontológica sobre impresión 3D, displays recuperados, cemento y videoarte", dims: "25 × 25 × 12 cm" },
+  { img: "/assets/obras48/eva-moro-nido.jpg",          artist: "Eva Moro Cafiero",               ig: "@evamcaf",                            title: "Nido de un latido",                       year: 2025, tech: "Prospección paleontológica sobre impresión 3D, displays recuperados, cemento y videoarte", dims: "25 × 12 × 8 cm" },
+  { img: "/assets/obras48/kevin-colors.jpg",           artist: "Kevin Colors",                   ig: "@kevin.colors",                       title: "Hell is lovely",                          year: 2026, tech: "Instalación · Técnica mixta",         dims: "170 × 40 × 70 cm" },
+  { img: "/assets/obras48/sofia-alfageme.jpg",         artist: "Sofía Alfageme",                 ig: "@alfagememe",                         title: "Gran Hotel Bell Ville",                   year: 2026, tech: "Sublimación de fotografía analógica en tela", dims: "32 × 19 cm" },
+  { img: "/assets/obras48/roja-rex-apendices.jpg",     artist: "Roja Rex",                       ig: "@roja_rex",                           title: "Apéndices",                               year: 2025, tech: "Bordado a mano sobre tela de arpillera", dims: "50 × 50 cm" },
+  { img: "/assets/obras48/roja-rex-hawaii.jpg",        artist: "Roja Rex",                       ig: "@roja_rex",                           title: "Hawaii",                                  year: 2023, tech: "Bordado a mano sobre tela",           dims: "15 × 15 cm" },
+  { img: "/assets/obras48/analia-zalazar.jpg",         artist: "Analía Zalazar",                 ig: "@ana.lia.zalazar",                    title: "Arqueología de recuerdos",                year: 2026, tech: "Papel de seda sobre soportes de hierro", dims: "Medidas variables" },
+  { img: "/assets/obras48/camila-poteto.jpg",          artist: "Camila Poteto",                  ig: "@potetocu",                           title: "caza correosa corintia",                  year: 2026, tech: "Óleo sobre tabla",                    dims: "35 × 50 cm" },
+  { img: "/assets/obras48/paula-memi.jpg",             artist: "Paula Memi",                     ig: "@visionmagica2",                      title: "S/T",                                     year: 2026, tech: "Óleo sobre fibrofácil",               dims: "30 × 42 cm" },
+  { img: "/assets/obras48/matias-la-plata.jpg",        artist: "Matías La Plata",                ig: "@matiaslaplata_",                     title: "La consagración del guaymallen",          year: 2024, tech: "Acrílico sobre lienzo",               dims: "180 × 120 cm" },
+  { img: "/assets/obras48/situacion.jpg",              artist: "Situación",                      ig: "@situaciooooooon",                    title: "Juego",                                   year: 2026, tech: "Óleo sobre tela",                     dims: "150 × 100 cm" },
 ];
 
 function buyMailto(w) {
   const subject = `Consulta — ${w.title} (${w.artist})`;
   const body =
-    `Hola Centro,\n\nMe interesa la siguiente obra de la galería Vol. 48 (Re-colección):\n\n` +
+    `Hola Centro,\n\nMe interesa la siguiente obra de la galería Vol. 48 (Entre oro, hielo y hueso):\n\n` +
     `· Artista:   ${w.artist} (${w.ig})\n` +
     `· Obra:      ${w.title} (${w.year})\n` +
     `· Técnica:   ${w.tech}\n` +
     `· Medidas:   ${w.dims}\n` +
-    `${w.trastienda ? "· Disponible en trastienda\n" : ""}` +
     `\nQuisiera saber:\n[ ] precio y disponibilidad\n[ ] medios de pago\n[ ] envío o retiro en el espacio\n[ ] coordinar visita\n\n` +
     `Mis datos:\nNombre:\nTeléfono:\nCiudad:\n\nGracias.`;
   return "mailto:abrilmilenabarboza@gmail.com" +
@@ -83,45 +90,49 @@ function buyMailto(w) {
 }
 
 const EVENT_PHOTOS = [
-  "/assets/event/event-03.jpg",
-  "/assets/event/event-04.jpg",
-  "/assets/event/event-05.jpg",
-  "/assets/event/event-06.jpg",
-  "/assets/event/event-07.jpg",
-  "/assets/event/event-01.jpg",
-  "/assets/event/event-02.jpg",
+  "/assets/evento48/evento-01.jpg",
+  "/assets/evento48/evento-02.jpg",
+  "/assets/evento48/evento-03.jpg",
+  "/assets/evento48/evento-04.jpg",
+  "/assets/evento48/evento-05.jpg",
+  "/assets/evento48/evento-06.jpg",
+  "/assets/evento48/evento-07.jpg",
+  "/assets/evento48/evento-08.jpg",
 ];
 
+const VISIT_WPP_HREF = "https://wa.me/5492804777018?text=" +
+  encodeURIComponent("Hola Centro! Quiero visitar la galería — Vol. 48 \"Entre oro, hielo y hueso\". ¿Cuándo puedo coordinar una visita?");
+
 function GalleryPage() {
-  const bordo = "#8a1a16";
+  const oro = "#8a6d1a";
 
   return (
     <div className="page-fade" style={{ paddingTop: 64, paddingBottom: 80 }}>
       <SectionHeader index="05" kicker="Galería · Vol. 48" title={<>Galería<Asterisk size={48} /></>}
-        intro="Vol. 48 — Re-colección. Cuatro semanas de obra en convivencia con la práctica del tatuaje. En curso hasta el 9 de julio." />
+        intro="Vol. 48 — Entre oro, hielo y hueso. Una lectura de la argentinidad llevada a textura. Inauguró el 9 de julio. Visitas con cita previa." />
 
-      {/* Vol48 brand strip — bordo */}
+      {/* Vol48 brand strip — oro */}
       <div className="container" style={{ marginTop: 24 }}>
         <div style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
           gap: 28, flexWrap: "wrap",
-          background: bordo, color: "#fff",
+          background: oro, color: "#fff",
           padding: "20px 28px",
-          border: `1px solid ${bordo}`,
+          border: `1px solid ${oro}`,
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 22, flexWrap: "wrap" }}>
             <img src="/assets/vol48-logo.png" alt="Vol. 48"
               style={{ height: 64, filter: "brightness(0) invert(1)" }} />
             <div>
-              <div className="mono" style={{ fontSize: 11, letterSpacing: "0.1em", opacity: 0.8 }}>VOL. 48 · RE-COLECCIÓN</div>
+              <div className="mono" style={{ fontSize: 11, letterSpacing: "0.1em", opacity: 0.8 }}>VOL. 48 · ENTRE ORO, HIELO Y HUESO</div>
               <div className="display" style={{ fontSize: "clamp(18px, 2vw, 26px)", lineHeight: 1.1, marginTop: 4, maxWidth: 620 }}>
-                Coleccionar arte para la clase trabajadora <em style={{ fontWeight: 300 }}>es coleccionar tatuajes.</em>
+                Un muestrario para identificar <em style={{ fontWeight: 300 }}>nuestros colores llevados a textura.</em>
               </div>
             </div>
           </div>
           <div style={{ textAlign: "right", fontSize: 12, fontFamily: "var(--mono)" }}>
-            <div>Apertura · 09 May 26</div>
-            <div style={{ opacity: 0.85 }}>Cierre · 09 Jul 26</div>
+            <div>Apertura · 09 Jul 26</div>
+            <div style={{ opacity: 0.85 }}>En curso · cita previa</div>
           </div>
         </div>
       </div>
@@ -130,32 +141,32 @@ function GalleryPage() {
       <div className="container" style={{ marginTop: 80 }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 32 }}>
           <div style={{ gridColumn: "span 12" }} className="gl-img">
-            <div style={{ border: `1px solid ${bordo}`, overflow: "hidden" }}>
+            <div style={{ border: `1px solid ${oro}`, overflow: "hidden" }}>
               <GalleryCarousel images={EVENT_PHOTOS} interval={3000} />
             </div>
           </div>
           <div style={{ gridColumn: "span 12" }} className="gl-text">
-            <div className="meta" style={{ marginBottom: 14, color: bordo }}>[ Texto curatorial · re-colección ]</div>
+            <div className="meta" style={{ marginBottom: 14, color: oro }}>[ Texto curatorial · entre oro, hielo y hueso ]</div>
             <p className="display" style={{ fontSize: "clamp(22px, 2.4vw, 32px)", lineHeight: 1.3, margin: "0 0 20px", maxWidth: 560 }}>
-              Vol. 48 invita a la relectura del espacio del tatuaje como un <em style={{ color: bordo }}>taller de constante creación de arte</em>.
+              Habitamos una identidad construida de <em style={{ color: oro }}>sensaciones heterogéneas</em>.
             </p>
             <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(0,0,0,0.78)", maxWidth: 560, margin: "0 0 14px" }}>
-              En un contexto donde la lógica de apropiación material se intensifica, el cuerpo aparece como el último territorio de pertenencia. El tatuaje se vuelve una forma contemporánea de coleccionar arte.
+              Los símbolos más aclamados en el arte fueron una herencia europea que se inculcó en Argentina y se nos ha enseñado a digerir y avalar. Hoy en día, la iconografía que conforma el imaginario de nuestro país se compone de fragmentos que se recrean desde nuestro propio lenguaje. Por eso conformamos un muestrario para identificar nuestros colores llevados a textura:
             </p>
             <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(0,0,0,0.78)", maxWidth: 560, margin: "0 0 14px" }}>
-              Desde un lugar underground, proponemos reactivar la circulación del objeto artístico en convivencia con la producción de arte contemporáneo. <em style={{ color: bordo }}>¿Coleccionar arte puede dejar de ser un privilegio de clase?</em>
+              <strong>El oro</strong>, que es brillante por naturaleza, se presenta resignificado a un objeto íntimo. <strong>El hielo</strong> actúa como el detenimiento de un cambio potencial: materializa al frío para luego derramarse y cambiar de forma. <strong>El hueso</strong> es la reducción pura del ser humano, el archivo antropológico del hecho de que algo contuvo vida.
             </p>
             <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(0,0,0,0.78)", maxWidth: 560, margin: 0 }}>
-              <strong>Re-colección</strong> es la relectura del coleccionismo como arte-objeto y arte-piel. Sin un emisor y un receptor no hay diálogo. Por eso, los invitamos a convivir.
+              Proponemos leer la argentinidad en las nuevas formas de comunicar y de expresarse. <em style={{ color: oro }}>El énfasis está en defender una Nación que buscan que sea disuelta y recordar nuestra soberanía a pesar de las circunstancias.</em>
             </p>
-            <div style={{ display: "flex", gap: 28, marginTop: 32, paddingTop: 24, borderTop: `1px solid ${bordo}40` }}>
+            <div style={{ display: "flex", gap: 28, marginTop: 32, paddingTop: 24, borderTop: `1px solid ${oro}40` }}>
               <div>
                 <div className="meta">Apertura</div>
-                <div className="display" style={{ fontSize: 22, marginTop: 4 }}>09 May 26</div>
+                <div className="display" style={{ fontSize: 22, marginTop: 4 }}>09 Jul 26</div>
               </div>
               <div>
-                <div className="meta">Cierre</div>
-                <div className="display" style={{ fontSize: 22, marginTop: 4, color: bordo }}>09 Jul 26</div>
+                <div className="meta">Curaduría</div>
+                <div className="display" style={{ fontSize: 22, marginTop: 4, color: oro }}>Sistema 348</div>
               </div>
             </div>
           </div>
@@ -168,34 +179,34 @@ function GalleryPage() {
         `}</style>
       </div>
 
-      {/* Open Call */}
+      {/* Visitá la galería */}
       <div className="container" style={{ marginTop: 80 }}>
         <div style={{
           display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 32,
-          padding: "60px 48px", border: `2px solid ${bordo}`,
+          padding: "60px 48px", border: `2px solid ${oro}`,
           background: "#0c0c0c", color: "#fff",
         }}>
           <div style={{ gridColumn: "span 12" }} className="ga-side">
-            <div className="meta" style={{ marginBottom: 16, color: `${bordo}cc`, letterSpacing: "0.12em" }}>[ Open call · Vol. 48 ]</div>
+            <div className="meta" style={{ marginBottom: 16, color: `${oro}cc`, letterSpacing: "0.12em" }}>[ Visitas · Vol. 48 ]</div>
             <h3 className="display" style={{ fontSize: "clamp(32px, 4.5vw, 58px)", margin: "0 0 12px", lineHeight: 1, color: "#fff" }}>
-              Ya tenemos fecha para <em style={{ color: "#e87070" }}>el próximo volumen.</em>
+              La muestra está abierta <em style={{ color: "#d4b44a" }}>y te esperamos.</em>
             </h3>
           </div>
           <div style={{ gridColumn: "span 12" }} className="ga-side">
             <p style={{ fontSize: 16, lineHeight: 1.65, color: "rgba(255,255,255,0.75)", margin: "0 0 10px", maxWidth: 500 }}>
-              Estamos buscando artistas para formar parte de la próxima exposición de Centro.
-              Si hacés obra — pintura, ilustración, fotografía, objeto, técnica mixta — y te gustaría mostrarla en el espacio, este es tu momento.
+              Podés recorrer Vol. 48 — Entre oro, hielo y hueso en el espacio de Centro Studio.
+              Las visitas se coordinan <strong style={{ color: "#fff" }}>con cita previa</strong>, escribinos y armamos el encuentro.
             </p>
             <p style={{ fontSize: 15, lineHeight: 1.55, color: "rgba(255,255,255,0.5)", margin: "0 0 28px", maxWidth: 500 }}>
-              Completá el formulario con tu propuesta. Las respuestas están abiertas hasta cubrir el cupo.
+              La entrada es libre. También podés consultar por obras disponibles durante tu visita.
             </p>
             <a
-              href="https://docs.google.com/forms/d/1LKYjOX2kKbuXIE7LM7i4GhrisQz65tlJVyEp_4xIchs/edit"
+              href={VISIT_WPP_HREF}
               target="_blank" rel="noopener"
               className="btn"
               style={{ background: "#fff", color: "#000", borderColor: "#fff", textDecoration: "none", display: "inline-flex" }}
             >
-              Aplicar al Vol. 48 →
+              Quiero visitar la galería →
             </a>
           </div>
         </div>
@@ -208,12 +219,12 @@ function GalleryPage() {
       <div className="container" style={{ marginTop: 80 }}>
         <div style={{
           display: "flex", justifyContent: "space-between", alignItems: "baseline",
-          paddingBottom: 24, borderBottom: `2px solid ${bordo}`, flexWrap: "wrap", gap: 12,
+          paddingBottom: 24, borderBottom: `2px solid ${oro}`, flexWrap: "wrap", gap: 12,
         }}>
           <h2 className="display" style={{ fontSize: "clamp(36px, 5vw, 72px)", margin: 0 }}>
-            Selección de <em style={{ color: bordo }}>obras</em>
+            Selección de <em style={{ color: oro }}>obras</em>
           </h2>
-          <span className="mono" style={{ color: bordo }}>{VOL48_OBRAS.length} obras en circulación</span>
+          <span className="mono" style={{ color: oro }}>{VOL48_OBRAS.length} obras en circulación</span>
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 32, marginTop: 40 }}>
@@ -224,9 +235,9 @@ function GalleryPage() {
                 background: "#0c0c0c",
                 aspectRatio: "3/4",
                 overflow: "hidden",
-                border: `1px solid ${bordo}30`,
+                border: `1px solid ${oro}30`,
               }}>
-                <img src={w.img} alt={w.title}
+                <img src={w.img} alt={w.title} loading="lazy"
                   style={{
                     width: "100%", height: "100%",
                     objectFit: "cover",
@@ -274,7 +285,7 @@ function GalleryPage() {
               ) : (
                 <a href={buyMailto(w)} className="btn" style={{
                   textDecoration: "none", fontSize: 12, padding: "10px 14px",
-                  borderColor: bordo, color: bordo,
+                  borderColor: oro, color: oro,
                   alignSelf: "flex-start",
                 }}>
                   Consultar / Comprar →

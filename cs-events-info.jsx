@@ -2,10 +2,10 @@
 
 const UPCOMING_EVENTS = [
   { k: "Galería Vol. 49 · Segunda edición", date: "Por confirmar", time: "19 a 00hs", desc: "Segunda edición del ciclo. Galería, showroom y comunidad en simultáneo.", cat: "Galería" },
-  { k: "Segunda presentación · Galería Vol. 48", date: "09 Julio 2026", time: "20h", desc: "Cierre de Re-colección con nueva lectura de obra y comunidad.", cat: "Galería" },
 ];
 
 const PAST_EVENTS = [
+  { k: "Inauguración · Entre oro, hielo y hueso — Vol. 48", date: "09 Julio 2026", time: "20h", desc: "Apertura de la muestra curada por Sistema 348. En curso — visitas con cita previa.", cat: "Galería" },
   { k: "Mercado Central Vol. 1", date: "13 Junio 2026", time: "—", desc: "Primera edición del mercado de marcas, arte y comunidad en Centro Studio.", cat: "Mercado", video: "/assets/event/videoevento.mp4" },
   { k: "Inauguración Galería Vol. 48", date: "09 Mayo 2026", time: "20h", desc: "Apertura de Re-colección. Cuatro semanas de obra y comunidad.", cat: "Galería" },
   { k: "Inauguración Centro Studio", date: "21 Febrero 2026", time: "—", desc: "Apertura del nuevo espacio en Av. Córdoba 857 · Retiro.", cat: "Apertura" },
