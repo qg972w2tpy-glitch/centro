@@ -1,4 +1,4 @@
-// Gallery page — Vol. 48 Entre oro, hielo y hueso — gold accents, editorial trash
+// Gallery page — Vol. 48 Entre oro, hielo y hueso — bordo accents, editorial trash
 
 function GalleryCarousel({ images, interval = 3000 }) {
   const [idx, setIdx] = React.useState(0);
@@ -104,35 +104,64 @@ const VISIT_WPP_HREF = "https://wa.me/5492804777018?text=" +
   encodeURIComponent("Hola Centro! Quiero visitar la galería — Vol. 48 \"Entre oro, hielo y hueso\". ¿Cuándo puedo coordinar una visita?");
 
 function GalleryPage() {
-  const oro = "#8a6d1a";
+  const bordo = "#8a1a16";
+  const dorado = "#b8860b";
+  const celeste = "#5e9ec4";
+  const crema = "#f0e6d2";
+  const [lightbox, setLightbox] = React.useState(null);
+
+  React.useEffect(() => {
+    if (!lightbox) return;
+    const onKey = (e) => { if (e.key === "Escape") setLightbox(null); };
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [lightbox]);
 
   return (
     <div className="page-fade" style={{ paddingTop: 64, paddingBottom: 80 }}>
       <SectionHeader index="05" kicker="Galería · Vol. 48" title={<>Galería<Asterisk size={48} /></>}
         intro="Vol. 48 — Entre oro, hielo y hueso. Una lectura de la argentinidad llevada a textura. Inauguró el 9 de julio. Visitas con cita previa." />
 
-      {/* Vol48 brand strip — oro */}
+      {/* Vol48 brand strip — bordo */}
       <div className="container" style={{ marginTop: 24 }}>
         <div style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
           gap: 28, flexWrap: "wrap",
-          background: oro, color: "#fff",
+          background: bordo, color: "#fff",
           padding: "20px 28px",
-          border: `1px solid ${oro}`,
+          border: `1px solid ${bordo}`,
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 22, flexWrap: "wrap" }}>
             <img src="/assets/vol48-logo.png" alt="Vol. 48"
               style={{ height: 64, filter: "brightness(0) invert(1)" }} />
             <div>
-              <div className="mono" style={{ fontSize: 11, letterSpacing: "0.1em", opacity: 0.8 }}>VOL. 48 · ENTRE ORO, HIELO Y HUESO</div>
+              <div className="mono" style={{ fontSize: 11, letterSpacing: "0.1em" }}>
+                <span style={{ opacity: 0.8 }}>VOL. 48 · ENTRE </span>
+                <span style={{ color: "#e7c55a" }}>ORO</span>
+                <span style={{ opacity: 0.8 }}>, </span>
+                <span style={{ color: "#a8d8f0" }}>HIELO</span>
+                <span style={{ opacity: 0.8 }}> Y </span>
+                <span style={{ color: crema }}>HUESO</span>
+              </div>
               <div className="display" style={{ fontSize: "clamp(18px, 2vw, 26px)", lineHeight: 1.1, marginTop: 4, maxWidth: 620 }}>
                 Un muestrario para identificar <em style={{ fontWeight: 300 }}>nuestros colores llevados a textura.</em>
               </div>
             </div>
           </div>
-          <div style={{ textAlign: "right", fontSize: 12, fontFamily: "var(--mono)" }}>
-            <div>Apertura · 09 Jul 26</div>
-            <div style={{ opacity: 0.85 }}>En curso · cita previa</div>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 12 }}>
+            <div style={{ textAlign: "right", fontSize: 12, fontFamily: "var(--mono)" }}>
+              <div>Apertura · 09 Jul 26</div>
+              <div style={{ opacity: 0.85 }}>En curso · cita previa</div>
+            </div>
+            <a href="/assets/catalogo-vol48.pdf" target="_blank" rel="noopener"
+              className="btn"
+              style={{ background: "transparent", color: "#fff", borderColor: "#fff", textDecoration: "none", padding: "10px 16px", fontSize: 11.5 }}>
+              Ver catálogo →
+            </a>
           </div>
         </div>
       </div>
@@ -141,32 +170,32 @@ function GalleryPage() {
       <div className="container" style={{ marginTop: 80 }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 32 }}>
           <div style={{ gridColumn: "span 12" }} className="gl-img">
-            <div style={{ border: `1px solid ${oro}`, overflow: "hidden" }}>
+            <div style={{ border: `1px solid ${bordo}`, overflow: "hidden" }}>
               <GalleryCarousel images={EVENT_PHOTOS} interval={3000} />
             </div>
           </div>
           <div style={{ gridColumn: "span 12" }} className="gl-text">
-            <div className="meta" style={{ marginBottom: 14, color: oro }}>[ Texto curatorial · entre oro, hielo y hueso ]</div>
+            <div className="meta" style={{ marginBottom: 14, color: bordo }}>[ Texto curatorial · entre oro, hielo y hueso ]</div>
             <p className="display" style={{ fontSize: "clamp(22px, 2.4vw, 32px)", lineHeight: 1.3, margin: "0 0 20px", maxWidth: 560 }}>
-              Habitamos una identidad construida de <em style={{ color: oro }}>sensaciones heterogéneas</em>.
+              Habitamos una identidad construida de <em style={{ color: bordo }}>sensaciones heterogéneas</em>.
             </p>
             <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(0,0,0,0.78)", maxWidth: 560, margin: "0 0 14px" }}>
               Los símbolos más aclamados en el arte fueron una herencia europea que se inculcó en Argentina y se nos ha enseñado a digerir y avalar. Hoy en día, la iconografía que conforma el imaginario de nuestro país se compone de fragmentos que se recrean desde nuestro propio lenguaje. Por eso conformamos un muestrario para identificar nuestros colores llevados a textura:
             </p>
             <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(0,0,0,0.78)", maxWidth: 560, margin: "0 0 14px" }}>
-              <strong>El oro</strong>, que es brillante por naturaleza, se presenta resignificado a un objeto íntimo. <strong>El hielo</strong> actúa como el detenimiento de un cambio potencial: materializa al frío para luego derramarse y cambiar de forma. <strong>El hueso</strong> es la reducción pura del ser humano, el archivo antropológico del hecho de que algo contuvo vida.
+              <strong style={{ color: dorado }}>El oro</strong>, que es brillante por naturaleza, se presenta resignificado a un objeto íntimo. <strong style={{ color: celeste }}>El hielo</strong> actúa como el detenimiento de un cambio potencial: materializa al frío para luego derramarse y cambiar de forma. <strong style={{ background: crema, padding: "1px 6px" }}>El hueso</strong> es la reducción pura del ser humano, el archivo antropológico del hecho de que algo contuvo vida.
             </p>
             <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(0,0,0,0.78)", maxWidth: 560, margin: 0 }}>
-              Proponemos leer la argentinidad en las nuevas formas de comunicar y de expresarse. <em style={{ color: oro }}>El énfasis está en defender una Nación que buscan que sea disuelta y recordar nuestra soberanía a pesar de las circunstancias.</em>
+              Proponemos leer la argentinidad en las nuevas formas de comunicar y de expresarse. <em style={{ color: bordo }}>El énfasis está en defender una Nación que buscan que sea disuelta y recordar nuestra soberanía a pesar de las circunstancias.</em>
             </p>
-            <div style={{ display: "flex", gap: 28, marginTop: 32, paddingTop: 24, borderTop: `1px solid ${oro}40` }}>
+            <div style={{ display: "flex", gap: 28, marginTop: 32, paddingTop: 24, borderTop: `1px solid ${bordo}40` }}>
               <div>
                 <div className="meta">Apertura</div>
                 <div className="display" style={{ fontSize: 22, marginTop: 4 }}>09 Jul 26</div>
               </div>
               <div>
                 <div className="meta">Curaduría</div>
-                <div className="display" style={{ fontSize: 22, marginTop: 4, color: oro }}>Sistema 348</div>
+                <div className="display" style={{ fontSize: 22, marginTop: 4, color: bordo }}>Sistema 348</div>
               </div>
             </div>
           </div>
@@ -183,18 +212,18 @@ function GalleryPage() {
       <div className="container" style={{ marginTop: 80 }}>
         <div style={{
           display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 32,
-          padding: "60px 48px", border: `2px solid ${oro}`,
+          padding: "60px 48px", border: `2px solid ${bordo}`,
           background: "#0c0c0c", color: "#fff",
         }}>
           <div style={{ gridColumn: "span 12" }} className="ga-side">
-            <div className="meta" style={{ marginBottom: 16, color: `${oro}cc`, letterSpacing: "0.12em" }}>[ Visitas · Vol. 48 ]</div>
+            <div className="meta" style={{ marginBottom: 16, color: `${bordo}cc`, letterSpacing: "0.12em" }}>[ Visitas · Vol. 48 ]</div>
             <h3 className="display" style={{ fontSize: "clamp(32px, 4.5vw, 58px)", margin: "0 0 12px", lineHeight: 1, color: "#fff" }}>
-              La muestra está abierta <em style={{ color: "#d4b44a" }}>y te esperamos.</em>
+              La muestra está abierta <em style={{ color: "#e87070" }}>y te esperamos.</em>
             </h3>
           </div>
           <div style={{ gridColumn: "span 12" }} className="ga-side">
             <p style={{ fontSize: 16, lineHeight: 1.65, color: "rgba(255,255,255,0.75)", margin: "0 0 10px", maxWidth: 500 }}>
-              Podés recorrer Vol. 48 — Entre oro, hielo y hueso en el espacio de Centro Studio.
+              Podés recorrer Vol. 48 — Entre <span style={{ color: "#e7c55a" }}>oro</span>, <span style={{ color: "#a8d8f0" }}>hielo</span> y <span style={{ color: crema }}>hueso</span> en el espacio de Centro Studio.
               Las visitas se coordinan <strong style={{ color: "#fff" }}>con cita previa</strong>, escribinos y armamos el encuentro.
             </p>
             <p style={{ fontSize: 15, lineHeight: 1.55, color: "rgba(255,255,255,0.5)", margin: "0 0 28px", maxWidth: 500 }}>
@@ -219,24 +248,28 @@ function GalleryPage() {
       <div className="container" style={{ marginTop: 80 }}>
         <div style={{
           display: "flex", justifyContent: "space-between", alignItems: "baseline",
-          paddingBottom: 24, borderBottom: `2px solid ${oro}`, flexWrap: "wrap", gap: 12,
+          paddingBottom: 24, borderBottom: `2px solid ${bordo}`, flexWrap: "wrap", gap: 12,
         }}>
           <h2 className="display" style={{ fontSize: "clamp(36px, 5vw, 72px)", margin: 0 }}>
-            Selección de <em style={{ color: oro }}>obras</em>
+            Selección de <em style={{ color: bordo }}>obras</em>
           </h2>
-          <span className="mono" style={{ color: oro }}>{VOL48_OBRAS.length} obras en circulación</span>
+          <span className="mono" style={{ color: bordo }}>{VOL48_OBRAS.length} obras en circulación</span>
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 32, marginTop: 40 }}>
           {VOL48_OBRAS.map((w, i) => (
             <article key={i} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <div style={{
-                position: "relative",
-                background: "#0c0c0c",
-                aspectRatio: "3/4",
-                overflow: "hidden",
-                border: `1px solid ${oro}30`,
-              }}>
+              <div
+                onClick={() => setLightbox(w)}
+                title="Ver en alta calidad"
+                style={{
+                  position: "relative",
+                  background: "#0c0c0c",
+                  aspectRatio: "3/4",
+                  overflow: "hidden",
+                  border: `1px solid ${bordo}30`,
+                  cursor: "zoom-in",
+                }}>
                 <img src={w.img} alt={w.title} loading="lazy"
                   style={{
                     width: "100%", height: "100%",
@@ -285,7 +318,7 @@ function GalleryPage() {
               ) : (
                 <a href={buyMailto(w)} className="btn" style={{
                   textDecoration: "none", fontSize: 12, padding: "10px 14px",
-                  borderColor: oro, color: oro,
+                  borderColor: bordo, color: bordo,
                   alignSelf: "flex-start",
                 }}>
                   Consultar / Comprar →
@@ -296,6 +329,43 @@ function GalleryPage() {
         </div>
       </div>
 
+      {/* Lightbox — obra en alta calidad */}
+      {lightbox && (
+        <div
+          onClick={() => setLightbox(null)}
+          style={{
+            position: "fixed", inset: 0, zIndex: 999,
+            background: "rgba(0,0,0,0.94)",
+            display: "flex", flexDirection: "column",
+            alignItems: "center", justifyContent: "center",
+            padding: "24px 16px", cursor: "zoom-out",
+          }}>
+          <img
+            src={lightbox.img.replace("/obras48/", "/obras48-full/")}
+            alt={lightbox.title}
+            style={{
+              maxWidth: "94vw", maxHeight: "82vh",
+              objectFit: "contain", display: "block",
+              boxShadow: "0 20px 80px rgba(0,0,0,0.6)",
+            }} />
+          <div style={{ marginTop: 18, textAlign: "center", color: "#fff", maxWidth: 600 }}>
+            <div style={{ fontWeight: 600, fontSize: 15 }}>{lightbox.artist}</div>
+            <div className="meta" style={{ color: "rgba(255,255,255,0.65)", marginTop: 4 }}>
+              <em>{lightbox.title}</em>, {lightbox.year} — {lightbox.dims}
+            </div>
+          </div>
+          <button
+            onClick={() => setLightbox(null)}
+            aria-label="Cerrar"
+            style={{
+              position: "fixed", top: 18, right: 22,
+              color: "#fff", fontSize: 30, lineHeight: 1,
+              fontFamily: "var(--sans)",
+            }}>
+            ×
+          </button>
+        </div>
+      )}
 
     </div>
   );
