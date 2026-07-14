@@ -114,8 +114,49 @@ const CATALOG_PAGES = Array.from({ length: 54 }, (_, i) =>
 function CatalogViewer({ onClose }) {
   const bookRef = React.useRef(null);
   const flipRef = React.useRef(null);
+  const scrollRef = React.useRef(null);
+  const zoomRef = React.useRef(1);
   const [ready, setReady] = React.useState(false);
   const [pageNum, setPageNum] = React.useState(0);
+  const [zoom, setZoom] = React.useState(1);
+
+  const applyZoom = (z) => {
+    const clamped = Math.min(3, Math.max(1, z));
+    zoomRef.current = clamped;
+    setZoom(clamped);
+  };
+
+  // PageFlip (size: stretch) se re-acomoda con el resize de window
+  React.useEffect(() => {
+    window.dispatchEvent(new Event("resize"));
+  }, [zoom]);
+
+  // Pinch para zoom en touch (listener nativo no-pasivo para poder preventDefault)
+  React.useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    let start = null;
+    const dist = (e) => Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    const ts = (e) => { if (e.touches.length === 2) start = { d: dist(e), z: zoomRef.current }; };
+    const tm = (e) => {
+      if (start && e.touches.length === 2) {
+        e.preventDefault();
+        applyZoom(start.z * (dist(e) / start.d));
+      }
+    };
+    const te = () => { start = null; };
+    el.addEventListener("touchstart", ts, { passive: false });
+    el.addEventListener("touchmove", tm, { passive: false });
+    el.addEventListener("touchend", te);
+    return () => {
+      el.removeEventListener("touchstart", ts);
+      el.removeEventListener("touchmove", tm);
+      el.removeEventListener("touchend", te);
+    };
+  }, []);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -124,8 +165,9 @@ function CatalogViewer({ onClose }) {
       const pf = new St.PageFlip(bookRef.current, {
         width: 504, height: 714,
         size: "stretch",
-        minWidth: 240, maxWidth: 560,
-        minHeight: 340, maxHeight: 794,
+        minWidth: 130, maxWidth: 1100,
+        minHeight: 184, maxHeight: 1558,
+        usePortrait: false,
         showCover: true,
         maxShadowOpacity: 0.35,
         flippingTime: 700,
@@ -186,33 +228,50 @@ function CatalogViewer({ onClose }) {
         </div>
       </div>
 
-      <div style={{
-        flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
-        padding: "0 12px", minHeight: 0,
+      <div ref={scrollRef} style={{
+        flex: 1, overflow: "auto", minHeight: 0,
+        display: "flex", padding: "0 12px",
+        touchAction: "pan-x pan-y",
       }}>
-        <div style={{ width: "min(94vw, 1140px)", height: "min(76vh, 800px)" }}>
+        <div style={{
+          width: `calc(min(94vw, 1140px) * ${zoom})`,
+          height: `calc(min(72vh, 800px) * ${zoom})`,
+          margin: "auto", flexShrink: 0,
+        }}>
           <div ref={bookRef} />
         </div>
       </div>
 
       <div style={{
         display: "flex", alignItems: "center", justifyContent: "center",
-        gap: 22, padding: "12px 20px 20px", color: "#fff",
+        gap: 12, padding: "12px 12px 16px", color: "#fff", flexWrap: "wrap",
       }}>
         <button onClick={() => flipRef.current && flipRef.current.flipPrev()}
           className="mono" style={{ color: "#fff", fontSize: 12, padding: "8px 14px", border: "1px solid rgba(255,255,255,0.35)" }}>
           ← Anterior
         </button>
-        <span className="mono" style={{ fontSize: 10.5, color: "rgba(255,255,255,0.55)", minWidth: 70, textAlign: "center" }}>
+        <span className="mono" style={{ fontSize: 10.5, color: "rgba(255,255,255,0.55)", minWidth: 62, textAlign: "center" }}>
           {ready ? `${pageNum + 1} / ${CATALOG_PAGES.length}` : "Cargando…"}
         </span>
         <button onClick={() => flipRef.current && flipRef.current.flipNext()}
           className="mono" style={{ color: "#fff", fontSize: 12, padding: "8px 14px", border: "1px solid rgba(255,255,255,0.35)" }}>
           Siguiente →
         </button>
+        <span style={{ width: 10 }} />
+        <button onClick={() => applyZoom(zoom - 0.5)} aria-label="Alejar"
+          className="mono" style={{ color: "#fff", fontSize: 15, padding: "8px 13px", border: "1px solid rgba(255,255,255,0.35)", opacity: zoom <= 1 ? 0.4 : 1 }}>
+          −
+        </button>
+        <span className="mono" style={{ fontSize: 10.5, color: "rgba(255,255,255,0.55)", minWidth: 42, textAlign: "center" }}>
+          {Math.round(zoom * 100)}%
+        </span>
+        <button onClick={() => applyZoom(zoom + 0.5)} aria-label="Acercar"
+          className="mono" style={{ color: "#fff", fontSize: 15, padding: "8px 13px", border: "1px solid rgba(255,255,255,0.35)", opacity: zoom >= 3 ? 0.4 : 1 }}>
+          +
+        </button>
       </div>
-      <div className="mono" style={{ textAlign: "center", paddingBottom: 14, fontSize: 9.5, color: "rgba(255,255,255,0.35)", letterSpacing: "0.1em" }}>
-        ARRASTRÁ LAS ESQUINAS DE LAS PÁGINAS · TAMBIÉN FUNCIONAN LAS FLECHAS DEL TECLADO
+      <div className="mono" style={{ textAlign: "center", paddingBottom: 14, fontSize: 9.5, color: "rgba(255,255,255,0.35)", letterSpacing: "0.1em", padding: "0 16px 14px" }}>
+        ARRASTRÁ LAS ESQUINAS PARA PASAR DE HOJA · PELLIZCÁ O USÁ +/− PARA ZOOM
       </div>
     </div>,
     document.body
@@ -375,7 +434,7 @@ function GalleryPage() {
           <span className="mono" style={{ color: bordo }}>{VOL48_OBRAS.length} obras en circulación</span>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 32, marginTop: 40 }}>
+        <div className="obra-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 32, marginTop: 40 }}>
           {VOL48_OBRAS.map((w, i) => (
             <article key={i} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               <div
@@ -446,6 +505,14 @@ function GalleryPage() {
             </article>
           ))}
         </div>
+        <style>{`
+          @media (max-width: 767px) {
+            .obra-grid { grid-template-columns: 1fr 1fr !important; gap: 14px !important; }
+            .obra-grid article header div:first-child { font-size: 13px !important; }
+            .obra-grid dl { font-size: 10.5px !important; grid-template-columns: 52px 1fr !important; column-gap: 8px !important; }
+            .obra-grid .btn { font-size: 10px !important; padding: 8px 10px !important; }
+          }
+        `}</style>
       </div>
 
       {/* Lightbox — obra en alta calidad (portal: el transform de .page-fade rompe position:fixed) */}
