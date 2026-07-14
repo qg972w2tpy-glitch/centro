@@ -115,46 +115,116 @@ function CatalogViewer({ onClose }) {
   const bookRef = React.useRef(null);
   const flipRef = React.useRef(null);
   const scrollRef = React.useRef(null);
+  const wrapRef = React.useRef(null);
+  const zoomLabelRef = React.useRef(null);
   const zoomRef = React.useRef(1);
+  const pendingScrollRef = React.useRef(null);
   const [ready, setReady] = React.useState(false);
   const [pageNum, setPageNum] = React.useState(0);
   const [zoom, setZoom] = React.useState(1);
 
-  const applyZoom = (z) => {
-    const clamped = Math.min(3, Math.max(1, z));
-    zoomRef.current = clamped;
-    setZoom(clamped);
+  const clampZoom = (z) => Math.min(3, Math.max(1, z));
+
+  // Commit de zoom manteniendo fijo el punto focal (focalX/Y relativos al viewport del scroller)
+  const commitZoom = (newZ, focalX, focalY) => {
+    const sc = scrollRef.current;
+    if (!sc) return;
+    const z0 = zoomRef.current;
+    const z1 = clampZoom(newZ);
+    if (z1 === z0) return;
+    const fx = focalX != null ? focalX : sc.clientWidth / 2;
+    const fy = focalY != null ? focalY : sc.clientHeight / 2;
+    pendingScrollRef.current = {
+      left: (sc.scrollLeft + fx) * (z1 / z0) - fx,
+      top: (sc.scrollTop + fy) * (z1 / z0) - fy,
+    };
+    zoomRef.current = z1;
+    setZoom(z1);
   };
 
-  // PageFlip (size: stretch) se re-acomoda con el resize de window
+  // Tras el re-layout: PageFlip (size: stretch) se recalcula con el resize
+  // de window, y recién después reposicionamos el scroll al punto focal.
   React.useEffect(() => {
     window.dispatchEvent(new Event("resize"));
+    const pending = pendingScrollRef.current;
+    if (!pending) return;
+    pendingScrollRef.current = null;
+    requestAnimationFrame(() => {
+      const sc = scrollRef.current;
+      if (!sc) return;
+      sc.scrollLeft = pending.left;
+      sc.scrollTop = pending.top;
+    });
   }, [zoom]);
 
-  // Pinch para zoom en touch (listener nativo no-pasivo para poder preventDefault)
+  // Pinch: preview con transform (fluido, sin re-layout) y commit al soltar.
   React.useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    let start = null;
+    const sc = scrollRef.current;
+    if (!sc) return;
+    let pinch = null;
+
     const dist = (e) => Math.hypot(
       e.touches[0].clientX - e.touches[1].clientX,
       e.touches[0].clientY - e.touches[1].clientY
     );
-    const ts = (e) => { if (e.touches.length === 2) start = { d: dist(e), z: zoomRef.current }; };
-    const tm = (e) => {
-      if (start && e.touches.length === 2) {
-        e.preventDefault();
-        applyZoom(start.z * (dist(e) / start.d));
+    const midpoint = (e) => {
+      const rect = sc.getBoundingClientRect();
+      return {
+        x: (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left,
+        y: (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top,
+      };
+    };
+
+    const onStart = (e) => {
+      if (e.touches.length !== 2) return;
+      const m = midpoint(e);
+      pinch = { d0: dist(e), z0: zoomRef.current, fx: m.x, fy: m.y, s: 1 };
+      const wrap = wrapRef.current;
+      if (wrap) {
+        wrap.style.transformOrigin = `${sc.scrollLeft + m.x}px ${sc.scrollTop + m.y}px`;
+        wrap.style.willChange = "transform";
+      }
+      if (bookRef.current) bookRef.current.style.pointerEvents = "none";
+    };
+    const onMove = (e) => {
+      if (!pinch || e.touches.length !== 2) return;
+      e.preventDefault();
+      const raw = pinch.z0 * (dist(e) / pinch.d0);
+      pinch.s = clampZoom(raw) / pinch.z0;
+      const wrap = wrapRef.current;
+      if (wrap) wrap.style.transform = `scale(${pinch.s})`;
+      if (zoomLabelRef.current) {
+        zoomLabelRef.current.textContent = `${Math.round(pinch.z0 * pinch.s * 100)}%`;
       }
     };
-    const te = () => { start = null; };
-    el.addEventListener("touchstart", ts, { passive: false });
-    el.addEventListener("touchmove", tm, { passive: false });
-    el.addEventListener("touchend", te);
+    const onEnd = (e) => {
+      if (!pinch || e.touches.length >= 2) return;
+      const { z0, s, fx, fy } = pinch;
+      pinch = null;
+      const wrap = wrapRef.current;
+      if (wrap) {
+        wrap.style.transform = "";
+        wrap.style.willChange = "";
+      }
+      if (bookRef.current) bookRef.current.style.pointerEvents = "";
+      commitZoom(z0 * s, fx, fy);
+    };
+    // captura: PageFlip no debe ver el segundo dedo
+    const swallow = (e) => {
+      if (e.touches.length >= 2) e.stopPropagation();
+    };
+
+    sc.addEventListener("touchstart", swallow, { capture: true, passive: true });
+    sc.addEventListener("touchstart", onStart, { passive: true });
+    sc.addEventListener("touchmove", onMove, { passive: false });
+    sc.addEventListener("touchend", onEnd);
+    sc.addEventListener("touchcancel", onEnd);
     return () => {
-      el.removeEventListener("touchstart", ts);
-      el.removeEventListener("touchmove", tm);
-      el.removeEventListener("touchend", te);
+      sc.removeEventListener("touchstart", swallow, { capture: true });
+      sc.removeEventListener("touchstart", onStart);
+      sc.removeEventListener("touchmove", onMove);
+      sc.removeEventListener("touchend", onEnd);
+      sc.removeEventListener("touchcancel", onEnd);
     };
   }, []);
 
@@ -171,7 +241,7 @@ function CatalogViewer({ onClose }) {
         showCover: true,
         maxShadowOpacity: 0.35,
         flippingTime: 700,
-        mobileScrollSupport: false,
+        mobileScrollSupport: true,
       });
       pf.loadFromImages(CATALOG_PAGES);
       pf.on("flip", (e) => setPageNum(e.data));
@@ -232,8 +302,9 @@ function CatalogViewer({ onClose }) {
         flex: 1, overflow: "auto", minHeight: 0,
         display: "flex", padding: "0 12px",
         touchAction: "pan-x pan-y",
+        overscrollBehavior: "contain",
       }}>
-        <div style={{
+        <div ref={wrapRef} style={{
           width: `calc(min(94vw, 1140px) * ${zoom})`,
           height: `calc(min(72vh, 800px) * ${zoom})`,
           margin: "auto", flexShrink: 0,
@@ -258,20 +329,26 @@ function CatalogViewer({ onClose }) {
           Siguiente →
         </button>
         <span style={{ width: 10 }} />
-        <button onClick={() => applyZoom(zoom - 0.5)} aria-label="Alejar"
+        <button onClick={() => commitZoom(zoomRef.current - 0.5)} aria-label="Alejar"
           className="mono" style={{ color: "#fff", fontSize: 15, padding: "8px 13px", border: "1px solid rgba(255,255,255,0.35)", opacity: zoom <= 1 ? 0.4 : 1 }}>
           −
         </button>
-        <span className="mono" style={{ fontSize: 10.5, color: "rgba(255,255,255,0.55)", minWidth: 42, textAlign: "center" }}>
+        <span ref={zoomLabelRef} className="mono" style={{ fontSize: 10.5, color: "rgba(255,255,255,0.55)", minWidth: 42, textAlign: "center" }}>
           {Math.round(zoom * 100)}%
         </span>
-        <button onClick={() => applyZoom(zoom + 0.5)} aria-label="Acercar"
+        <button onClick={() => commitZoom(zoomRef.current + 0.5)} aria-label="Acercar"
           className="mono" style={{ color: "#fff", fontSize: 15, padding: "8px 13px", border: "1px solid rgba(255,255,255,0.35)", opacity: zoom >= 3 ? 0.4 : 1 }}>
           +
         </button>
+        {zoom > 1 && (
+          <button onClick={() => commitZoom(1)}
+            className="mono" style={{ color: "rgba(255,255,255,0.6)", fontSize: 10.5, padding: "8px 10px", textDecoration: "underline" }}>
+            Restablecer
+          </button>
+        )}
       </div>
-      <div className="mono" style={{ textAlign: "center", paddingBottom: 14, fontSize: 9.5, color: "rgba(255,255,255,0.35)", letterSpacing: "0.1em", padding: "0 16px 14px" }}>
-        ARRASTRÁ LAS ESQUINAS PARA PASAR DE HOJA · PELLIZCÁ O USÁ +/− PARA ZOOM
+      <div className="mono" style={{ textAlign: "center", fontSize: 9.5, color: "rgba(255,255,255,0.35)", letterSpacing: "0.1em", padding: "0 16px 14px" }}>
+        ARRASTRÁ LAS ESQUINAS PARA PASAR DE HOJA · PELLIZCÁ PARA HACER ZOOM · CON ZOOM, UN DEDO PANEA Y LOS BOTONES PASAN DE HOJA
       </div>
     </div>,
     document.body
