@@ -116,7 +116,6 @@ function CatalogViewer({ onClose }) {
   const flipRef = React.useRef(null);
   const scrollRef = React.useRef(null);
   const wrapRef = React.useRef(null);
-  const zoomLabelRef = React.useRef(null);
   const zoomRef = React.useRef(1);
   const pendingScrollRef = React.useRef(null);
   const [ready, setReady] = React.useState(false);
@@ -198,9 +197,6 @@ function CatalogViewer({ onClose }) {
       pinch.s = clampZoom(raw) / pinch.z0;
       const wrap = wrapRef.current;
       if (wrap) wrap.style.transform = `scale(${pinch.s})`;
-      if (zoomLabelRef.current) {
-        zoomLabelRef.current.textContent = `${Math.round(pinch.z0 * pinch.s * 100)}%`;
-      }
     };
     const onEnd = (e) => {
       if (!pinch || e.touches.length >= 2) return;
@@ -290,20 +286,15 @@ function CatalogViewer({ onClose }) {
       display: "flex", flexDirection: "column",
     }}>
       <div style={{
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "14px 20px", color: "#fff", gap: 12, flexWrap: "wrap",
+        display: "flex", alignItems: "center", justifyContent: "flex-end",
+        padding: "10px 16px", color: "#fff", gap: 18,
       }}>
-        <div className="mono" style={{ fontSize: 11, letterSpacing: "0.1em", color: "rgba(255,255,255,0.8)" }}>
-          CATÁLOGO · VOL. 48 — ENTRE ORO, HIELO Y HUESO
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-          <a href="/assets/catalogo-vol48.pdf" target="_blank" rel="noopener"
-            className="mono" style={{ color: "rgba(255,255,255,0.6)", fontSize: 10.5, textDecoration: "underline" }}>
-            Descargar PDF
-          </a>
-          <button onClick={onClose} aria-label="Cerrar"
-            style={{ color: "#fff", fontSize: 28, lineHeight: 1 }}>×</button>
-        </div>
+        <a href="/assets/catalogo-vol48.pdf" target="_blank" rel="noopener"
+          className="mono" style={{ color: "rgba(255,255,255,0.6)", fontSize: 10.5, textDecoration: "underline" }}>
+          Descargar PDF
+        </a>
+        <button onClick={onClose} aria-label="Cerrar"
+          style={{ color: "#fff", fontSize: 28, lineHeight: 1 }}>×</button>
       </div>
 
       <div style={{ position: "relative", flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
@@ -315,7 +306,7 @@ function CatalogViewer({ onClose }) {
         }}>
           <div ref={wrapRef} style={{
             width: `calc(min(94vw, 1140px) * ${zoom})`,
-            height: `calc(min(72vh, 800px) * ${zoom})`,
+            height: `calc(min(78vh, 860px) * ${zoom})`,
             margin: "auto", flexShrink: 0,
           }}>
             <div ref={bookRef} />
@@ -375,9 +366,6 @@ function CatalogViewer({ onClose }) {
           className="mono" style={{ color: "#fff", fontSize: 15, padding: "8px 13px", border: "1px solid rgba(255,255,255,0.35)", opacity: zoom <= 1 ? 0.4 : 1 }}>
           −
         </button>
-        <span ref={zoomLabelRef} className="mono" style={{ fontSize: 10.5, color: "rgba(255,255,255,0.55)", minWidth: 42, textAlign: "center" }}>
-          {Math.round(zoom * 100)}%
-        </span>
         <button onClick={() => commitZoom(zoomRef.current + 0.5)} aria-label="Acercar"
           className="mono" style={{ color: "#fff", fontSize: 15, padding: "8px 13px", border: "1px solid rgba(255,255,255,0.35)", opacity: zoom >= 3 ? 0.4 : 1 }}>
           +
@@ -388,9 +376,6 @@ function CatalogViewer({ onClose }) {
             Restablecer
           </button>
         )}
-      </div>
-      <div className="mono" style={{ textAlign: "center", fontSize: 9.5, color: "rgba(255,255,255,0.35)", letterSpacing: "0.1em", padding: "0 16px 14px" }}>
-        ARRASTRÁ LAS ESQUINAS PARA PASAR DE HOJA · PELLIZCÁ PARA HACER ZOOM · CON ZOOM, UN DEDO PANEA Y LAS FLECHAS PASAN DE HOJA
       </div>
     </div>,
     document.body
