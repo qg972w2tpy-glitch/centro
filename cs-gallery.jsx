@@ -146,6 +146,7 @@ function CatalogViewer({ onClose }) {
   // de window, y recién después reposicionamos el scroll al punto focal.
   React.useEffect(() => {
     window.dispatchEvent(new Event("resize"));
+    if (bookRef.current) bookRef.current.style.pointerEvents = zoom > 1 ? "none" : "";
     const pending = pendingScrollRef.current;
     if (!pending) return;
     pendingScrollRef.current = null;
@@ -210,8 +211,10 @@ function CatalogViewer({ onClose }) {
         wrap.style.transform = "";
         wrap.style.willChange = "";
       }
-      if (bookRef.current) bookRef.current.style.pointerEvents = "";
       commitZoom(z0 * s, fx, fy);
+      // con zoom, el libro no recibe gestos: un dedo panea, las hojas
+      // se pasan con los botones laterales
+      if (bookRef.current) bookRef.current.style.pointerEvents = zoomRef.current > 1 ? "none" : "";
     };
     // Safari iOS: sus eventos propietarios de gesto disparan el zoom
     // nativo de página por encima de touch-action
@@ -303,19 +306,53 @@ function CatalogViewer({ onClose }) {
         </div>
       </div>
 
-      <div ref={scrollRef} style={{
-        flex: 1, overflow: "auto", minHeight: 0,
-        display: "flex", padding: "0 12px",
-        touchAction: "pan-x pan-y",
-        overscrollBehavior: "contain",
-      }}>
-        <div ref={wrapRef} style={{
-          width: `calc(min(94vw, 1140px) * ${zoom})`,
-          height: `calc(min(72vh, 800px) * ${zoom})`,
-          margin: "auto", flexShrink: 0,
+      <div style={{ position: "relative", flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
+        <div ref={scrollRef} style={{
+          flex: 1, overflow: "auto", minHeight: 0,
+          display: "flex", padding: "0 12px",
+          touchAction: "pan-x pan-y",
+          overscrollBehavior: "contain",
         }}>
-          <div ref={bookRef} />
+          <div ref={wrapRef} style={{
+            width: `calc(min(94vw, 1140px) * ${zoom})`,
+            height: `calc(min(72vh, 800px) * ${zoom})`,
+            margin: "auto", flexShrink: 0,
+          }}>
+            <div ref={bookRef} />
+          </div>
         </div>
+
+        {/* Con zoom: botones flotantes para pasar de hoja */}
+        {zoom > 1 && ready && (
+          <React.Fragment>
+            <button
+              onClick={() => flipRef.current && flipRef.current.flipPrev()}
+              aria-label="Hoja anterior"
+              style={{
+                position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)",
+                width: 42, height: 42, borderRadius: "50%",
+                background: "rgba(255,255,255,0.94)", color: "#000",
+                fontSize: 22, lineHeight: 1,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                boxShadow: "0 4px 18px rgba(0,0,0,0.45)", zIndex: 5,
+              }}>
+              ‹
+            </button>
+            <button
+              onClick={() => flipRef.current && flipRef.current.flipNext()}
+              aria-label="Hoja siguiente"
+              style={{
+                position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)",
+                width: 42, height: 42, borderRadius: "50%",
+                background: "rgba(255,255,255,0.94)", color: "#000",
+                fontSize: 22, lineHeight: 1,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                boxShadow: "0 4px 18px rgba(0,0,0,0.45)", zIndex: 5,
+              }}>
+              ›
+            </button>
+          </React.Fragment>
+        )}
       </div>
 
       <div style={{
@@ -353,7 +390,7 @@ function CatalogViewer({ onClose }) {
         )}
       </div>
       <div className="mono" style={{ textAlign: "center", fontSize: 9.5, color: "rgba(255,255,255,0.35)", letterSpacing: "0.1em", padding: "0 16px 14px" }}>
-        ARRASTRÁ LAS ESQUINAS PARA PASAR DE HOJA · PELLIZCÁ PARA HACER ZOOM · CON ZOOM, UN DEDO PANEA Y LOS BOTONES PASAN DE HOJA
+        ARRASTRÁ LAS ESQUINAS PARA PASAR DE HOJA · PELLIZCÁ PARA HACER ZOOM · CON ZOOM, UN DEDO PANEA Y LAS FLECHAS PASAN DE HOJA
       </div>
     </div>,
     document.body
