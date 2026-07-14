@@ -84,7 +84,7 @@ function buyMailto(w) {
     `· Medidas:   ${w.dims}\n` +
     `\nQuisiera saber:\n[ ] precio y disponibilidad\n[ ] medios de pago\n[ ] envío o retiro en el espacio\n[ ] coordinar visita\n\n` +
     `Mis datos:\nNombre:\nTeléfono:\nCiudad:\n\nGracias.`;
-  return "mailto:abrilmilenabarboza@gmail.com" +
+  return "mailto:vol48galeria@gmail.com" +
     "?subject=" + encodeURIComponent(subject) +
     "&body=" + encodeURIComponent(body);
 }
@@ -100,8 +100,124 @@ const EVENT_PHOTOS = [
   "/assets/evento48/evento-08.jpg",
 ];
 
-const VISIT_WPP_HREF = "https://wa.me/5492804777018?text=" +
-  encodeURIComponent("Hola Centro! Quiero visitar la galería — Vol. 48 \"Entre oro, hielo y hueso\". ¿Cuándo puedo coordinar una visita?");
+const VISIT_MAILTO = "mailto:vol48galeria@gmail.com" +
+  "?subject=" + encodeURIComponent("Visita a la galería — Vol. 48 Entre oro, hielo y hueso") +
+  "&body=" + encodeURIComponent(
+    "Hola Centro!\n\nQuiero visitar la galería Vol. 48 — Entre oro, hielo y hueso.\n\n" +
+    "Días y horarios en los que puedo:\n\nCantidad de personas:\n\nNombre:\n\nGracias!"
+  );
+
+/* ============== CATÁLOGO — flipbook ============== */
+const CATALOG_PAGES = Array.from({ length: 54 }, (_, i) =>
+  `/assets/catalogo48/page-${String(i + 1).padStart(2, "0")}.jpg`);
+
+function CatalogViewer({ onClose }) {
+  const bookRef = React.useRef(null);
+  const flipRef = React.useRef(null);
+  const [ready, setReady] = React.useState(false);
+  const [pageNum, setPageNum] = React.useState(0);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    const init = () => {
+      if (cancelled || flipRef.current || !bookRef.current || !window.St) return;
+      const pf = new St.PageFlip(bookRef.current, {
+        width: 504, height: 714,
+        size: "stretch",
+        minWidth: 240, maxWidth: 560,
+        minHeight: 340, maxHeight: 794,
+        showCover: true,
+        maxShadowOpacity: 0.35,
+        flippingTime: 700,
+        mobileScrollSupport: false,
+      });
+      pf.loadFromImages(CATALOG_PAGES);
+      pf.on("flip", (e) => setPageNum(e.data));
+      flipRef.current = pf;
+      setReady(true);
+    };
+    if (window.St && window.St.PageFlip) {
+      init();
+    } else {
+      let s = document.getElementById("pageflip-lib");
+      if (!s) {
+        s = document.createElement("script");
+        s.id = "pageflip-lib";
+        s.src = "https://unpkg.com/page-flip@2.0.7/dist/js/page-flip.browser.js";
+        document.head.appendChild(s);
+      }
+      s.addEventListener("load", init);
+    }
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowRight" && flipRef.current) flipRef.current.flipNext();
+      if (e.key === "ArrowLeft" && flipRef.current) flipRef.current.flipPrev();
+    };
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      cancelled = true;
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+      if (flipRef.current) { try { flipRef.current.destroy(); } catch (err) {} }
+    };
+  }, []);
+
+  return ReactDOM.createPortal(
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 998,
+      background: "rgba(8,8,8,0.97)",
+      display: "flex", flexDirection: "column",
+    }}>
+      <div style={{
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "14px 20px", color: "#fff", gap: 12, flexWrap: "wrap",
+      }}>
+        <div className="mono" style={{ fontSize: 11, letterSpacing: "0.1em", color: "rgba(255,255,255,0.8)" }}>
+          CATÁLOGO · VOL. 48 — ENTRE ORO, HIELO Y HUESO
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+          <a href="/assets/catalogo-vol48.pdf" target="_blank" rel="noopener"
+            className="mono" style={{ color: "rgba(255,255,255,0.6)", fontSize: 10.5, textDecoration: "underline" }}>
+            Descargar PDF
+          </a>
+          <button onClick={onClose} aria-label="Cerrar"
+            style={{ color: "#fff", fontSize: 28, lineHeight: 1 }}>×</button>
+        </div>
+      </div>
+
+      <div style={{
+        flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
+        padding: "0 12px", minHeight: 0,
+      }}>
+        <div style={{ width: "min(94vw, 1140px)", height: "min(76vh, 800px)" }}>
+          <div ref={bookRef} />
+        </div>
+      </div>
+
+      <div style={{
+        display: "flex", alignItems: "center", justifyContent: "center",
+        gap: 22, padding: "12px 20px 20px", color: "#fff",
+      }}>
+        <button onClick={() => flipRef.current && flipRef.current.flipPrev()}
+          className="mono" style={{ color: "#fff", fontSize: 12, padding: "8px 14px", border: "1px solid rgba(255,255,255,0.35)" }}>
+          ← Anterior
+        </button>
+        <span className="mono" style={{ fontSize: 10.5, color: "rgba(255,255,255,0.55)", minWidth: 70, textAlign: "center" }}>
+          {ready ? `${pageNum + 1} / ${CATALOG_PAGES.length}` : "Cargando…"}
+        </span>
+        <button onClick={() => flipRef.current && flipRef.current.flipNext()}
+          className="mono" style={{ color: "#fff", fontSize: 12, padding: "8px 14px", border: "1px solid rgba(255,255,255,0.35)" }}>
+          Siguiente →
+        </button>
+      </div>
+      <div className="mono" style={{ textAlign: "center", paddingBottom: 14, fontSize: 9.5, color: "rgba(255,255,255,0.35)", letterSpacing: "0.1em" }}>
+        ARRASTRÁ LAS ESQUINAS DE LAS PÁGINAS · TAMBIÉN FUNCIONAN LAS FLECHAS DEL TECLADO
+      </div>
+    </div>,
+    document.body
+  );
+}
 
 function GalleryPage() {
   const bordo = "#8a1a16";
@@ -109,6 +225,7 @@ function GalleryPage() {
   const celeste = "#5e9ec4";
   const crema = "#f0e6d2";
   const [lightbox, setLightbox] = React.useState(null);
+  const [catalogOpen, setCatalogOpen] = React.useState(false);
 
   React.useEffect(() => {
     if (!lightbox) return;
@@ -157,11 +274,11 @@ function GalleryPage() {
               <div>Apertura · 09 Jul 26</div>
               <div style={{ opacity: 0.85 }}>En curso · cita previa</div>
             </div>
-            <a href="/assets/catalogo-vol48.pdf" target="_blank" rel="noopener"
+            <button onClick={() => setCatalogOpen(true)}
               className="btn"
-              style={{ background: "transparent", color: "#fff", borderColor: "#fff", textDecoration: "none", padding: "10px 16px", fontSize: 11.5 }}>
+              style={{ background: "transparent", color: "#fff", borderColor: "#fff", padding: "10px 16px", fontSize: 11.5 }}>
               Ver catálogo →
-            </a>
+            </button>
           </div>
         </div>
       </div>
@@ -194,8 +311,8 @@ function GalleryPage() {
                 <div className="display" style={{ fontSize: 22, marginTop: 4 }}>09 Jul 26</div>
               </div>
               <div>
-                <div className="meta">Curaduría</div>
-                <div className="display" style={{ fontSize: 22, marginTop: 4, color: bordo }}>Sistema 348</div>
+                <div className="meta">Visitas</div>
+                <div className="display" style={{ fontSize: 22, marginTop: 4, color: bordo }}>Cita previa</div>
               </div>
             </div>
           </div>
@@ -210,18 +327,18 @@ function GalleryPage() {
 
       {/* Visitá la galería */}
       <div className="container" style={{ marginTop: 80 }}>
-        <div style={{
-          display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 32,
-          padding: "60px 48px", border: `2px solid ${bordo}`,
+        <div className="ga-block" style={{
+          display: "grid", gridTemplateColumns: "1fr", gap: 28,
+          padding: "36px 22px", border: `2px solid ${bordo}`,
           background: "#0c0c0c", color: "#fff",
         }}>
-          <div style={{ gridColumn: "span 12" }} className="ga-side">
+          <div className="ga-side">
             <div className="meta" style={{ marginBottom: 16, color: `${bordo}cc`, letterSpacing: "0.12em" }}>[ Visitas · Vol. 48 ]</div>
             <h3 className="display" style={{ fontSize: "clamp(32px, 4.5vw, 58px)", margin: "0 0 12px", lineHeight: 1, color: "#fff" }}>
               La muestra está abierta <em style={{ color: "#e87070" }}>y te esperamos.</em>
             </h3>
           </div>
-          <div style={{ gridColumn: "span 12" }} className="ga-side">
+          <div className="ga-side">
             <p style={{ fontSize: 16, lineHeight: 1.65, color: "rgba(255,255,255,0.75)", margin: "0 0 10px", maxWidth: 500 }}>
               Podés recorrer Vol. 48 — Entre <span style={{ color: "#e7c55a" }}>oro</span>, <span style={{ color: "#a8d8f0" }}>hielo</span> y <span style={{ color: crema }}>hueso</span> en el espacio de Centro Studio.
               Las visitas se coordinan <strong style={{ color: "#fff" }}>con cita previa</strong>, escribinos y armamos el encuentro.
@@ -230,8 +347,7 @@ function GalleryPage() {
               La entrada es libre. También podés consultar por obras disponibles durante tu visita.
             </p>
             <a
-              href={VISIT_WPP_HREF}
-              target="_blank" rel="noopener"
+              href={VISIT_MAILTO}
               className="btn"
               style={{ background: "#fff", color: "#000", borderColor: "#fff", textDecoration: "none", display: "inline-flex" }}
             >
@@ -240,7 +356,10 @@ function GalleryPage() {
           </div>
         </div>
         <style>{`
-          @media (min-width: 900px) { .ga-side { grid-column: span 6 !important; } }
+          @media (min-width: 900px) {
+            .ga-block { grid-template-columns: repeat(12, 1fr) !important; padding: 60px 48px !important; gap: 32px !important; }
+            .ga-side { grid-column: span 6 !important; }
+          }
         `}</style>
       </div>
 
@@ -329,8 +448,8 @@ function GalleryPage() {
         </div>
       </div>
 
-      {/* Lightbox — obra en alta calidad */}
-      {lightbox && (
+      {/* Lightbox — obra en alta calidad (portal: el transform de .page-fade rompe position:fixed) */}
+      {lightbox && ReactDOM.createPortal(
         <div
           onClick={() => setLightbox(null)}
           style={{
@@ -364,8 +483,12 @@ function GalleryPage() {
             }}>
             ×
           </button>
-        </div>
+        </div>,
+        document.body
       )}
+
+      {/* Catálogo flipbook */}
+      {catalogOpen && <CatalogViewer onClose={() => setCatalogOpen(false)} />}
 
     </div>
   );

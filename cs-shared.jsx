@@ -99,7 +99,7 @@ const I18N = {
       featured: "En curso",
       featuredEvent: "Vol. 48 — Entre oro, hielo y hueso",
       featuredDate: "Inauguró 09 Jul · visitas con cita previa",
-      featuredBody: "Una lectura de la argentinidad llevada a textura. Curaduría de Sistema 348. Coordiná tu visita por WhatsApp.",
+      featuredBody: "Una lectura de la argentinidad llevada a textura. Escribinos para coordinar tu visita.",
     },
     footer: {
       address: "Av. Córdoba 857\nRetiro, CABA",
@@ -181,7 +181,7 @@ const I18N = {
       featured: "On view",
       featuredEvent: "Vol. 48 — Entre oro, hielo y hueso",
       featuredDate: "Opened Jul 09 · visits by appointment",
-      featuredBody: "A reading of Argentine identity rendered as texture. Curated by Sistema 348. Book your visit via WhatsApp.",
+      featuredBody: "A reading of Argentine identity rendered as texture. Email us to book your visit.",
     },
     footer: {
       address: "Av. Córdoba 857\nRetiro, CABA",
