@@ -175,8 +175,11 @@ function CatalogViewer({ onClose }) {
       };
     };
 
+    // Todo en fase de captura: interceptamos la pinza antes de que
+    // PageFlip vea los toques, sin bloquearnos a nosotros mismos.
     const onStart = (e) => {
       if (e.touches.length !== 2) return;
+      e.stopPropagation();
       const m = midpoint(e);
       pinch = { d0: dist(e), z0: zoomRef.current, fx: m.x, fy: m.y, s: 1 };
       const wrap = wrapRef.current;
@@ -189,6 +192,7 @@ function CatalogViewer({ onClose }) {
     const onMove = (e) => {
       if (!pinch || e.touches.length !== 2) return;
       e.preventDefault();
+      e.stopPropagation();
       const raw = pinch.z0 * (dist(e) / pinch.d0);
       pinch.s = clampZoom(raw) / pinch.z0;
       const wrap = wrapRef.current;
@@ -209,22 +213,23 @@ function CatalogViewer({ onClose }) {
       if (bookRef.current) bookRef.current.style.pointerEvents = "";
       commitZoom(z0 * s, fx, fy);
     };
-    // captura: PageFlip no debe ver el segundo dedo
-    const swallow = (e) => {
-      if (e.touches.length >= 2) e.stopPropagation();
-    };
+    // Safari iOS: sus eventos propietarios de gesto disparan el zoom
+    // nativo de página por encima de touch-action
+    const preventGesture = (e) => e.preventDefault();
 
-    sc.addEventListener("touchstart", swallow, { capture: true, passive: true });
-    sc.addEventListener("touchstart", onStart, { passive: true });
-    sc.addEventListener("touchmove", onMove, { passive: false });
-    sc.addEventListener("touchend", onEnd);
-    sc.addEventListener("touchcancel", onEnd);
+    sc.addEventListener("touchstart", onStart, { capture: true, passive: true });
+    sc.addEventListener("touchmove", onMove, { capture: true, passive: false });
+    sc.addEventListener("touchend", onEnd, { capture: true });
+    sc.addEventListener("touchcancel", onEnd, { capture: true });
+    sc.addEventListener("gesturestart", preventGesture);
+    sc.addEventListener("gesturechange", preventGesture);
     return () => {
-      sc.removeEventListener("touchstart", swallow, { capture: true });
-      sc.removeEventListener("touchstart", onStart);
-      sc.removeEventListener("touchmove", onMove);
-      sc.removeEventListener("touchend", onEnd);
-      sc.removeEventListener("touchcancel", onEnd);
+      sc.removeEventListener("touchstart", onStart, { capture: true });
+      sc.removeEventListener("touchmove", onMove, { capture: true });
+      sc.removeEventListener("touchend", onEnd, { capture: true });
+      sc.removeEventListener("touchcancel", onEnd, { capture: true });
+      sc.removeEventListener("gesturestart", preventGesture);
+      sc.removeEventListener("gesturechange", preventGesture);
     };
   }, []);
 
