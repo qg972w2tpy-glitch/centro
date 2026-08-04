@@ -343,9 +343,9 @@ function Hero({ setRoute, time, t }) {
       {/* Velo para contraste */}
       <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.32)" }} />
 
-      {/* Meta superior — como el hero original, en blanco sobre la imagen */}
+      {/* Meta superior — debajo del navbar fijo (64px), en blanco sobre la imagen */}
       <div style={{
-        position: "absolute", top: 0, left: 0, right: 0, zIndex: 2,
+        position: "absolute", top: 64, left: 0, right: 0, zIndex: 2,
         display: "flex", justifyContent: "space-between", alignItems: "flex-start",
         gap: 24, padding: "20px clamp(16px, 5vw, 36px) 0",
         fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase",
@@ -357,25 +357,50 @@ function Hero({ setRoute, time, t }) {
         </span>
       </div>
 
-      {/* Logo 3D girando */}
-      <div style={{ position: "relative", zIndex: 2 }}>
+      {/* ( logo ) — los paréntesis llegan desde fuera de pantalla,
+          forman el logo en el centro y recién ahí empieza a girar */}
+      <div style={{ position: "relative", zIndex: 2, display: "flex", alignItems: "center", gap: "clamp(10px, 2.2vw, 32px)" }}>
+        <span className="h-par h-par-l">(</span>
         <div className="h-logo3d">
           <div className="h-logo3d-spin">
             <img src="/assets/centro-logo.png" alt="Centro Studio" />
           </div>
         </div>
+        <span className="h-par h-par-r">)</span>
       </div>
 
       <style>{`
-        .h-logo3d {
-          width: clamp(150px, 24vw, 300px);
-          height: clamp(150px, 24vw, 300px);
-          perspective: 900px;
+        .h-par {
+          font-family: var(--akira);
+          font-size: clamp(64px, 11vw, 150px);
+          font-weight: 800;
+          color: #fff;
+          line-height: 1;
+          transform: translateY(-0.06em);
         }
+        .h-par-l { animation: parInL 1.5s cubic-bezier(.16, 1, .3, 1) .35s both; }
+        .h-par-r { animation: parInR 1.5s cubic-bezier(.16, 1, .3, 1) .35s both; }
+        @keyframes parInL {
+          from { transform: translateX(-75vw) translateY(-0.06em); }
+          to   { transform: translateX(0)     translateY(-0.06em); }
+        }
+        @keyframes parInR {
+          from { transform: translateX(75vw) translateY(-0.06em); }
+          to   { transform: translateX(0)    translateY(-0.06em); }
+        }
+
+        .h-logo3d {
+          width: clamp(140px, 22vw, 280px);
+          height: clamp(140px, 22vw, 280px);
+          perspective: 900px;
+          animation: logoFade 1s ease .7s both;
+        }
+        @keyframes logoFade { from { opacity: 0; } to { opacity: 1; } }
         .h-logo3d-spin {
           width: 100%; height: 100%;
           transform-style: preserve-3d;
-          animation: heroSpin 5s cubic-bezier(.55,.05,.45,.95) infinite;
+          /* quieto mientras los paréntesis llegan; a los 2s arranca el giro */
+          animation: heroSpin 5s cubic-bezier(.55,.05,.45,.95) 2s infinite;
         }
         .h-logo3d-spin img {
           width: 100%; height: 100%; object-fit: contain;
