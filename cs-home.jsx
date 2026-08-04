@@ -436,23 +436,8 @@ function Disciplines({ setRoute, t }) {
   const items = (t.home.areas || []).map((a, i) => ({ ...a, route: routes[i] }));
 
   return (
-    <section style={{ background: "#fff", padding: "clamp(56px, 10vw, 140px) 0 60px", borderTop: "1px solid #000" }}>
+    <section style={{ background: "#fff", padding: "clamp(20px, 3vw, 40px) 0 60px", borderTop: "1px solid #000" }}>
       <div style={{ padding: "0 clamp(16px, 5vw, 36px)" }}>
-        <div style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "baseline",
-          marginBottom: 56,
-          gap: 16,
-          fontSize: 11,
-          letterSpacing: "0.08em",
-          textTransform: "uppercase",
-          fontWeight: 600,
-        }}>
-          <span>I — {t.home.areaIntro || "Disciplinas"}</span>
-          <span style={{ color: "rgba(0,0,0,0.45)" }}>04 · {t.home.eyebrow || "espacios"}</span>
-        </div>
-
         <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
           {items.map((a, i) => {
             const active = hover === i;
