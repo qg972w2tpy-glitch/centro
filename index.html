@@ -7,6 +7,14 @@
 <link rel="icon" type="image/png" href="/assets/centro-logo.png" />
 <link rel="apple-touch-icon" href="/assets/centro-logo.png" />
 <style>
+  @font-face {
+    font-family: "Akira";
+    src: url("/assets/Akira Expanded Demo.otf") format("opentype");
+    font-weight: 800;
+    font-style: normal;
+    font-display: block;
+  }
+
   :root {
     --bg: #FFFFFF;
     --fg: #000000;
@@ -15,6 +23,7 @@
     --hair: rgba(0,0,0,0.12);
     --hair-strong: rgba(0,0,0,0.4);
     --muted: rgba(0,0,0,0.55);
+    --akira: "Akira", "Helvetica Neue", Helvetica, Arial, sans-serif;
     --display: "Helvetica Neue", Helvetica, Arial, sans-serif;
     --sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
     --mono: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -207,6 +216,70 @@
 
   body.nav-open { overflow: hidden; }
 
+  /* ── Hero logo animation — Akira font ── */
+  .h-chr {
+    font-family: var(--akira);
+    font-size: clamp(72px, 13vw, 168px);
+    line-height: 1;
+    display: inline-block;
+    user-select: none;
+  }
+  /* Brackets: salen a los bordes y crecen hasta llenar la pantalla */
+  .h-chr-l { animation: hChrL 1.7s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards; }
+  .h-chr-r { animation: hChrR 1.7s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards; }
+  @keyframes hChrL {
+    from { transform: translateX(0)     scale(1);   }
+    to   { transform: translateX(-46vw) scale(5.5); }
+  }
+  @keyframes hChrR {
+    from { transform: translateX(0)    scale(1);   }
+    to   { transform: translateX(46vw) scale(5.5); }
+  }
+  /* Asterisco wrapper: escala */
+  .h-ast-wrap {
+    position: relative;
+    flex-shrink: 0;
+    width: clamp(72px, 13vw, 168px);
+    height: clamp(72px, 13vw, 168px);
+    overflow: hidden;
+    animation: hAstGrow 1.7s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards;
+  }
+  @keyframes hAstGrow {
+    from { transform: scale(1);   }
+    to   { transform: scale(1.6); }
+  }
+  /* Fotos: detrás del asterisco */
+  .h-ast-photo {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    transition: opacity 0.2s ease;
+  }
+  /* Asterisco: div cuadrado que llena el wrapper → rota sobre su propio eje */
+  .h-ast-chr {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    animation: hAstSpin 0.9s linear infinite;
+    z-index: 2;
+  }
+  @keyframes hAstSpin {
+    to { transform: rotate(360deg); }
+  }
+  /* Texto Centro Studio: aparece cuando los brackets terminan */
+  .h-title {
+    font-family: var(--akira);
+    font-size: clamp(20px, 3.2vw, 44px);
+    letter-spacing: 0.06em;
+    text-align: center;
+    margin-top: clamp(16px, 2.5vw, 36px);
+    animation: hTitleIn 0.9s ease 2.5s both;
+  }
+  @keyframes hTitleIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
   /* ── Critical: page-fade transform breaks position:fixed on loading screen ── */
   body.loading-active .page-fade { animation: none !important; transform: none !important; }
 
@@ -238,16 +311,16 @@
 </head>
 <body>
 <div id="root"></div>
-<script type="text/babel" src="/tweaks-panel.jsx?v=10"></script>
-<script type="text/babel" src="/cs-shared.jsx?v=10"></script>
-<script type="text/babel" src="/cs-home.jsx?v=10"></script>
-<script type="text/babel" src="/cs-wizard.jsx?v=10"></script>
-<script type="text/babel" src="/cs-tattoo.jsx?v=10"></script>
-<script type="text/babel" src="/cs-pages.jsx?v=10"></script>
-<script type="text/babel" src="/cs-guest-store.jsx?v=10"></script>
-<script type="text/babel" src="/cs-workshops.jsx?v=10"></script>
-<script type="text/babel" src="/cs-gallery.jsx?v=10"></script>
-<script type="text/babel" src="/cs-events-info.jsx?v=10"></script>
-<script type="text/babel" src="/cs-app.jsx?v=10"></script>
+<script type="text/babel" src="/tweaks-panel.jsx?v=26"></script>
+<script type="text/babel" src="/cs-shared.jsx?v=26"></script>
+<script type="text/babel" src="/cs-home.jsx?v=26"></script>
+<script type="text/babel" src="/cs-wizard.jsx?v=26"></script>
+<script type="text/babel" src="/cs-tattoo.jsx?v=26"></script>
+<script type="text/babel" src="/cs-pages.jsx?v=26"></script>
+<script type="text/babel" src="/cs-guest-store.jsx?v=26"></script>
+<script type="text/babel" src="/cs-workshops.jsx?v=26"></script>
+<script type="text/babel" src="/cs-gallery.jsx?v=26"></script>
+<script type="text/babel" src="/cs-events-info.jsx?v=26"></script>
+<script type="text/babel" src="/cs-app.jsx?v=26"></script>
 </body>
 </html>

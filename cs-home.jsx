@@ -114,9 +114,9 @@ function LoadingScreen({ onDone }) {
       <style>{`
         .ls-photo-bg {
           position: absolute; inset: 0; z-index: 1;
-          background-image: url('assets/film-bg.jpg');
+          background-image: url('/assets/hero/hero-01.jpg');
           background-size: cover; background-position: center;
-          filter: brightness(0.38) grayscale(0.4) contrast(1.1);
+          filter: brightness(0.38) grayscale(1) contrast(1.15);
         }
         .loading-root {
           position: fixed; inset: 0; z-index: 9999;
@@ -295,165 +295,89 @@ function HomePage({ setRoute }) {
   return (
     <div className="page-fade">
       {!loaded && <LoadingScreen onDone={() => setLoaded(true)} />}
-      <Hero setRoute={setRoute} time={tStr} t={t} />
-      <Disciplines setRoute={setRoute} t={t} />
-      <NextEvent setRoute={setRoute} t={t} />
+      {loaded && <Hero setRoute={setRoute} time={tStr} t={t} />}
+      {loaded && <Disciplines setRoute={setRoute} t={t} />}
+      {loaded && <NextEvent setRoute={setRoute} t={t} />}
     </div>
   );
 }
 
-/* ---------------- HERO ---------------- */
+/* ---------------- HERO — full-bleed carousel + logo 3D ---------------- */
+const HERO_PHOTOS = [
+  "/assets/hero/hero-01.jpg",
+  "/assets/hero/hero-02.jpg",
+  "/assets/hero/hero-03.jpg",
+  "/assets/hero/hero-04.jpg",
+  "/assets/hero/hero-05.jpg",
+  "/assets/hero/hero-06.jpg",
+  "/assets/hero/hero-07.jpg",
+  "/assets/hero/hero-08.jpg",
+];
+
 function Hero({ setRoute, time, t }) {
+  const [photoIdx, setPhotoIdx] = useStateH(0);
+
+  useEffectH(() => {
+    const id = setInterval(() => setPhotoIdx(p => (p + 1) % HERO_PHOTOS.length), 3800);
+    return () => clearInterval(id);
+  }, []);
+
   return (
     <section style={{
-      minHeight: "100vh",
-      paddingTop: 84,
-      background: "#fff",
-      position: "relative",
-      display: "flex",
-      flexDirection: "column",
+      height: "88vh", background: "#000",
+      position: "relative", overflow: "hidden",
+      display: "flex", flexDirection: "column",
+      alignItems: "center", justifyContent: "center",
     }}>
-      <div className="hero-grid" style={{
-        flex: 1,
-        display: "grid",
-        gridTemplateColumns: "1fr",
-        alignItems: "stretch",
-      }}>
 
-        {/* TYPE COLUMN */}
-        <div style={{
-          padding: "32px clamp(16px, 5vw, 36px) 32px",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          gap: 40,
-          position: "relative",
-          minHeight: "calc(100vh - 84px)",
-        }}>
+      {/* Carrusel automático a todo el ancho */}
+      {HERO_PHOTOS.map((src, i) => (
+        <img key={src} src={src} alt="" style={{
+          position: "absolute", inset: 0,
+          width: "100%", height: "100%", objectFit: "cover",
+          opacity: photoIdx === i ? 1 : 0,
+          transition: "opacity 1.4s ease",
+          display: "block",
+        }} />
+      ))}
+      {/* Velo para contraste */}
+      <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.32)" }} />
 
-          {/* Top meta */}
-          <div style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            gap: 24,
-            fontSize: 11,
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            fontWeight: 600,
-            lineHeight: 1.5,
-          }}>
-            <span>{t.home.heroSub}</span>
-            <span style={{ textAlign: "right" }}>
-              {t.location}<br/>{time}h · −34.59° / −58.43°
-            </span>
-          </div>
+      {/* ( logo 3D girando ) */}
+      <div style={{ position: "relative", zIndex: 2, display: "flex", alignItems: "center", gap: "clamp(8px, 2vw, 28px)" }}>
+        <span className="h-chr h-chr-l" style={{ color: "#fff" }}>(</span>
 
-          {/* Wordmark — the identity moment */}
-          <div style={{ alignSelf: "stretch" }}>
-            <h1 style={{
-              fontFamily: "var(--display)",
-              fontWeight: 900,
-              fontSize: "clamp(72px, 17vw, 264px)",
-              lineHeight: 0.82,
-              letterSpacing: "-0.055em",
-              textTransform: "uppercase",
-              margin: 0,
-              display: "flex",
-              alignItems: "center",
-              flexWrap: "nowrap",
-              gap: "0.04em",
-            }}>
-              <span>Centro</span>
-              <span style={{ display: "inline-flex", alignItems: "center", lineHeight: 0 }}>
-                <Asterisk size="0.62em" spin />
-              </span>
-            </h1>
-            <div style={{
-              fontFamily: "var(--display)",
-              fontWeight: 200,
-              fontStyle: "italic",
-              fontSize: "clamp(72px, 17vw, 264px)",
-              lineHeight: 0.82,
-              letterSpacing: "-0.045em",
-              margin: "0.02em 0 0 0",
-              color: "#000",
-            }}>
-              studio
-            </div>
-          </div>
-
-          {/* Bottom row */}
-          <div style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-end",
-            gap: 24,
-            flexWrap: "wrap",
-          }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <LinkArrow onClick={() => setRoute("quote")} label={t.nav.quote} />
-              <LinkArrow onClick={() => setRoute("info")} label={t.home.cta} />
-              <LinkArrow onClick={() => setRoute("gallery")} label={t.nav.gallery} />
-            </div>
-
-            <div style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              fontSize: 10.5,
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              fontWeight: 600,
-              color: "rgba(0,0,0,0.55)",
-            }}>
-              <span>scroll</span>
-              <span style={{ width: 1, height: 36, background: "#000" }} />
-            </div>
+        <div className="h-logo3d">
+          <div className="h-logo3d-spin">
+            <img src="/assets/centro-logo.png" alt="Centro Studio" />
           </div>
         </div>
 
-        {/* PHOTO COLUMN — appears on wider screens */}
-        <div className="hero-img" style={{
-          display: "none",
-          position: "relative",
-          background: "#000",
-          overflow: "hidden",
-        }}>
-          <img src="/assets/espacio/espacio-01.jpg" alt="" style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            filter: "grayscale(1) contrast(1.08) brightness(0.95)",
-            display: "block",
-          }} />
-          <div style={{
-            position: "absolute",
-            left: 20,
-            bottom: 20,
-            color: "#fff",
-            fontFamily: "var(--mono)",
-            fontSize: 10,
-            letterSpacing: "0.12em",
-            textTransform: "uppercase",
-            fontWeight: 600,
-            mixBlendMode: "difference",
-          }}>
-            <div>Fig. 01 — Centro Studio</div>
-            <div style={{ opacity: 0.7, marginTop: 4 }}>Av. Córdoba 857 · Retiro, CABA</div>
-          </div>
-        </div>
+        <span className="h-chr h-chr-r" style={{ color: "#fff" }}>)</span>
       </div>
 
       <style>{`
-        @media (min-width: 900px) {
-          .hero-grid { grid-template-columns: 1.55fr 1fr !important; }
-          .hero-img { display: block !important; }
+        .h-logo3d {
+          width: clamp(150px, 24vw, 300px);
+          height: clamp(150px, 24vw, 300px);
+          perspective: 900px;
         }
-        @media (min-width: 1200px) {
-          .hero-grid { grid-template-columns: 1.75fr 1fr !important; }
+        .h-logo3d-spin {
+          width: 100%; height: 100%;
+          transform-style: preserve-3d;
+          animation: heroSpin 5s cubic-bezier(.55,.05,.45,.95) infinite;
+        }
+        .h-logo3d-spin img {
+          width: 100%; height: 100%; object-fit: contain;
+          filter: invert(1);
+          display: block;
+        }
+        @keyframes heroSpin {
+          from { transform: rotateY(0deg); }
+          to { transform: rotateY(360deg); }
         }
       `}</style>
+
     </section>
   );
 }
