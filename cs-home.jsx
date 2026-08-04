@@ -357,54 +357,30 @@ function Hero({ setRoute, time, t }) {
         </span>
       </div>
 
-      {/* Logo descompuesto: ( + * + ) — los paréntesis llegan desde fuera
-          de pantalla y forman la marca; después el asterisco gira en 3D */}
-      <div style={{ position: "relative", zIndex: 2, display: "flex", alignItems: "center", gap: "clamp(10px, 2.2vw, 32px)" }}>
-        <span className="h-par h-par-l">(</span>
+      {/* Logo completo en blanco, girando en 3D sobre su eje */}
+      <div style={{ position: "relative", zIndex: 2 }}>
         <div className="h-logo3d">
           <div className="h-logo3d-spin">
-            <svg viewBox="-50 -50 100 100" fill="#fff" style={{ width: "100%", height: "100%", display: "block" }}>
-              <rect x="-7" y="-46" width="14" height="92" />
-              <rect x="-7" y="-46" width="14" height="92" transform="rotate(60)" />
-              <rect x="-7" y="-46" width="14" height="92" transform="rotate(120)" />
-            </svg>
+            <img src="/assets/centro-logo.png" alt="Centro Studio" />
           </div>
         </div>
-        <span className="h-par h-par-r">)</span>
       </div>
 
       <style>{`
-        .h-par {
-          font-family: var(--akira);
-          font-size: clamp(64px, 11vw, 150px);
-          font-weight: 800;
-          color: #fff;
-          line-height: 1;
-          transform: translateY(-0.06em);
-        }
-        .h-par-l { animation: parInL 1.5s cubic-bezier(.16, 1, .3, 1) .35s both; }
-        .h-par-r { animation: parInR 1.5s cubic-bezier(.16, 1, .3, 1) .35s both; }
-        @keyframes parInL {
-          from { transform: translateX(-75vw) translateY(-0.06em); }
-          to   { transform: translateX(0)     translateY(-0.06em); }
-        }
-        @keyframes parInR {
-          from { transform: translateX(75vw) translateY(-0.06em); }
-          to   { transform: translateX(0)    translateY(-0.06em); }
-        }
-
         .h-logo3d {
-          width: clamp(88px, 14vw, 190px);
-          height: clamp(88px, 14vw, 190px);
+          width: clamp(170px, 30vw, 360px);
+          height: clamp(170px, 30vw, 360px);
           perspective: 900px;
-          animation: logoFade 1s ease .7s both;
         }
-        @keyframes logoFade { from { opacity: 0; } to { opacity: 1; } }
         .h-logo3d-spin {
           width: 100%; height: 100%;
           transform-style: preserve-3d;
-          /* quieto mientras los paréntesis llegan; a los 2s arranca el giro */
-          animation: heroSpin 5s cubic-bezier(.55,.05,.45,.95) 2s infinite;
+          animation: heroSpin 5s cubic-bezier(.55,.05,.45,.95) infinite;
+        }
+        .h-logo3d-spin img {
+          width: 100%; height: 100%; object-fit: contain;
+          filter: invert(1);
+          display: block;
         }
         @keyframes heroSpin {
           from { transform: rotateY(0deg); }
