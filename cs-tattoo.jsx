@@ -9,7 +9,8 @@ const TATTOO_ARTISTS = [
   { k: "maxis.sb",      name: "Maxi SB",              role: "Resident", styles: "Lettering · Fine line",    img: "/assets/artists/maxi.jpg",      ig: "maxis.sb" },
   { k: "fiebre",        name: "Nazareno González",    role: "Resident", styles: "Blackwork · Ilustrativo",  img: "/assets/artists/naza.jpg",      ig: "fiebre" },
   { k: "nella369",      name: "Agustín Nella",        role: "Resident", styles: "Gótico · Tribal",          img: "/assets/artists/nella.jpg",     ig: "nella369" },
-  { k: "sufrodeamor",   name: "Camila Piña",          role: "Resident", styles: "Fine line · Ornamental",   img: "/assets/artists/cami.jpg",      ig: "sufrodeamor" },
+  { k: "_cronico_",     name: "Nahuel Olivera",       role: "Resident", styles: "Orgánico · Ilustrativo",   img: "/assets/artists/cronico.jpg",  ig: "_cronico_" },
+  { k: "skate.rat.tattoo", name: "Gastón",            role: "Resident", styles: "Ilustrativo",              img: "/assets/artists/skaterat.jpg", ig: "skate.rat.tattoo" },
   { k: "c4talina",      name: "Catalina",             role: "Resident", styles: "Blackwork",                img: "/assets/artists/cata.jpg",      ig: "c4talina" },
   { k: "facundo.void",  name: "Facundo",              role: "Resident", styles: "Fine line · Dotwork",      img: "/assets/artists/facu.jpg",      ig: "facundo.void" },
 ];
