@@ -343,17 +343,27 @@ function Hero({ setRoute, time, t }) {
       {/* Velo para contraste */}
       <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.32)" }} />
 
-      {/* ( logo 3D girando ) */}
-      <div style={{ position: "relative", zIndex: 2, display: "flex", alignItems: "center", gap: "clamp(8px, 2vw, 28px)" }}>
-        <span className="h-chr h-chr-l" style={{ color: "#fff" }}>(</span>
+      {/* Meta superior — como el hero original, en blanco sobre la imagen */}
+      <div style={{
+        position: "absolute", top: 0, left: 0, right: 0, zIndex: 2,
+        display: "flex", justifyContent: "space-between", alignItems: "flex-start",
+        gap: 24, padding: "20px clamp(16px, 5vw, 36px) 0",
+        fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase",
+        fontWeight: 600, lineHeight: 1.5, color: "#fff",
+      }}>
+        <span>{t.home.heroSub}</span>
+        <span style={{ textAlign: "right" }}>
+          {t.location}<br/>{time}h · −34.59° / −58.43°
+        </span>
+      </div>
 
+      {/* Logo 3D girando */}
+      <div style={{ position: "relative", zIndex: 2 }}>
         <div className="h-logo3d">
           <div className="h-logo3d-spin">
             <img src="/assets/centro-logo.png" alt="Centro Studio" />
           </div>
         </div>
-
-        <span className="h-chr h-chr-r" style={{ color: "#fff" }}>)</span>
       </div>
 
       <style>{`
