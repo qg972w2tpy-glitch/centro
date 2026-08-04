@@ -357,13 +357,17 @@ function Hero({ setRoute, time, t }) {
         </span>
       </div>
 
-      {/* ( logo ) — los paréntesis llegan desde fuera de pantalla,
-          forman el logo en el centro y recién ahí empieza a girar */}
+      {/* Logo descompuesto: ( + * + ) — los paréntesis llegan desde fuera
+          de pantalla y forman la marca; después el asterisco gira en 3D */}
       <div style={{ position: "relative", zIndex: 2, display: "flex", alignItems: "center", gap: "clamp(10px, 2.2vw, 32px)" }}>
         <span className="h-par h-par-l">(</span>
         <div className="h-logo3d">
           <div className="h-logo3d-spin">
-            <img src="/assets/centro-logo.png" alt="Centro Studio" />
+            <svg viewBox="-50 -50 100 100" fill="#fff" style={{ width: "100%", height: "100%", display: "block" }}>
+              <rect x="-7" y="-46" width="14" height="92" />
+              <rect x="-7" y="-46" width="14" height="92" transform="rotate(60)" />
+              <rect x="-7" y="-46" width="14" height="92" transform="rotate(120)" />
+            </svg>
           </div>
         </div>
         <span className="h-par h-par-r">)</span>
@@ -390,8 +394,8 @@ function Hero({ setRoute, time, t }) {
         }
 
         .h-logo3d {
-          width: clamp(140px, 22vw, 280px);
-          height: clamp(140px, 22vw, 280px);
+          width: clamp(88px, 14vw, 190px);
+          height: clamp(88px, 14vw, 190px);
           perspective: 900px;
           animation: logoFade 1s ease .7s both;
         }
@@ -401,11 +405,6 @@ function Hero({ setRoute, time, t }) {
           transform-style: preserve-3d;
           /* quieto mientras los paréntesis llegan; a los 2s arranca el giro */
           animation: heroSpin 5s cubic-bezier(.55,.05,.45,.95) 2s infinite;
-        }
-        .h-logo3d-spin img {
-          width: 100%; height: 100%; object-fit: contain;
-          filter: invert(1);
-          display: block;
         }
         @keyframes heroSpin {
           from { transform: rotateY(0deg); }
