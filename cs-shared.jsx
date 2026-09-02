@@ -711,8 +711,160 @@ function SectionHeader({ index, kicker, title, intro }) {
 }
 
 // expose
+/* ---------------- PERFIL DE ARTISTA (compartido: tatuadores + cotizador) ---------------- */
+const ARTIST_BIOS = {
+  "panchogattoni": "Tradicional y blackwork. Líneas firmes y negro sólido, con la estructura del old school como base.",
+  "inksomnio": "Fine line y ornamental. Trazo delicado y composiciones que acompañan la anatomía.",
+  "mutar": "Artista guest. Fine line y ornamental.",
+  "coti": "Ilustrativo. Composiciones narrativas, pensadas pieza por pieza.",
+  "milepokes": "Handpoke e ilustrativo. Tatuaje hecho a mano, punto por punto, sin máquina.",
+  "guadatatua": "Tradicional. Iconografía clásica del old school con paleta cerrada.",
+  "maxis.sb": "Lettering y fine line. Tipografía y caligrafía llevadas a la piel.",
+  "fiebre": "Blackwork ilustrativo. Negro sólido con fuerte presencia gráfica.",
+  "nella369": "Gótico y tribal. Líneas decorativas y simbología.",
+  "_cronico_": "Orgánico e ilustrativo. Formas que siguen el recorrido del cuerpo.",
+  "skate.rat.tattoo": "Ilustrativo. Piezas de diseño propio.",
+  "c4talina": "Blackwork. Negro sólido y alto contraste.",
+  "facundo.void": "Fine line y dotwork. Detalle fino y trabajo de puntillismo.",
+};
+
+// Las dos listas de artistas del sitio tienen forma distinta
+// (tatuadores usa name/ig, el cotizador usa sub y k como handle).
+function normalizeArtist(a) {
+  if (!a) return null;
+  return {
+    k: a.k,
+    name: a.name || a.sub || a.k,
+    role: a.role,
+    styles: a.styles,
+    img: a.img,
+    ig: a.ig || a.k,
+    bio: a.bio || ARTIST_BIOS[a.k] || "",
+  };
+}
+
+/* Fotos de trabajos: /assets/works/<k>/01.jpg … 06.jpg
+   Se detectan solas — alcanza con dejar los archivos en la carpeta. */
+function useArtistWorks(artist) {
+  const [works, setWorks] = React.useState([]);
+  React.useEffect(() => {
+    if (!artist) { setWorks([]); return; }
+    let alive = true;
+    const candidates = Array.from({ length: 6 }, (_, i) =>
+      `/assets/works/${artist.k}/${String(i + 1).padStart(2, "0")}.jpg`);
+    Promise.all(candidates.map(src => new Promise(res => {
+      const im = new Image();
+      im.onload = () => res(src);
+      im.onerror = () => res(null);
+      im.src = src;
+    }))).then(list => { if (alive) setWorks(list.filter(Boolean)); });
+    return () => { alive = false; };
+  }, [artist]);
+  return works;
+}
+
+function ArtistModal({ artist, onClose, primaryLabel, onPrimary }) {
+  const a = normalizeArtist(artist);
+  const works = useArtistWorks(a);
+
+  React.useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  if (!a) return null;
+  const firstName = a.name.split(" ")[0];
+
+  return ReactDOM.createPortal(
+    <div onClick={onClose} style={{
+      position: "fixed", inset: 0, zIndex: 995,
+      background: "rgba(8,8,8,0.9)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      padding: "20px 14px", overflowY: "auto",
+    }}>
+      <div onClick={e => e.stopPropagation()} style={{
+        background: "#fff", maxWidth: 860, width: "100%",
+        maxHeight: "90vh", overflowY: "auto", position: "relative",
+      }}>
+        <button onClick={onClose} aria-label="Cerrar" style={{
+          position: "sticky", top: 0, float: "right",
+          margin: "10px 14px 0 0", fontSize: 26, lineHeight: 1,
+          color: "#000", zIndex: 2,
+        }}>×</button>
+
+        <div className="am-head" style={{ display: "grid", gridTemplateColumns: "1fr", gap: 22, padding: "26px 22px 0" }}>
+          <div style={{ aspectRatio: "3/4", overflow: "hidden", background: "var(--warm)", maxWidth: 220 }}>
+            <img src={a.img} alt={a.name}
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+          </div>
+          <div>
+            <div className="meta" style={{ marginBottom: 8 }}>[ {a.role} ]</div>
+            <h3 className="display" style={{ fontSize: "clamp(28px, 4.5vw, 46px)", margin: "0 0 8px", lineHeight: 1 }}>
+              {a.name}
+            </h3>
+            <div className="mono" style={{ color: "var(--muted)", marginBottom: 16 }}>{a.styles}</div>
+            <p style={{ fontSize: 15, lineHeight: 1.65, color: "rgba(0,0,0,0.78)", margin: "0 0 22px" }}>
+              {a.bio}
+            </p>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+              {onPrimary && (
+                <button className="btn btn-dark" onClick={onPrimary}>
+                  {primaryLabel || `Cotizar con ${firstName}`} →
+                </button>
+              )}
+              <a className="btn" href={`https://instagram.com/${a.ig}`} target="_blank" rel="noopener"
+                style={{ textDecoration: "none" }}>
+                @{a.ig} ↗
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ padding: "30px 22px 32px" }}>
+          <div className="meta" style={{ marginBottom: 14, paddingTop: 22, borderTop: "1px solid var(--hair)" }}>
+            [ Trabajos ]
+          </div>
+          {works.length > 0 ? (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 10 }}>
+              {works.map(src => (
+                <div key={src} style={{ aspectRatio: "1/1", overflow: "hidden", background: "var(--warm)" }}>
+                  <img src={src} alt="" loading="lazy"
+                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <a href={`https://instagram.com/${a.ig}`} target="_blank" rel="noopener"
+              style={{
+                display: "block", textDecoration: "none",
+                border: "1px dashed var(--hair-strong)", padding: "28px 20px",
+                textAlign: "center", color: "rgba(0,0,0,0.6)", fontSize: 14,
+              }}>
+              Mirá los trabajos de {firstName} en Instagram<br/>
+              <strong style={{ color: "#000" }}>@{a.ig} ↗</strong>
+            </a>
+          )}
+        </div>
+
+        <style>{`
+          @media (min-width: 720px) {
+            .am-head { grid-template-columns: 220px 1fr !important; gap: 32px !important; padding: 34px 34px 0 !important; }
+          }
+        `}</style>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
 Object.assign(window, {
   Logo, Asterisk, I18N, I18nContext, useI18n,
   Navbar, Footer, Placeholder, SectionHeader,
   NAV_KEYS, NAV_ROUTES,
+  ArtistModal, useArtistWorks, normalizeArtist, ARTIST_BIOS,
 });

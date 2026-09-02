@@ -1,137 +1,22 @@
 // Tattoo page — hero, CTAs, resident artists, Google review, aftercare
 const TATTOO_ARTISTS = [
-  { k: "panchogattoni", name: "Francisco Gattoni",    role: "Resident", styles: "Tradicional · Blackwork",  img: "/assets/artists/pancho.jpg",    ig: "panchogattoni" , bio: "Tradicional y blackwork. Líneas firmes y negro sólido, con la estructura del old school como base." },
-  { k: "inksomnio",     name: "Agustina Cistaro",     role: "Resident", styles: "Fine line · Ornamental",   img: "/assets/artists/inksomnio.jpg", ig: "inksomnio" , bio: "Fine line y ornamental. Trazo delicado y composiciones que acompañan la anatomía." },
-  { k: "mutar",         name: "Katja Sol Müller",     role: "Guest",    styles: "Fine line · Ornamental",   img: "/assets/artists/mutar.jpg",     ig: "mutar" , bio: "Artista guest. Fine line y ornamental." },
-  { k: "coti",          name: "Constanza Rossi",      role: "Resident", styles: "Ilustrativo",              img: "/assets/artists/coti.jpg",      ig: "coti" , bio: "Ilustrativo. Composiciones narrativas, pensadas pieza por pieza." },
-  { k: "milepokes",     name: "Milena Presta",        role: "Resident", styles: "Handpoke · Ilustrativo",   img: "/assets/artists/mile.jpg",      ig: "milepokes" , bio: "Handpoke e ilustrativo. Tatuaje hecho a mano, punto por punto, sin máquina." },
-  { k: "guadatatua",    name: "Guadalupe Barrientos", role: "Resident", styles: "Tradicional",              img: "/assets/artists/guada.jpg",     ig: "guadatatua" , bio: "Tradicional. Iconografía clásica del old school con paleta cerrada." },
-  { k: "maxis.sb",      name: "Maxi SB",              role: "Resident", styles: "Lettering · Fine line",    img: "/assets/artists/maxi.jpg",      ig: "maxis.sb" , bio: "Lettering y fine line. Tipografía y caligrafía llevadas a la piel." },
-  { k: "fiebre",        name: "Nazareno González",    role: "Resident", styles: "Blackwork · Ilustrativo",  img: "/assets/artists/naza.jpg",      ig: "fiebre" , bio: "Blackwork ilustrativo. Negro sólido con fuerte presencia gráfica." },
-  { k: "nella369",      name: "Agustín Nella",        role: "Resident", styles: "Gótico · Tribal",          img: "/assets/artists/nella.jpg",     ig: "nella369" , bio: "Gótico y tribal. Líneas decorativas y simbología." },
-  { k: "_cronico_",     name: "Nahuel Olivera",       role: "Resident", styles: "Orgánico · Ilustrativo",   img: "/assets/artists/cronico.jpg",  ig: "_cronico_" , bio: "Orgánico e ilustrativo. Formas que siguen el recorrido del cuerpo." },
-  { k: "skate.rat.tattoo", name: "Gastón",            role: "Resident", styles: "Ilustrativo",              img: "/assets/artists/skaterat.jpg", ig: "skate.rat.tattoo" , bio: "Ilustrativo. Piezas de diseño propio." },
-  { k: "c4talina",      name: "Catalina",             role: "Resident", styles: "Blackwork",                img: "/assets/artists/cata.jpg",      ig: "c4talina" , bio: "Blackwork. Negro sólido y alto contraste." },
-  { k: "facundo.void",  name: "Facundo",              role: "Resident", styles: "Fine line · Dotwork",      img: "/assets/artists/facu.jpg",      ig: "facundo.void" , bio: "Fine line y dotwork. Detalle fino y trabajo de puntillismo." },
+  { k: "panchogattoni", name: "Francisco Gattoni",    role: "Resident", styles: "Tradicional · Blackwork",  img: "/assets/artists/pancho.jpg",    ig: "panchogattoni" },
+  { k: "inksomnio",     name: "Agustina Cistaro",     role: "Resident", styles: "Fine line · Ornamental",   img: "/assets/artists/inksomnio.jpg", ig: "inksomnio" },
+  { k: "mutar",         name: "Katja Sol Müller",     role: "Guest",    styles: "Fine line · Ornamental",   img: "/assets/artists/mutar.jpg",     ig: "mutar" },
+  { k: "coti",          name: "Constanza Rossi",      role: "Resident", styles: "Ilustrativo",              img: "/assets/artists/coti.jpg",      ig: "coti" },
+  { k: "milepokes",     name: "Milena Presta",        role: "Resident", styles: "Handpoke · Ilustrativo",   img: "/assets/artists/mile.jpg",      ig: "milepokes" },
+  { k: "guadatatua",    name: "Guadalupe Barrientos", role: "Resident", styles: "Tradicional",              img: "/assets/artists/guada.jpg",     ig: "guadatatua" },
+  { k: "maxis.sb",      name: "Maxi SB",              role: "Resident", styles: "Lettering · Fine line",    img: "/assets/artists/maxi.jpg",      ig: "maxis.sb" },
+  { k: "fiebre",        name: "Nazareno González",    role: "Resident", styles: "Blackwork · Ilustrativo",  img: "/assets/artists/naza.jpg",      ig: "fiebre" },
+  { k: "nella369",      name: "Agustín Nella",        role: "Resident", styles: "Gótico · Tribal",          img: "/assets/artists/nella.jpg",     ig: "nella369" },
+  { k: "_cronico_",     name: "Nahuel Olivera",       role: "Resident", styles: "Orgánico · Ilustrativo",   img: "/assets/artists/cronico.jpg",  ig: "_cronico_" },
+  { k: "skate.rat.tattoo", name: "Gastón",            role: "Resident", styles: "Ilustrativo",              img: "/assets/artists/skaterat.jpg", ig: "skate.rat.tattoo" },
+  { k: "c4talina",      name: "Catalina",             role: "Resident", styles: "Blackwork",                img: "/assets/artists/cata.jpg",      ig: "c4talina" },
+  { k: "facundo.void",  name: "Facundo",              role: "Resident", styles: "Fine line · Dotwork",      img: "/assets/artists/facu.jpg",      ig: "facundo.void" },
 ];
 
 // deterministic rotation — no Math.random on render
 const POLROT = [1.4, -0.9, 2.2, -1.6, 0.8, -2.1, 1.9, -1.2, 2.5, -0.6, 1.7, -1.8];
-
-/* Fotos de trabajos: /assets/works/<k>/01.jpg … 06.jpg
-   Se detectan solas — alcanza con dejar los archivos en la carpeta. */
-function useArtistWorks(artist) {
-  const [works, setWorks] = React.useState([]);
-  React.useEffect(() => {
-    if (!artist) { setWorks([]); return; }
-    let alive = true;
-    const candidates = Array.from({ length: 6 }, (_, i) =>
-      `/assets/works/${artist.k}/${String(i + 1).padStart(2, "0")}.jpg`);
-    Promise.all(candidates.map(src => new Promise(res => {
-      const im = new Image();
-      im.onload = () => res(src);
-      im.onerror = () => res(null);
-      im.src = src;
-    }))).then(list => { if (alive) setWorks(list.filter(Boolean)); });
-    return () => { alive = false; };
-  }, [artist]);
-  return works;
-}
-
-function ArtistModal({ artist, onClose, setRoute }) {
-  const works = useArtistWorks(artist);
-
-  React.useEffect(() => {
-    const onKey = (e) => { if (e.key === "Escape") onClose(); };
-    window.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
-    };
-  }, []);
-
-  if (!artist) return null;
-
-  return ReactDOM.createPortal(
-    <div onClick={onClose} style={{
-      position: "fixed", inset: 0, zIndex: 995,
-      background: "rgba(8,8,8,0.9)",
-      display: "flex", alignItems: "center", justifyContent: "center",
-      padding: "20px 14px", overflowY: "auto",
-    }}>
-      <div onClick={e => e.stopPropagation()} style={{
-        background: "#fff", maxWidth: 860, width: "100%",
-        maxHeight: "90vh", overflowY: "auto", position: "relative",
-      }}>
-        <button onClick={onClose} aria-label="Cerrar" style={{
-          position: "sticky", top: 0, float: "right",
-          margin: "10px 14px 0 0", fontSize: 26, lineHeight: 1,
-          color: "#000", zIndex: 2,
-        }}>×</button>
-
-        <div className="am-head" style={{ display: "grid", gridTemplateColumns: "1fr", gap: 22, padding: "26px 22px 0" }}>
-          <div style={{ aspectRatio: "3/4", overflow: "hidden", background: "var(--warm)", maxWidth: 220 }}>
-            <img src={artist.img} alt={artist.name}
-              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-          </div>
-          <div>
-            <div className="meta" style={{ marginBottom: 8 }}>[ {artist.role} ]</div>
-            <h3 className="display" style={{ fontSize: "clamp(28px, 4.5vw, 46px)", margin: "0 0 8px", lineHeight: 1 }}>
-              {artist.name}
-            </h3>
-            <div className="mono" style={{ color: "var(--muted)", marginBottom: 16 }}>{artist.styles}</div>
-            <p style={{ fontSize: 15, lineHeight: 1.65, color: "rgba(0,0,0,0.78)", margin: "0 0 22px" }}>
-              {artist.bio}
-            </p>
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              <button className="btn btn-dark" onClick={() => { onClose(); setRoute("quote"); }}>
-                Cotizar con {artist.name.split(" ")[0]} →
-              </button>
-              <a className="btn" href={`https://instagram.com/${artist.ig}`} target="_blank" rel="noopener"
-                style={{ textDecoration: "none" }}>
-                @{artist.ig} ↗
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div style={{ padding: "30px 22px 32px" }}>
-          <div className="meta" style={{ marginBottom: 14, paddingTop: 22, borderTop: "1px solid var(--hair)" }}>
-            [ Trabajos ]
-          </div>
-          {works.length > 0 ? (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 10 }}>
-              {works.map(src => (
-                <div key={src} style={{ aspectRatio: "1/1", overflow: "hidden", background: "var(--warm)" }}>
-                  <img src={src} alt="" loading="lazy"
-                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <a href={`https://instagram.com/${artist.ig}`} target="_blank" rel="noopener"
-              style={{
-                display: "block", textDecoration: "none",
-                border: "1px dashed var(--hair-strong)", padding: "28px 20px",
-                textAlign: "center", color: "rgba(0,0,0,0.6)", fontSize: 14,
-              }}>
-              Mirá los trabajos de {artist.name.split(" ")[0]} en Instagram<br/>
-              <strong style={{ color: "#000" }}>@{artist.ig} ↗</strong>
-            </a>
-          )}
-        </div>
-
-        <style>{`
-          @media (min-width: 720px) {
-            .am-head { grid-template-columns: 220px 1fr !important; gap: 32px !important; padding: 34px 34px 0 !important; }
-          }
-        `}</style>
-      </div>
-    </div>,
-    document.body
-  );
-}
 
 function ArtistPolaroid({ artist, idx, onOpen }) {
   const [hov, setHov] = React.useState(false);
@@ -426,7 +311,11 @@ function TattooArtists({ setRoute, T }) {
       </div>
 
       {selected && (
-        <ArtistModal artist={selected} onClose={() => setSelected(null)} setRoute={setRoute} />
+        <ArtistModal
+          artist={selected}
+          onClose={() => setSelected(null)}
+          onPrimary={() => { setSelected(null); setRoute("quote"); }}
+        />
       )}
     </div>
   );

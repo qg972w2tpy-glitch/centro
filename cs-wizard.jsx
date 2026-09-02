@@ -464,6 +464,7 @@ function Step06({ data, set, T }) {
 }
 
 function Step07({ data, setAndAdvance, T, preselectedArtist }) {
+  const [profile, setProfile] = React.useState(null);
   const artists = T.artists;
 
   if (preselectedArtist) {
@@ -523,6 +524,22 @@ function Step07({ data, setAndAdvance, T, preselectedArtist }) {
                 }}>
                   <img src={a.img} alt={a.k} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                 </div>
+                {!away && (
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    className="mono wz-profile"
+                    onClick={(e) => { e.stopPropagation(); setProfile(a); }}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); setProfile(a); } }}
+                    style={{
+                      position: "absolute", top: 8, right: 8,
+                      background: "rgba(0,0,0,0.72)", color: "#fff",
+                      padding: "5px 9px", fontSize: 9.5, letterSpacing: "0.08em",
+                      cursor: "pointer", zIndex: 3,
+                    }}>
+                    VER PERFIL
+                  </span>
+                )}
                 {away && (
                   <div style={{
                     position: "absolute", inset: 0,
@@ -556,6 +573,15 @@ function Step07({ data, setAndAdvance, T, preselectedArtist }) {
           );
         })}
       </ChoiceGrid>
+
+      {profile && (
+        <ArtistModal
+          artist={profile}
+          onClose={() => setProfile(null)}
+          primaryLabel={`Elegir a ${(profile.sub || profile.k).split(" ")[0]}`}
+          onPrimary={() => { setProfile(null); setAndAdvance("artist", profile.k); }}
+        />
+      )}
     </div>
   );
 }
