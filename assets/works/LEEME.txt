@@ -1,0 +1,30 @@
+FOTOS DE TRABAJOS DE CADA TATUADOR
+==================================
+
+Para que aparezcan en el perfil de un tatuador, creá una carpeta con su
+identificador y dejá adentro hasta 6 fotos numeradas 01.jpg … 06.jpg
+
+Ejemplo:
+  assets/works/panchogattoni/01.jpg
+  assets/works/panchogattoni/02.jpg
+  ...
+
+Las que estén se muestran solas, no hay que tocar código.
+Si una carpeta está vacía, el perfil muestra el link al Instagram.
+
+Identificadores (el nombre exacto que tiene que tener la carpeta):
+  panchogattoni      Francisco Gattoni
+  inksomnio          Agustina Cistaro
+  mutar              Katja Sol Müller
+  coti               Constanza Rossi
+  milepokes          Milena Presta
+  guadatatua         Guadalupe Barrientos
+  maxis.sb           Maxi SB
+  fiebre             Nazareno González
+  nella369           Agustín Nella
+  _cronico_          Nahuel Olivera
+  skate.rat.tattoo   Gastón
+  c4talina           Catalina
+  facundo.void       Facundo
+
+Tamaño recomendado: cuadradas, 1000x1000 px aprox, .jpg
