@@ -816,40 +816,42 @@ function ArtistModal({ artist, onClose, primaryLabel, onPrimary }) {
           color: "#000", zIndex: 2,
         }}>×</button>
 
-        <div className="am-head" style={{ display: "grid", gridTemplateColumns: "1fr", gap: 22, padding: "26px 22px 0" }}>
-          <div style={{ aspectRatio: "3/4", overflow: "hidden", background: "var(--warm)", maxWidth: 220 }}>
-            <img src={a.img} alt={a.name}
-              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-          </div>
-          <div>
-            <div className="meta" style={{ marginBottom: 8 }}>[ {a.role} ]</div>
-            <h3 className="display" style={{ fontSize: "clamp(28px, 4.5vw, 46px)", margin: "0 0 8px", lineHeight: 1 }}>
-              {a.name}
-            </h3>
-            <div className="mono" style={{ color: "var(--muted)", marginBottom: 16 }}>{a.styles}</div>
-            <p style={{ fontSize: 15, lineHeight: 1.65, color: "rgba(0,0,0,0.78)", margin: "0 0 22px" }}>
-              {a.bio}
-            </p>
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              {onPrimary && (
-                <button className="btn btn-dark" onClick={onPrimary}>
-                  {primaryLabel || `Cotizar con ${firstName}`} →
-                </button>
-              )}
-              <a className="btn" href={`https://instagram.com/${a.ig}`} target="_blank" rel="noopener"
-                style={{ textDecoration: "none" }}>
-                @{a.ig} ↗
-              </a>
+        {/* Encabezado compacto: foto chica al lado de la identidad, para que
+            los trabajos y la playlist entren en la primera pantalla */}
+        <div className="am-head">
+          <div className="am-top">
+            <div className="am-photo">
+              <img src={a.img} alt={a.name}
+                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
             </div>
+            <div style={{ minWidth: 0 }}>
+              <div className="meta" style={{ marginBottom: 6 }}>[ {a.role} ]</div>
+              <h3 className="display am-name" style={{ margin: "0 0 6px", lineHeight: 1.02 }}>
+                {a.name}
+              </h3>
+              <div className="mono" style={{ color: "var(--muted)" }}>{a.styles}</div>
+            </div>
+          </div>
+
+          <p className="am-bio">{a.bio}</p>
+
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            {onPrimary && (
+              <button className="btn btn-dark" onClick={onPrimary}>
+                {primaryLabel || `Cotizar con ${firstName}`} →
+              </button>
+            )}
+            <a className="btn" href={`https://instagram.com/${a.ig}`} target="_blank" rel="noopener"
+              style={{ textDecoration: "none" }}>
+              @{a.ig} ↗
+            </a>
           </div>
         </div>
 
-        <div style={{ padding: "30px 22px 32px" }}>
-          <div className="meta" style={{ marginBottom: 14, paddingTop: 22, borderTop: "1px solid var(--hair)" }}>
-            [ Trabajos ]
-          </div>
+        <div className="am-body">
+          <div className="meta am-label">[ Trabajos ]</div>
           {works.length > 0 ? (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 10 }}>
+            <div className="am-works">
               {works.map(src => (
                 <div key={src} style={{ aspectRatio: "1/1", overflow: "hidden", background: "var(--warm)" }}>
                   <img src={src} alt="" loading="lazy"
@@ -870,10 +872,8 @@ function ArtistModal({ artist, onClose, primaryLabel, onPrimary }) {
           )}
 
           {spotifyEmbedUrl(a.playlist) && (
-            <div style={{ marginTop: 30 }}>
-              <div className="meta" style={{ marginBottom: 14, paddingTop: 22, borderTop: "1px solid var(--hair)" }}>
-                [ Lo que suena mientras tatúa ]
-              </div>
+            <div style={{ marginTop: 22 }}>
+              <div className="meta am-label">[ Lo que suena mientras tatúa ]</div>
               <iframe
                 src={spotifyEmbedUrl(a.playlist)}
                 title={`Playlist de ${a.name}`}
@@ -887,8 +887,29 @@ function ArtistModal({ artist, onClose, primaryLabel, onPrimary }) {
         </div>
 
         <style>{`
+          .am-head { padding: 20px 18px 0; }
+          .am-top { display: flex; gap: 14px; align-items: flex-start; }
+          .am-photo {
+            flex: 0 0 96px; width: 96px; aspect-ratio: 3 / 4;
+            overflow: hidden; background: var(--warm);
+          }
+          .am-name { font-size: clamp(21px, 5.6vw, 30px); }
+          .am-bio { font-size: 14px; line-height: 1.55; color: rgba(0,0,0,0.78); margin: 13px 0 15px; }
+          .am-body { padding: 20px 18px 24px; }
+          .am-label { margin-bottom: 11px; padding-top: 16px; border-top: 1px solid var(--hair); }
+          .am-works {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+            gap: 8px;
+          }
           @media (min-width: 720px) {
-            .am-head { grid-template-columns: 220px 1fr !important; gap: 32px !important; padding: 34px 34px 0 !important; }
+            .am-head { padding: 30px 30px 0; }
+            .am-top { gap: 22px; }
+            .am-photo { flex-basis: 152px; width: 152px; }
+            .am-name { font-size: 40px; }
+            .am-bio { font-size: 15px; line-height: 1.6; margin: 16px 0 18px; max-width: 620px; }
+            .am-body { padding: 24px 30px 30px; }
+            .am-works { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
           }
         `}</style>
       </div>
