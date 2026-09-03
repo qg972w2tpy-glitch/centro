@@ -732,8 +732,8 @@ const ARTIST_BIOS = {
    "Compartir → Copiar enlace". Sirve playlist, álbum o artista.
    El que no tenga link, simplemente no muestra la sección. */
 const ARTIST_PLAYLISTS = {
-  // "panchogattoni": "https://open.spotify.com/playlist/37i9dQZF1DX...",
-  // "coti":          "https://open.spotify.com/playlist/...",
+  "facundo.void": "https://open.spotify.com/playlist/1QXCgl3JwvcKccuAhozIPn?si=0ff9cbd34ae745ef",
+  // "panchogattoni": "https://open.spotify.com/playlist/...",
 };
 
 // Acepta el link completo, el URI (spotify:playlist:...) o el ID pelado
