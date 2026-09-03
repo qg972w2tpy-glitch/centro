@@ -30,8 +30,8 @@ Identificadores (el nombre exacto que tiene que tener la carpeta):
 Tamaño recomendado: cuadradas, 1000x1000 px aprox, .jpg
 
 
-PLAYLIST DE SPOTIFY
-===================
+PLAYLIST DE CADA ARTISTA
+========================
 
 Para que un artista muestre su playlist, abrí cs-shared.jsx, buscá
 ARTIST_PLAYLISTS y agregá una línea con su identificador y el link:
@@ -41,7 +41,10 @@ ARTIST_PLAYLISTS y agregá una línea con su identificador y el link:
     "coti":          "https://open.spotify.com/playlist/yyyyy",
   };
 
-El link se saca en Spotify con "Compartir → Copiar enlace".
-Sirve tal cual, con el ?si=... del final incluido.
-También funciona con álbumes o con el perfil de un artista.
+Sirve el link de "Compartir → Copiar enlace", tal cual, con el
+?si=... del final incluido. Funciona con:
+
+  · Spotify: playlist, álbum, artista o tema
+  · YouTube y YouTube Music: playlist, álbum o video
+
 El que no tenga link no muestra la sección.

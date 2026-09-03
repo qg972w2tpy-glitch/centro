@@ -733,17 +733,39 @@ const ARTIST_BIOS = {
    El que no tenga link, simplemente no muestra la sección. */
 const ARTIST_PLAYLISTS = {
   "facundo.void": "https://open.spotify.com/playlist/1QXCgl3JwvcKccuAhozIPn?si=0ff9cbd34ae745ef",
-  // "panchogattoni": "https://open.spotify.com/playlist/...",
+  "maxis.sb":     "https://open.spotify.com/album/2i5NyX1puwpGt7tmaP5sEg?si=59TQuvfSQ8ixzjGaSdZtAg&utm_source=copy-link",
+  "inksomnio":    "https://music.youtube.com/playlist?list=OLAK5uy_lychiPt7mNkNijJI5pXsJHrDOaW_Fn56k&si=gomS3YD7E7GuhgdH",
 };
 
-// Acepta el link completo, el URI (spotify:playlist:...) o el ID pelado
-function spotifyEmbedUrl(input) {
+// Acepta links de Spotify (playlist, álbum, artista, track — también
+// el URI spotify:... o el ID pelado) y de YouTube / YouTube Music.
+// Devuelve { src, kind } o null si el link no se reconoce.
+function musicEmbed(input) {
   if (!input) return null;
   const s = String(input).trim();
+
+  // --- Spotify ---
   let m = s.match(/(?:open\.spotify\.com\/(?:intl-[a-z]+\/)?|spotify:)(playlist|album|artist|track)[\/:]([A-Za-z0-9]+)/);
-  if (m) return `https://open.spotify.com/embed/${m[1]}/${m[2]}?utm_source=generator`;
-  if (/^[A-Za-z0-9]{22}$/.test(s)) return `https://open.spotify.com/embed/playlist/${s}?utm_source=generator`;
+  if (m) return { src: `https://open.spotify.com/embed/${m[1]}/${m[2]}?utm_source=generator`, kind: "spotify" };
+
+  // --- YouTube / YouTube Music: playlist (music.youtube.com no sirve embeds) ---
+  m = s.match(/[?&]list=([A-Za-z0-9_-]+)/);
+  if (m && /(?:music\.)?youtube\.com/.test(s)) {
+    return { src: `https://www.youtube.com/embed/videoseries?list=${m[1]}`, kind: "youtube" };
+  }
+  // --- YouTube: video suelto ---
+  m = s.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=|music\.youtube\.com\/watch\?v=)([A-Za-z0-9_-]{11})/);
+  if (m) return { src: `https://www.youtube.com/embed/${m[1]}`, kind: "youtube" };
+
+  // --- ID de Spotify pelado ---
+  if (/^[A-Za-z0-9]{22}$/.test(s)) return { src: `https://open.spotify.com/embed/playlist/${s}?utm_source=generator`, kind: "spotify" };
   return null;
+}
+
+// compatibilidad: devuelve solo la URL de Spotify
+function spotifyEmbedUrl(input) {
+  const e = musicEmbed(input);
+  return e && e.kind === "spotify" ? e.src : null;
 }
 
 // Las dos listas de artistas del sitio tienen forma distinta
@@ -871,19 +893,28 @@ function ArtistModal({ artist, onClose, primaryLabel, onPrimary }) {
             </a>
           )}
 
-          {spotifyEmbedUrl(a.playlist) && (
-            <div style={{ marginTop: 22 }}>
-              <div className="meta am-label">[ Lo que suena mientras tatúa ]</div>
-              <iframe
-                src={spotifyEmbedUrl(a.playlist)}
-                title={`Playlist de ${a.name}`}
-                width="100%" height="152"
-                frameBorder="0" loading="lazy"
-                style={{ border: 0, display: "block" }}
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-              />
-            </div>
-          )}
+          {(() => {
+            const music = musicEmbed(a.playlist);
+            if (!music) return null;
+            return (
+              <div style={{ marginTop: 22 }}>
+                <div className="meta am-label">[ Lo que suena mientras tatúa ]</div>
+                <div style={music.kind === "youtube"
+                  ? { aspectRatio: "16 / 9", background: "#000" }
+                  : { height: 152 }}>
+                  <iframe
+                    src={music.src}
+                    title={`Playlist de ${a.name}`}
+                    width="100%" height="100%"
+                    frameBorder="0" loading="lazy"
+                    style={{ border: 0, display: "block", width: "100%", height: "100%" }}
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+              </div>
+            );
+          })()}
         </div>
 
         <style>{`
@@ -923,5 +954,5 @@ Object.assign(window, {
   Navbar, Footer, Placeholder, SectionHeader,
   NAV_KEYS, NAV_ROUTES,
   ArtistModal, useArtistWorks, normalizeArtist, ARTIST_BIOS,
-  ARTIST_PLAYLISTS, spotifyEmbedUrl,
+  ARTIST_PLAYLISTS, spotifyEmbedUrl, musicEmbed,
 });
