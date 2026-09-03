@@ -481,7 +481,7 @@ function Step07({ data, setAndAdvance, T, preselectedArtist }) {
               </div>
               <div style={{ padding: "14px 16px" }}>
                 <div className="num">{artist.role}</div>
-                <div style={{ fontWeight: 600, fontSize: 16, marginTop: 4 }}>{artist.k}</div>
+                <div style={{ fontWeight: 600, fontSize: 16, marginTop: 4 }}>{artist.ig || artist.k}</div>
                 {artist.sub && <div style={{ fontSize: 11, opacity: 0.5, marginTop: 2 }}>{artist.sub}</div>}
                 <div style={{ fontSize: 12, opacity: 0.65, marginTop: 5 }}>{artist.styles}</div>
               </div>
@@ -558,7 +558,7 @@ function Step07({ data, setAndAdvance, T, preselectedArtist }) {
               </div>
               <div style={{ padding: "14px 16px", textAlign: "left" }}>
                 <div className="num">{String(i+1).padStart(2,"0")} · {a.role}</div>
-                <div style={{ fontWeight: 600, fontSize: 15, marginTop: 4 }}>{a.k}</div>
+                <div style={{ fontWeight: 600, fontSize: 15, marginTop: 4 }}>{a.ig || a.k}</div>
                 {a.sub && (
                   <div style={{ fontSize: 11, opacity: 0.5, marginTop: 1 }}>{a.sub}</div>
                 )}
@@ -783,17 +783,22 @@ const wzES = {
   anyArtistD: "Te asignamos el mejor según el estilo.",
   artists: [
     { k: "panchogattoni", role: "Resident", styles: "Tradicional blackwork",    img: "/assets/artists/pancho.jpg",     sub: "Francisco Gattoni" },
-    { k: "inksomnio",     role: "Resident", styles: "Fineline / Ornamental",   img: "/assets/artists/inksomnio.jpg", sub: "Agustina Cistaro" },
-    { k: "mutar",         role: "Guest",    styles: "Fineline / Ornamental",   img: "/assets/artists/mutar.jpg",      sub: "Katja Sol Müller" },
-    { k: "coti",          role: "Resident", styles: "Ilustrativo",              img: "/assets/artists/coti.jpg",       sub: "Constanza Rossi" },
+    { k: "inksomnio", ig: "inksomniottt",
+      role: "Resident", styles: "Fineline / Ornamental",   img: "/assets/artists/inksomnio.jpg", sub: "Agustina Cistaro" },
+    { k: "mutar", ig: "mutar_______",
+      role: "Guest",    styles: "Fineline / Ornamental",   img: "/assets/artists/mutar.jpg",      sub: "Katja Sol Müller" },
+    { k: "coti", ig: "cowgirlcoti",
+      role: "Resident", styles: "Ilustrativo",              img: "/assets/artists/coti.jpg",       sub: "Constanza Rossi" },
     { k: "milepokes",     role: "Resident", styles: "Handpoke ilustrativo",     img: "/assets/artists/mile.jpg",       sub: "Milena Presta" },
     { k: "guadatatua",    role: "Resident", styles: "Tradicional",              img: "/assets/artists/guada.jpg",      sub: "Guadalupe Barrientos" },
     { k: "maxis.sb",      role: "Resident", styles: "Lettering · Fine line",    img: "/assets/artists/maxi.jpg" },
-    { k: "fiebre",        role: "Resident", styles: "Blackwork ilustrativo",    img: "/assets/artists/naza.jpg",       sub: "Nazareno González" },
+    { k: "fiebre", ig: "___fiebre",
+      role: "Resident", styles: "Blackwork ilustrativo",    img: "/assets/artists/naza.jpg",       sub: "Nazareno González" },
     { k: "nella369",      role: "Resident", styles: "Gótico · Tribal",          img: "/assets/artists/nella.jpg",      sub: "Agustín Nella" },
     { k: "_cronico_",     role: "Resident", styles: "Orgánico · Ilustrativo",   img: "/assets/artists/cronico.jpg",    sub: "Nahuel Olivera" },
     { k: "skate.rat.tattoo", role: "Resident", styles: "Ilustrativo",           img: "/assets/artists/skaterat.jpg",   sub: "Gastón" },
-    { k: "c4talina",      role: "Resident", styles: "Blackwork",                img: "/assets/artists/cata.jpg",       sub: "Catalina" },
+    { k: "c4talina", ig: "c4talin4___",
+      role: "Resident", styles: "Blackwork",                img: "/assets/artists/cata.jpg",       sub: "Catalina" },
     { k: "facundo.void",  role: "Resident", styles: "Fine line · Dotwork",      img: "/assets/artists/facu.jpg" },
   ],
   awayNote: "Actualmente de viaje",

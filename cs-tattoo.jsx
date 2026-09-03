@@ -1,17 +1,17 @@
 // Tattoo page — hero, CTAs, resident artists, Google review, aftercare
 const TATTOO_ARTISTS = [
   { k: "panchogattoni", name: "Francisco Gattoni",    role: "Resident", styles: "Tradicional · Blackwork",  img: "/assets/artists/pancho.jpg",    ig: "panchogattoni" },
-  { k: "inksomnio",     name: "Agustina Cistaro",     role: "Resident", styles: "Fine line · Ornamental",   img: "/assets/artists/inksomnio.jpg", ig: "inksomnio" },
-  { k: "mutar",         name: "Katja Sol Müller",     role: "Guest",    styles: "Fine line · Ornamental",   img: "/assets/artists/mutar.jpg",     ig: "mutar" },
-  { k: "coti",          name: "Constanza Rossi",      role: "Resident", styles: "Ilustrativo",              img: "/assets/artists/coti.jpg",      ig: "coti" },
+  { k: "inksomnio",     name: "Agustina Cistaro",     role: "Resident", styles: "Fine line · Ornamental",   img: "/assets/artists/inksomnio.jpg", ig: "inksomniottt" },
+  { k: "mutar",         name: "Katja Sol Müller",     role: "Guest",    styles: "Fine line · Ornamental",   img: "/assets/artists/mutar.jpg",     ig: "mutar_______" },
+  { k: "coti",          name: "Constanza Rossi",      role: "Resident", styles: "Ilustrativo",              img: "/assets/artists/coti.jpg",      ig: "cowgirlcoti" },
   { k: "milepokes",     name: "Milena Presta",        role: "Resident", styles: "Handpoke · Ilustrativo",   img: "/assets/artists/mile.jpg",      ig: "milepokes" },
   { k: "guadatatua",    name: "Guadalupe Barrientos", role: "Resident", styles: "Tradicional",              img: "/assets/artists/guada.jpg",     ig: "guadatatua" },
   { k: "maxis.sb",      name: "Maxi SB",              role: "Resident", styles: "Lettering · Fine line",    img: "/assets/artists/maxi.jpg",      ig: "maxis.sb" },
-  { k: "fiebre",        name: "Nazareno González",    role: "Resident", styles: "Blackwork · Ilustrativo",  img: "/assets/artists/naza.jpg",      ig: "fiebre" },
+  { k: "fiebre",        name: "Nazareno González",    role: "Resident", styles: "Blackwork · Ilustrativo",  img: "/assets/artists/naza.jpg",      ig: "___fiebre" },
   { k: "nella369",      name: "Agustín Nella",        role: "Resident", styles: "Gótico · Tribal",          img: "/assets/artists/nella.jpg",     ig: "nella369" },
   { k: "_cronico_",     name: "Nahuel Olivera",       role: "Resident", styles: "Orgánico · Ilustrativo",   img: "/assets/artists/cronico.jpg",  ig: "_cronico_" },
   { k: "skate.rat.tattoo", name: "Gastón",            role: "Resident", styles: "Ilustrativo",              img: "/assets/artists/skaterat.jpg", ig: "skate.rat.tattoo" },
-  { k: "c4talina",      name: "Catalina",             role: "Resident", styles: "Blackwork",                img: "/assets/artists/cata.jpg",      ig: "c4talina" },
+  { k: "c4talina",      name: "Catalina",             role: "Resident", styles: "Blackwork",                img: "/assets/artists/cata.jpg",      ig: "c4talin4___" },
   { k: "facundo.void",  name: "Facundo",              role: "Resident", styles: "Fine line · Dotwork",      img: "/assets/artists/facu.jpg",      ig: "facundo.void" },
 ];
 

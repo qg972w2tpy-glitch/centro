@@ -728,6 +728,24 @@ const ARTIST_BIOS = {
   "facundo.void": "Fine line y dotwork. Detalle fino y trabajo de puntillismo.",
 };
 
+/* Playlist de cada artista — pegá acá el link que da Spotify en
+   "Compartir → Copiar enlace". Sirve playlist, álbum o artista.
+   El que no tenga link, simplemente no muestra la sección. */
+const ARTIST_PLAYLISTS = {
+  // "panchogattoni": "https://open.spotify.com/playlist/37i9dQZF1DX...",
+  // "coti":          "https://open.spotify.com/playlist/...",
+};
+
+// Acepta el link completo, el URI (spotify:playlist:...) o el ID pelado
+function spotifyEmbedUrl(input) {
+  if (!input) return null;
+  const s = String(input).trim();
+  let m = s.match(/(?:open\.spotify\.com\/(?:intl-[a-z]+\/)?|spotify:)(playlist|album|artist|track)[\/:]([A-Za-z0-9]+)/);
+  if (m) return `https://open.spotify.com/embed/${m[1]}/${m[2]}?utm_source=generator`;
+  if (/^[A-Za-z0-9]{22}$/.test(s)) return `https://open.spotify.com/embed/playlist/${s}?utm_source=generator`;
+  return null;
+}
+
 // Las dos listas de artistas del sitio tienen forma distinta
 // (tatuadores usa name/ig, el cotizador usa sub y k como handle).
 function normalizeArtist(a) {
@@ -740,6 +758,7 @@ function normalizeArtist(a) {
     img: a.img,
     ig: a.ig || a.k,
     bio: a.bio || ARTIST_BIOS[a.k] || "",
+    playlist: a.playlist || ARTIST_PLAYLISTS[a.k] || null,
   };
 }
 
@@ -849,6 +868,22 @@ function ArtistModal({ artist, onClose, primaryLabel, onPrimary }) {
               <strong style={{ color: "#000" }}>@{a.ig} ↗</strong>
             </a>
           )}
+
+          {spotifyEmbedUrl(a.playlist) && (
+            <div style={{ marginTop: 30 }}>
+              <div className="meta" style={{ marginBottom: 14, paddingTop: 22, borderTop: "1px solid var(--hair)" }}>
+                [ Lo que suena mientras tatúa ]
+              </div>
+              <iframe
+                src={spotifyEmbedUrl(a.playlist)}
+                title={`Playlist de ${a.name}`}
+                width="100%" height="152"
+                frameBorder="0" loading="lazy"
+                style={{ border: 0, display: "block" }}
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              />
+            </div>
+          )}
         </div>
 
         <style>{`
@@ -867,4 +902,5 @@ Object.assign(window, {
   Navbar, Footer, Placeholder, SectionHeader,
   NAV_KEYS, NAV_ROUTES,
   ArtistModal, useArtistWorks, normalizeArtist, ARTIST_BIOS,
+  ARTIST_PLAYLISTS, spotifyEmbedUrl,
 });
