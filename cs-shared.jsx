@@ -734,6 +734,7 @@ const ARTIST_BIOS = {
 const ARTIST_PLAYLISTS = {
   "facundo.void": "https://open.spotify.com/playlist/1QXCgl3JwvcKccuAhozIPn?si=0ff9cbd34ae745ef",
   "maxis.sb":     "https://open.spotify.com/album/2i5NyX1puwpGt7tmaP5sEg?si=59TQuvfSQ8ixzjGaSdZtAg&utm_source=copy-link",
+  "panchogattoni": "https://open.spotify.com/album/1j57Q5ntVi7crpibb0h4sv?si=Xg4ckjgaRuahJBl5QrkseQ&utm_source=whatsapp",
   "inksomnio":    "https://music.youtube.com/playlist?list=OLAK5uy_lychiPt7mNkNijJI5pXsJHrDOaW_Fn56k&si=gomS3YD7E7GuhgdH",
 };
 
