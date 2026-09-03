@@ -28,7 +28,7 @@ function ArtistPolaroid({ artist, idx, onOpen }) {
       onMouseLeave={() => setHov(false)}
       style={{
         background: "#fff",
-        padding: "10px 10px 52px",
+        padding: "6px 6px 42px",
         boxShadow: hov
           ? "0 20px 48px rgba(0,0,0,0.22), 0 6px 16px rgba(0,0,0,0.12)"
           : "0 4px 18px rgba(0,0,0,0.13), 0 1px 4px rgba(0,0,0,0.07)",
@@ -58,13 +58,13 @@ function ArtistPolaroid({ artist, idx, onOpen }) {
       </div>
       <div className="polaroid-cap" style={{
         position: "absolute",
-        bottom: 10, left: 10, right: 10,
+        bottom: 6, left: 6, right: 6,
         textAlign: "center",
       }}>
-        <div style={{ fontWeight: 700, fontSize: 12.5, letterSpacing: "-0.01em", marginBottom: 2 }}>
+        <div style={{ fontWeight: 700, fontSize: 12, lineHeight: 1.1, letterSpacing: "-0.01em", marginBottom: 1 }}>
           {artist.name}
         </div>
-        <div style={{ fontSize: 9.5, color: "rgba(0,0,0,0.45)", fontFamily: "var(--mono)", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 4 }}>
+        <div style={{ fontSize: 9, lineHeight: 1.15, color: "rgba(0,0,0,0.45)", fontFamily: "var(--mono)", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 1 }}>
           {artist.styles}
         </div>
         <a
@@ -72,7 +72,7 @@ function ArtistPolaroid({ artist, idx, onOpen }) {
           target="_blank"
           rel="noopener"
           onClick={e => e.stopPropagation()}
-          style={{ fontSize: 9.5, color: "rgba(0,0,0,0.45)", fontFamily: "var(--mono)", textDecoration: "none" }}
+          style={{ fontSize: 9, lineHeight: 1.15, color: "rgba(0,0,0,0.45)", fontFamily: "var(--mono)", textDecoration: "none", display: "block" }}
           onMouseEnter={e => e.currentTarget.style.color = "#000"}
           onMouseLeave={e => e.currentTarget.style.color = "rgba(0,0,0,0.45)"}
         >
@@ -321,12 +321,12 @@ function TattooArtists({ setRoute, T }) {
             padding-top: 14px !important;
           }
           /* cuadrada: es el formato polaroid real y gana bastante alto */
-          .polaroid { padding: 7px 7px 44px !important; }
+          .polaroid { padding: 4px 4px 37px !important; }
           .polaroid-img { aspect-ratio: 1 / 1 !important; }
-          .polaroid-cap { bottom: 7px !important; left: 6px !important; right: 6px !important; }
-          .polaroid-cap > div:first-child { font-size: 11.5px !important; }
-          .polaroid-cap > div:nth-child(2) { font-size: 8.5px !important; margin-bottom: 2px !important; }
-          .polaroid-cap a { font-size: 8.5px !important; }
+          .polaroid-cap { bottom: 4px !important; left: 4px !important; right: 4px !important; }
+          .polaroid-cap > div:first-child { font-size: 11px !important; }
+          .polaroid-cap > div:nth-child(2) { font-size: 8px !important; margin-bottom: 1px !important; }
+          .polaroid-cap a { font-size: 8px !important; }
         }
       `}</style>
 
