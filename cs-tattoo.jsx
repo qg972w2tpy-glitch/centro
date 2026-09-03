@@ -23,6 +23,7 @@ function ArtistPolaroid({ artist, idx, onOpen }) {
   const rot = POLROT[idx % POLROT.length];
   return (
     <div
+      className="polaroid"
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
@@ -38,7 +39,7 @@ function ArtistPolaroid({ artist, idx, onOpen }) {
       }}
       onClick={onOpen}
     >
-      <div style={{ aspectRatio: "3/4", overflow: "hidden", background: "#f0ebe0", position: "relative" }}>
+      <div className="polaroid-img" style={{ aspectRatio: "3/4", overflow: "hidden", background: "#f0ebe0", position: "relative" }}>
         <img
           src={artist.img}
           alt={artist.name}
@@ -55,7 +56,7 @@ function ArtistPolaroid({ artist, idx, onOpen }) {
           VER PERFIL
         </div>
       </div>
-      <div style={{
+      <div className="polaroid-cap" style={{
         position: "absolute",
         bottom: 10, left: 10, right: 10,
         textAlign: "center",
@@ -285,9 +286,9 @@ function TattooCTAs({ setRoute, T }) {
 function TattooArtists({ setRoute, T }) {
   const [selected, setSelected] = React.useState(null);
   return (
-    <div id="artists" style={{ background: "var(--warm)", paddingTop: 72, paddingBottom: 96 }}>
+    <div id="artists" className="artists-section" style={{ background: "var(--warm)", paddingTop: 72, paddingBottom: 96 }}>
       <div className="container">
-        <div style={{ marginBottom: 56 }}>
+        <div className="artists-head" style={{ marginBottom: 56 }}>
           <span className="meta" style={{ display: "block", marginBottom: 16 }}>[ {T.artistsTitle} ]</span>
           <h2 className="display" style={{ fontSize: "clamp(36px, 7vw, 96px)", margin: "0 0 20px", lineHeight: 0.9 }}>
             Residentes
@@ -297,7 +298,7 @@ function TattooArtists({ setRoute, T }) {
           </p>
         </div>
 
-        <div style={{
+        <div className="artists-grid" style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fill, minmax(148px, 1fr))",
           gap: "48px 20px",
@@ -309,6 +310,25 @@ function TattooArtists({ setRoute, T }) {
           ))}
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 767px) {
+          .artists-section { padding-top: 44px !important; padding-bottom: 56px !important; }
+          .artists-head { margin-bottom: 28px !important; }
+          .artists-grid {
+            grid-template-columns: repeat(auto-fill, minmax(138px, 1fr)) !important;
+            gap: 22px 12px !important;
+            padding-top: 14px !important;
+          }
+          /* cuadrada: es el formato polaroid real y gana bastante alto */
+          .polaroid { padding: 7px 7px 44px !important; }
+          .polaroid-img { aspect-ratio: 1 / 1 !important; }
+          .polaroid-cap { bottom: 7px !important; left: 6px !important; right: 6px !important; }
+          .polaroid-cap > div:first-child { font-size: 11.5px !important; }
+          .polaroid-cap > div:nth-child(2) { font-size: 8.5px !important; margin-bottom: 2px !important; }
+          .polaroid-cap a { font-size: 8.5px !important; }
+        }
+      `}</style>
 
       {selected && (
         <ArtistModal
