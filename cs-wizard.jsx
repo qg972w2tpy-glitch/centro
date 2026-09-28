@@ -7,6 +7,24 @@ const wppChatUrl = (text) => `https://wa.me/${WPP_QUOTE}?text=${encodeURICompone
 const copyText = (text) => {
   try { if (navigator.clipboard) navigator.clipboard.writeText(text); } catch (_) {}
 };
+/* Pasa un teléfono escrito a mano al formato que necesita wa.me.
+   Si viene con + o 00 se respeta el país; si no, se asume Argentina. */
+const normalizeWpp = (raw) => {
+  if (!raw) return null;
+  const s = String(raw).trim();
+  const intl = s.startsWith("+") || s.startsWith("00");
+  let d = s.replace(/\D/g, "").replace(/^00/, "");
+  if (!d) return null;
+  if (d.startsWith("54")) {
+    let rest = d.slice(2).replace(/^0/, "");
+    if (!rest.startsWith("9")) rest = "9" + rest;   // móviles argentinos llevan 9
+    d = "54" + rest;
+  } else if (!intl) {
+    d = "549" + d.replace(/^0/, "");
+  }
+  return d.length >= 10 ? d : null;
+};
+
 // navigator.canShare({files}) no existe en todos los navegadores
 const canShareFiles = (files) => {
   try {
@@ -28,7 +46,7 @@ function Wizard({ setRoute, preselectedArtist }) {
     artist: preselectedArtist || null,
     dates: { from: "", to: "" },
     sizeImage: null,
-    contact: { name: "", ig: "", notes: "" },
+    contact: { name: "", ig: "", wpp: "", notes: "" },
   });
   const [sent, setSent] = useStateW(null);
 
@@ -62,6 +80,7 @@ function Wizard({ setRoute, preselectedArtist }) {
     L.push("");
     L.push(`*Nombre:* ${data.contact.name}`);
     L.push(`*Instagram:* @${data.contact.ig}`);
+    if (data.contact.wpp) L.push(`*WhatsApp:* ${data.contact.wpp}`);
     L.push("");
     L.push(`*Primer tatuaje:* ${data.first === null ? "—" : (data.first ? "Sí" : "No")}`);
     L.push(`*Estilo:* ${data.style || "—"}`);
@@ -83,6 +102,38 @@ function Wizard({ setRoute, preselectedArtist }) {
 
   const quoteFiles = () => data.refs.map(r => r.file).filter(Boolean);
 
+  /* Copia de respaldo por mail. Va en silencio: si la persona no llega a
+     tocar enviar en WhatsApp, la consulta igual queda registrada. */
+  const sendBackupEmail = async (files) => {
+    try {
+      const num = normalizeWpp(data.contact.wpp);
+      const cuerpo = buildWppText().replace(/\*/g, "") +
+        "\n\n── Responder ──\n" +
+        (num
+          ? "WhatsApp: https://wa.me/" + num + "?text=" +
+            encodeURIComponent(`Hola ${data.contact.name}! Te escribimos de Centro Studio por tu cotización.`) + "\n"
+          : "WhatsApp: no dejó número\n") +
+        "Instagram: https://instagram.com/" + data.contact.ig + "\n";
+
+      const attachments = (await Promise.all(files.map(f => new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = () => resolve({ name: f.name, data: String(reader.result).split(",")[1] });
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(f);
+      })))).filter(Boolean);
+
+      await fetch("/api/send-contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subject: `Cotización — ${data.contact.name} (@${data.contact.ig})`,
+          text: cuerpo,
+          attachments,
+        }),
+      });
+    } catch (_) { /* el respaldo nunca interrumpe el envío por WhatsApp */ }
+  };
+
   /* Enviar por WhatsApp.
      wa.me preselecciona el contacto pero NO admite adjuntos; el compartir
      nativo manda texto + imágenes juntas pero el contacto lo elige la
@@ -96,6 +147,10 @@ function Wizard({ setRoute, preselectedArtist }) {
     // Al compartir imágenes WhatsApp a veces descarta el texto:
     // lo dejamos copiado para poder pegarlo.
     copyText(text);
+
+    // Respaldo en segundo plano — sin await: navigator.share tiene que
+    // llamarse dentro del gesto del usuario
+    sendBackupEmail(files);
 
     if (!canShareFiles(files)) {
       window.open(wppChatUrl(text), "_blank", "noopener");
@@ -645,6 +700,17 @@ function Step09({ data, set, T }) {
             </div>
           </div>
           <div>
+            <label className="meta" style={{ display: "block", marginBottom: 4 }}>{T.fWpp}</label>
+            <input
+              className="field"
+              type="tel"
+              inputMode="tel"
+              value={data.contact.wpp || ""}
+              onChange={e => update("wpp", e.target.value)}
+              placeholder={T.fWppPlaceholder}
+            />
+          </div>
+          <div>
             <label className="meta" style={{ display: "block", marginBottom: 4 }}>{T.fNotes}</label>
             <textarea className="field" value={data.contact.notes || ""} onChange={e => update("notes", e.target.value)} rows={3} placeholder={T.fNotesPlaceholder} />
           </div>
@@ -770,6 +836,7 @@ const wzES = {
   h1a: "Contanos",
   h1b: "tu idea",
   back: "Atrás", next: "Siguiente", skip: "Saltear", submit: "Enviar por WhatsApp",
+  fWpp: "WhatsApp", fWppPlaceholder: "11 7294 3420 (sin 0 ni 15)",
   waTitleA: "Casi", waTitleB: "listo.",
   waBodyShared: "Se abrió WhatsApp con el mensaje y tus imágenes. Elegí el chat de Centro Studio y tocá enviar.",
   waBodyChat: "Te abrimos el chat de Centro Studio con todos tus datos cargados. Revisalo y tocá enviar.",
@@ -905,6 +972,7 @@ const wzEN = Object.assign({}, wzES, {
   title: "Tattoo Quote",
   h1a: "Tell us", h1b: "your idea",
   back: "Back", next: "Next", skip: "Skip", submit: "Send via WhatsApp",
+  fWpp: "WhatsApp", fWppPlaceholder: "+54 11 7294 3420",
   waTitleA: "Almost", waTitleB: "there.",
   waBodyShared: "WhatsApp opened with your message and images. Pick the Centro Studio chat and hit send.",
   waBodyChat: "We opened the Centro Studio chat with all your details. Check it and hit send.",
