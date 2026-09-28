@@ -25,10 +25,20 @@ const normalizeWpp = (raw) => {
   return d.length >= 10 ? d : null;
 };
 
+/* En la compu el compartir del sistema abre el panel de macOS/Windows
+   (AirDrop, Mail, Mensajes) donde WhatsApp normalmente no figura: no sirve.
+   Ahí conviene wa.me, que abre WhatsApp Web con el chat y el texto ya puestos. */
+const isTouchDevice = () => {
+  try {
+    return window.matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 1;
+  } catch (_) { return false; }
+};
+
 // navigator.canShare({files}) no existe en todos los navegadores
 const canShareFiles = (files) => {
   try {
-    return files.length > 0 && !!navigator.canShare && navigator.canShare({ files });
+    return files.length > 0 && isTouchDevice() &&
+      !!navigator.canShare && navigator.canShare({ files });
   } catch (_) { return false; }
 };
 
@@ -49,6 +59,7 @@ function Wizard({ setRoute, preselectedArtist }) {
     contact: { name: "", ig: "", wpp: "", notes: "" },
   });
   const [sent, setSent] = useStateW(null);
+  const backupSent = useRefW(false);   // el respaldo se manda una sola vez
 
   const total = 9;
   const set = (k, v) => setData(d => ({ ...d, [k]: v }));
@@ -149,8 +160,12 @@ function Wizard({ setRoute, preselectedArtist }) {
     copyText(text);
 
     // Respaldo en segundo plano — sin await: navigator.share tiene que
-    // llamarse dentro del gesto del usuario
-    sendBackupEmail(files);
+    // llamarse dentro del gesto del usuario. Una sola vez aunque se
+    // cancele el compartir y se vuelva a tocar el botón.
+    if (!backupSent.current) {
+      backupSent.current = true;
+      sendBackupEmail(files);
+    }
 
     if (!canShareFiles(files)) {
       window.open(wppChatUrl(text), "_blank", "noopener");
