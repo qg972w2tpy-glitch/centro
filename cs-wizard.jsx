@@ -1,6 +1,19 @@
 // Wizard: 9-step tattoo quote
 const { useState: useStateW, useRef: useRefW } = React;
 
+// WhatsApp al que llegan las cotizaciones (+54 9 11 7294-3420)
+const WPP_QUOTE = "5491172943420";
+const wppChatUrl = (text) => `https://wa.me/${WPP_QUOTE}?text=${encodeURIComponent(text)}`;
+const copyText = (text) => {
+  try { if (navigator.clipboard) navigator.clipboard.writeText(text); } catch (_) {}
+};
+// navigator.canShare({files}) no existe en todos los navegadores
+const canShareFiles = (files) => {
+  try {
+    return files.length > 0 && !!navigator.canShare && navigator.canShare({ files });
+  } catch (_) { return false; }
+};
+
 function Wizard({ setRoute, preselectedArtist }) {
   const { t, lang } = useI18n();
   const T = lang === "es" ? wzES : wzEN;
@@ -17,7 +30,7 @@ function Wizard({ setRoute, preselectedArtist }) {
     sizeImage: null,
     contact: { name: "", ig: "", notes: "" },
   });
-  const [submitted, setSubmitted] = useStateW(false);
+  const [sent, setSent] = useStateW(null);
 
   const total = 9;
   const set = (k, v) => setData(d => ({ ...d, [k]: v }));
@@ -43,72 +56,66 @@ function Wizard({ setRoute, preselectedArtist }) {
 
   const [sending, setSending] = useStateW(false);
 
-  const buildEmailText = () => {
-    const subj = `Cotizá un tatuaje — ${data.contact.name}`;
-    const body =
-      `Hola Centro,\n\n` +
-      `Cotizo un tatuaje. Estos son los datos:\n\n` +
-      `· Primer tatuaje: ${data.first === null ? "—" : (data.first ? "Sí" : "No")}\n` +
-      `· Estilo:         ${data.style || "—"}\n` +
-      `· Tamaño:         ${data.size || "—"}\n` +
-      `· Zona:           ${data.zone || "—"}\n` +
-      `· Diseño:         ${data.hasDesign || "—"}\n` +
-      `· Referencias:    ${data.refs.length} archivo(s)\n` +
-      `· Artista:        ${data.artist || "—"}\n` +
-      `· Fechas:         ${data.dates.from || "—"}${data.dates.to ? " → " + data.dates.to : ""}\n\n` +
-      `── Contacto ──\n` +
-      `Nombre:    ${data.contact.name}\n` +
-      `Instagram: @${data.contact.ig}\n\n` +
-      `Gracias.`;
-    return { subj, body };
+  const buildWppText = () => {
+    const L = [];
+    L.push("*COTIZACIÓN DE TATUAJE — CENTRO STUDIO*");
+    L.push("");
+    L.push(`*Nombre:* ${data.contact.name}`);
+    L.push(`*Instagram:* @${data.contact.ig}`);
+    L.push("");
+    L.push(`*Primer tatuaje:* ${data.first === null ? "—" : (data.first ? "Sí" : "No")}`);
+    L.push(`*Estilo:* ${data.style || "—"}`);
+    L.push(`*Zona:* ${data.zone || "—"}`);
+    L.push(`*Tamaño:* ${data.size || "—"}`);
+    L.push(`*Diseño:* ${data.hasDesign || "—"}`);
+    L.push(`*Artista:* ${data.artist || "—"}`);
+    L.push(`*Fechas:* ${data.dates.from || "—"}${data.dates.to ? " → " + data.dates.to : ""}`);
+    if (data.contact.notes) {
+      L.push("");
+      L.push(`*Notas:* ${data.contact.notes}`);
+    }
+    L.push("");
+    L.push(data.refs.length
+      ? `*Referencias:* ${data.refs.length} imagen(es).`
+      : "*Referencias:* sin imágenes.");
+    return L.join("\n");
   };
 
-  const submit = async () => {
+  const quoteFiles = () => data.refs.map(r => r.file).filter(Boolean);
+
+  /* Enviar por WhatsApp.
+     wa.me preselecciona el contacto pero NO admite adjuntos; el compartir
+     nativo manda texto + imágenes juntas pero el contacto lo elige la
+     persona. Usamos el segundo cuando hay imágenes, el primero cuando no. */
+  const submit = () => {
     if (!canSubmit || sending) return;
+
+    const text = buildWppText();
+    const files = quoteFiles();
+
+    // Al compartir imágenes WhatsApp a veces descarta el texto:
+    // lo dejamos copiado para poder pegarlo.
+    copyText(text);
+
+    if (!canShareFiles(files)) {
+      window.open(wppChatUrl(text), "_blank", "noopener");
+      setSent({ mode: "chat", text, files });
+      return;
+    }
+
+    // Algunos navegadores comparten archivos pero rechazan texto+archivos juntos
+    let payload = { files };
+    try { if (navigator.canShare({ files, text })) payload = { files, text }; } catch (_) {}
+
+    // navigator.share tiene que llamarse dentro del gesto, sin await previo
     setSending(true);
-
-    const { subj, body } = buildEmailText();
-
-    // Convert image blobs to base64 for API attachment
-    const sizeAttachment = data.sizeImage ? [data.sizeImage] : [];
-    const attachments = [...sizeAttachment, ...await Promise.all(
-      data.refs.map(r => new Promise(resolve => {
-        const xhr = new XMLHttpRequest();
-        xhr.open("GET", r.url, true);
-        xhr.responseType = "blob";
-        xhr.onload = () => {
-          const reader = new FileReader();
-          reader.onload = () => resolve({ name: r.name, data: reader.result.split(",")[1] });
-          reader.readAsDataURL(xhr.response);
-        };
-        xhr.onerror = () => resolve(null);
-        xhr.send();
-      }))
-    ).then(arr => arr.filter(Boolean))];
-
-    try {
-      const resp = await fetch("/api/send-contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subject: subj, text: body, attachments }),
-      });
-      const result = await resp.json().catch(() => ({}));
-
-      if (result.ok) {
-        setSending(false);
-        setSubmitted(true);
-        return;
-      }
-      // API not configured or failed → fall back to mailto:
-    } catch (_) { /* network error — fall back */ }
-
-    // Fallback: open mail client (user attaches images manually)
-    const url = "mailto:centrostudio.ar@gmail.com" +
-      "?subject=" + encodeURIComponent(subj) +
-      "&body=" + encodeURIComponent(body);
-    window.location.href = url;
-    setSending(false);
-    setSubmitted(true);
+    navigator.share(payload)
+      .then(() => setSent({ mode: "shared", text, files }))
+      .catch((err) => {
+        if (err && err.name === "AbortError") return;   // canceló: sigue en el form
+        setSent({ mode: "manual", text, files });
+      })
+      .finally(() => setSending(false));
   };
 
   const setAndAdvance = (k, v) => {
@@ -118,7 +125,7 @@ function Wizard({ setRoute, preselectedArtist }) {
     }
   };
 
-  if (submitted) return <WizardDone setRoute={setRoute} T={T} data={data} />;
+  if (sent) return <WizardDone setRoute={setRoute} T={T} data={data} sent={sent} />;
 
   return (
     <div className="page-fade" style={{ paddingTop: 64, minHeight: "100vh", background: "#fff" }}>
@@ -423,6 +430,7 @@ function Step06({ data, set, T }) {
     const arr = Array.from(files).slice(0, 6).map(f => ({
       name: f.name, size: f.size, type: f.type,
       url: URL.createObjectURL(f),
+      file: f,                       // necesario para compartir por WhatsApp
     }));
     set("refs", [...data.refs, ...arr].slice(0, 6));
   };
@@ -677,22 +685,80 @@ function Summary({ data, T }) {
   );
 }
 
-function WizardDone({ setRoute, T, data }) {
+function WizardDone({ setRoute, T, data, sent }) {
+  const { mode, text, files } = sent;
+  const shareable = canShareFiles(files);
+  const pendientes = mode !== "shared" && files.length > 0;
+  const [copiado, setCopiado] = useStateW(false);
+
+  const shareImgs = () => {
+    if (!shareable) return;
+    navigator.share({ files }).catch(() => {});
+  };
+  const abrirChat = () => window.open(wppChatUrl(text), "_blank", "noopener");
+  const copiar = () => { copyText(text); setCopiado(true); setTimeout(() => setCopiado(false), 2200); };
+
   return (
     <div className="page-fade" style={{ paddingTop: 64, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <div className="container" style={{ textAlign: "center", maxWidth: 720, padding: "80px 32px" }}>
-        <Asterisk size={56} spin />
-        <h1 className="display" style={{ fontSize: "clamp(48px, 7vw, 96px)", margin: "32px 0 16px", lineHeight: 1 }}>
-          <em>{T.thanksA}</em><br/>{T.thanksB}
+      <div className="container" style={{ textAlign: "center", maxWidth: 560, padding: "56px 24px" }}>
+        <Asterisk size={48} spin />
+        <h1 className="display" style={{ fontSize: "clamp(40px, 6vw, 72px)", margin: "26px 0 14px", lineHeight: 1 }}>
+          <em>{T.waTitleA}</em><br/>{T.waTitleB}
         </h1>
-        <p style={{ fontSize: 18, lineHeight: 1.5, color: "var(--muted)", maxWidth: 480, margin: "0 auto 16px" }}>
-          {T.thanksBody}
+
+        <p style={{ fontSize: 16.5, lineHeight: 1.55, color: "rgba(0,0,0,0.75)", margin: "0 auto 26px" }}>
+          {mode === "shared" ? T.waBodyShared
+            : mode === "manual" ? T.waBodyManual
+            : T.waBodyChat}
         </p>
-        <p style={{ fontSize: 14, color: "var(--muted)", margin: "0 0 36px" }}>
-          {T.thanksTime}
-        </p>
-        <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-          <button className="btn btn-dark" onClick={() => setRoute("home")}>{T.thanksHome}</button>
+
+        {/* Acción principal */}
+        <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+          {mode === "shared" ? (
+            <button className="btn btn-ghost" onClick={abrirChat}>{T.waOpenChat}</button>
+          ) : (
+            <button className="btn btn-dark" onClick={abrirChat}>{T.waOpenChat}</button>
+          )}
+          <button className="btn btn-ghost" onClick={copiar}>
+            {copiado ? T.waCopied : T.waCopy}
+          </button>
+        </div>
+
+        {/* Imágenes que todavía hay que adjuntar */}
+        {pendientes && (
+          <div style={{ marginTop: 34, paddingTop: 26, borderTop: "1px solid var(--hair)" }}>
+            <div className="meta" style={{ marginBottom: 14 }}>
+              [ {files.length} {files.length === 1 ? T.waOneRef : T.waManyRefs} ]
+            </div>
+            <p style={{ fontSize: 14.5, lineHeight: 1.55, color: "var(--muted)", margin: "0 0 18px" }}>
+              {shareable ? T.waAttachShare : T.waAttachManual}
+            </p>
+
+            <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap", marginBottom: 20 }}>
+              {data.refs.map((r, i) => (
+                <div key={i} style={{ width: 62, height: 62, overflow: "hidden", background: "var(--warm)", border: "1px solid var(--hair)" }}>
+                  <img src={r.url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                </div>
+              ))}
+            </div>
+
+            {shareable ? (
+              <button className="btn btn-dark" onClick={shareImgs}>{T.waShareImgs}</button>
+            ) : (
+              <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
+                {data.refs.map((r, i) => (
+                  <a key={i} className="btn btn-ghost" href={r.url} download={r.name}
+                    style={{ textDecoration: "none", fontSize: 11.5, padding: "9px 12px" }}>
+                    ↓ {i + 1}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        <div style={{ marginTop: 34 }}>
+          <button className="btn btn-ghost" onClick={() => setRoute("home")}>{T.thanksHome}</button>
         </div>
       </div>
     </div>
@@ -703,7 +769,17 @@ const wzES = {
   title: "Cotizá un tatuaje",
   h1a: "Contanos",
   h1b: "tu idea",
-  back: "Atrás", next: "Siguiente", skip: "Saltear", submit: "Enviar por mail",
+  back: "Atrás", next: "Siguiente", skip: "Saltear", submit: "Enviar por WhatsApp",
+  waTitleA: "Casi", waTitleB: "listo.",
+  waBodyShared: "Se abrió WhatsApp con el mensaje y tus imágenes. Elegí el chat de Centro Studio y tocá enviar.",
+  waBodyChat: "Te abrimos el chat de Centro Studio con todos tus datos cargados. Revisalo y tocá enviar.",
+  waBodyManual: "Tocá el botón para abrir el chat de Centro Studio con todos tus datos cargados.",
+  waOpenChat: "Abrir chat de Centro →",
+  waCopy: "Copiar el mensaje", waCopied: "✓ Copiado",
+  waOneRef: "referencia", waManyRefs: "referencias",
+  waAttachShare: "WhatsApp no deja adjuntar imágenes desde un link. Tocá acá para mandarlas al mismo chat.",
+  waAttachManual: "WhatsApp no deja adjuntar imágenes desde un link. Descargalas y adjuntalas en el chat.",
+  waShareImgs: "Enviar las imágenes →",
   ready: "listo · podés avanzar", optional: "opcional · podés saltearlo",
   yes: "Sí", no: "No",
   q1: "¿Es tu primer tatuaje?",
@@ -828,7 +904,17 @@ const wzES = {
 const wzEN = Object.assign({}, wzES, {
   title: "Tattoo Quote",
   h1a: "Tell us", h1b: "your idea",
-  back: "Back", next: "Next", skip: "Skip", submit: "Send by email",
+  back: "Back", next: "Next", skip: "Skip", submit: "Send via WhatsApp",
+  waTitleA: "Almost", waTitleB: "there.",
+  waBodyShared: "WhatsApp opened with your message and images. Pick the Centro Studio chat and hit send.",
+  waBodyChat: "We opened the Centro Studio chat with all your details. Check it and hit send.",
+  waBodyManual: "Tap the button to open the Centro Studio chat with all your details.",
+  waOpenChat: "Open Centro chat →",
+  waCopy: "Copy the message", waCopied: "✓ Copied",
+  waOneRef: "reference", waManyRefs: "references",
+  waAttachShare: "WhatsApp can't attach images from a link. Tap here to send them to the same chat.",
+  waAttachManual: "WhatsApp can't attach images from a link. Download them and attach them in the chat.",
+  waShareImgs: "Send the images →",
   ready: "ready · you can continue", optional: "optional · you can skip",
   yes: "Yes", no: "No",
   q1: "Is this your first tattoo?",
