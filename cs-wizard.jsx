@@ -34,6 +34,50 @@ const isTouchDevice = () => {
   } catch (_) { return false; }
 };
 
+/* Achica la imagen en el navegador antes de subirla: las fotos de celular
+   pesan varios MB y así viajan livianas (y el mail también). */
+const downscaleToBase64 = (file, max = 1600, quality = 0.82) => new Promise((resolve) => {
+  const fr = new FileReader();
+  fr.onerror = () => resolve(null);
+  fr.onload = () => {
+    const raw = String(fr.result);
+    const fallback = () => resolve(raw.split(",")[1] || null);
+    const img = new Image();
+    img.onerror = fallback;                       // HEIC u otro formato que no dibuja
+    img.onload = () => {
+      try {
+        let w = img.naturalWidth, h = img.naturalHeight;
+        if (!w || !h) return fallback();
+        if (Math.max(w, h) > max) {
+          const s = max / Math.max(w, h);
+          w = Math.round(w * s); h = Math.round(h * s);
+        }
+        const c = document.createElement("canvas");
+        c.width = w; c.height = h;
+        c.getContext("2d").drawImage(img, 0, 0, w, h);
+        resolve(c.toDataURL("image/jpeg", quality).split(",")[1]);
+      } catch (_) { fallback(); }
+    };
+    img.src = raw;
+  };
+  fr.readAsDataURL(file);
+});
+
+/* Sube una referencia y devuelve su link público (o null si no se pudo). */
+const uploadRef = async (file) => {
+  try {
+    const data = await downscaleToBase64(file);
+    if (!data) return null;
+    const resp = await fetch("/api/upload-ref", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: file.name, type: "image/jpeg", data }),
+    });
+    const j = await resp.json().catch(() => ({}));
+    return j && j.ok && j.url ? j.url : null;
+  } catch (_) { return null; }
+};
+
 // navigator.canShare({files}) no existe en todos los navegadores
 const canShareFiles = (files) => {
   try {
@@ -105,13 +149,32 @@ function Wizard({ setRoute, preselectedArtist }) {
       L.push(`*Notas:* ${data.contact.notes}`);
     }
     L.push("");
-    L.push(data.refs.length
-      ? `*Referencias:* ${data.refs.length} imagen(es).`
-      : "*Referencias:* sin imágenes.");
+    const links = data.refs.map(r => r.remote).filter(Boolean);
+    if (links.length) {
+      L.push(`*Referencias (${links.length}):*`);
+      links.forEach((u, i) => L.push(`${i + 1}. ${u}`));
+      const faltan = data.refs.length - links.length;
+      if (faltan > 0) L.push(`(y ${faltan} más que te mando acá)`);
+    } else {
+      L.push(data.refs.length
+        ? `*Referencias:* ${data.refs.length} imagen(es), te las mando acá.`
+        : "*Referencias:* sin imágenes.");
+    }
     return L.join("\n");
   };
 
   const quoteFiles = () => data.refs.map(r => r.file).filter(Boolean);
+
+  /* Se dispara apenas la persona elige las imágenes, mientras sigue
+     completando el formulario: al llegar al final ya están arriba. */
+  const startUpload = (id, file) => {
+    const mark = (patch) => setData(d => ({
+      ...d, refs: d.refs.map(r => (r.id === id ? { ...r, ...patch } : r)),
+    }));
+    uploadRef(file)
+      .then(url => mark(url ? { remote: url, up: "ok" } : { up: "fail" }))
+      .catch(() => mark({ up: "fail" }));
+  };
 
   /* Copia de respaldo por mail. Va en silencio: si la persona no llega a
      tocar enviar en WhatsApp, la consulta igual queda registrada. */
@@ -208,7 +271,7 @@ function Wizard({ setRoute, preselectedArtist }) {
           {step === 2 && <Step04 data={data} set={set} setAndAdvance={setAndAdvance} T={T} />}
           {step === 3 && <Step03Range data={data} set={set} T={T} />}
           {step === 4 && <Step05 data={data} set={set} setAndAdvance={setAndAdvance} T={T} />}
-          {step === 5 && <Step06 data={data} set={set} T={T} />}
+          {step === 5 && <Step06 data={data} set={set} T={T} startUpload={startUpload} />}
           {step === 6 && <Step07 data={data} set={set} setAndAdvance={setAndAdvance} T={T} preselectedArtist={preselectedArtist} />}
           {step === 7 && <Step08 data={data} set={set} T={T} />}
           {step === 8 && <Step09 data={data} set={set} T={T} />}
@@ -476,17 +539,22 @@ function Step05({ data, setAndAdvance, T }) {
   );
 }
 
-function Step06({ data, set, T }) {
+function Step06({ data, set, T, startUpload }) {
   const inputRef = useRefW(null);
   const [over, setOver] = useStateW(false);
 
   const handleFiles = (files) => {
     const arr = Array.from(files).slice(0, 6).map(f => ({
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       name: f.name, size: f.size, type: f.type,
       url: URL.createObjectURL(f),
       file: f,                       // necesario para compartir por WhatsApp
+      up: "going", remote: null,     // subida al almacenamiento
     }));
-    set("refs", [...data.refs, ...arr].slice(0, 6));
+    const next = [...data.refs, ...arr].slice(0, 6);
+    set("refs", next);
+    // sólo las que realmente entraron
+    arr.forEach(r => { if (next.some(n => n.id === r.id)) startUpload(r.id, r.file); });
   };
 
   return (
@@ -517,6 +585,20 @@ function Step06({ data, set, T }) {
                 style={{ position: "absolute", top: 6, right: 6, background: "#fff", padding: "2px 6px", fontSize: 10, fontFamily: "var(--mono)" }}>
                 ×
               </button>
+              {r.up === "going" && (
+                <span className="mono" style={{
+                  position: "absolute", left: 6, bottom: 6,
+                  background: "rgba(0,0,0,0.7)", color: "#fff",
+                  padding: "2px 6px", fontSize: 9, letterSpacing: "0.06em",
+                }}>···</span>
+              )}
+              {r.up === "ok" && (
+                <span className="mono" style={{
+                  position: "absolute", left: 6, bottom: 6,
+                  background: "rgba(0,0,0,0.7)", color: "#fff",
+                  padding: "2px 6px", fontSize: 9,
+                }}>✓</span>
+              )}
             </div>
           ))}
         </div>
@@ -751,7 +833,12 @@ function Summary({ data, T }) {
 }
 
 function WizardDone({ setRoute, T, data, sent }) {
-  const { text, files } = sent;
+  const { text } = sent;
+  // Las que ya subieron viajan como link dentro del mensaje;
+  // sólo quedan pendientes las que no se pudieron subir.
+  const pendientes = data.refs.filter(r => !r.remote);
+  const subidas = data.refs.length - pendientes.length;
+  const files = pendientes.map(r => r.file).filter(Boolean);
   const shareable = canShareFiles(files);
   const [copiado, setCopiado] = useStateW(false);
 
@@ -779,18 +866,25 @@ function WizardDone({ setRoute, T, data, sent }) {
           </button>
         </div>
 
-        {/* Paso 2 — las imágenes, al mismo chat */}
-        {files.length > 0 && (
+        {/* Las que ya están arriba viajan como link en el mensaje */}
+        {subidas > 0 && pendientes.length === 0 && (
+          <p className="mono" style={{ fontSize: 11, color: "var(--muted)", margin: "20px 0 0", letterSpacing: "0.06em" }}>
+            ✓ {subidas} {subidas === 1 ? T.waOneRef : T.waManyRefs} {T.waRefsInMsg}
+          </p>
+        )}
+
+        {/* Paso 2 — sólo las que no se pudieron subir */}
+        {pendientes.length > 0 && (
           <div style={{ marginTop: 36, paddingTop: 26, borderTop: "1px solid var(--hair)" }}>
             <div className="meta" style={{ marginBottom: 10 }}>
-              [ 2 · {files.length} {files.length === 1 ? T.waOneRef : T.waManyRefs} ]
+              [ 2 · {pendientes.length} {pendientes.length === 1 ? T.waOneRef : T.waManyRefs} ]
             </div>
             <p style={{ fontSize: 15, lineHeight: 1.55, color: "rgba(0,0,0,0.7)", margin: "0 0 18px" }}>
               {shareable ? T.waAttachShare : T.waAttachManual}
             </p>
 
             <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap", marginBottom: 20 }}>
-              {data.refs.map((r, i) => (
+              {pendientes.map((r, i) => (
                 <div key={i} style={{ width: 62, height: 62, overflow: "hidden", background: "var(--warm)", border: "1px solid var(--hair)" }}>
                   <img src={r.url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                 </div>
@@ -801,7 +895,7 @@ function WizardDone({ setRoute, T, data, sent }) {
               <button className="btn btn-dark" onClick={shareImgs}>{T.waShareImgs}</button>
             ) : (
               <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
-                {data.refs.map((r, i) => (
+                {pendientes.map((r, i) => (
                   <a key={i} className="btn btn-ghost" href={r.url} download={r.name}
                     style={{ textDecoration: "none", fontSize: 11.5, padding: "9px 12px" }}>
                     ↓ {i + 1}
@@ -831,6 +925,7 @@ const wzES = {
   waOpenChat: "Abrir chat de Centro →",
   waCopy: "Copiar el mensaje", waCopied: "✓ Copiado",
   waOneRef: "referencia", waManyRefs: "referencias",
+  waRefsInMsg: "van como link dentro del mensaje",
   waAttachShare: "Ahora mandá tus referencias al mismo chat: tocá el botón y elegí WhatsApp. El chat de Centro te va a aparecer primero.",
   waAttachManual: "Adjuntá tus referencias en el chat que se abrió. Si las necesitás, descargalas acá.",
   waShareImgs: "Enviar las imágenes →",
@@ -965,6 +1060,7 @@ const wzEN = Object.assign({}, wzES, {
   waOpenChat: "Open Centro chat →",
   waCopy: "Copy the message", waCopied: "✓ Copied",
   waOneRef: "reference", waManyRefs: "references",
+  waRefsInMsg: "included as links in the message",
   waAttachShare: "Now send your references to the same chat: tap the button and pick WhatsApp. The Centro chat will be at the top.",
   waAttachManual: "Attach your references in the chat that opened. Download them here if you need them.",
   waShareImgs: "Send the images →",
