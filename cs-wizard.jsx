@@ -149,43 +149,27 @@ function Wizard({ setRoute, preselectedArtist }) {
      wa.me preselecciona el contacto pero NO admite adjuntos; el compartir
      nativo manda texto + imágenes juntas pero el contacto lo elige la
      persona. Usamos el segundo cuando hay imágenes, el primero cuando no. */
+  /* Enviar por WhatsApp.
+     Siempre wa.me: es lo único que abre el chat de Centro directo y con el
+     texto puesto. Las imágenes no se pueden meter en un chat concreto desde
+     la web (WhatsApp no lo permite), así que van en un segundo paso desde
+     la pantalla final, cuando el chat de Centro ya quedó primero en la lista. */
   const submit = () => {
     if (!canSubmit || sending) return;
 
     const text = buildWppText();
     const files = quoteFiles();
 
-    // Al compartir imágenes WhatsApp a veces descarta el texto:
-    // lo dejamos copiado para poder pegarlo.
     copyText(text);
 
-    // Respaldo en segundo plano — sin await: navigator.share tiene que
-    // llamarse dentro del gesto del usuario. Una sola vez aunque se
-    // cancele el compartir y se vuelva a tocar el botón.
+    // Respaldo en segundo plano, una sola vez por cotización
     if (!backupSent.current) {
       backupSent.current = true;
       sendBackupEmail(files);
     }
 
-    if (!canShareFiles(files)) {
-      window.open(wppChatUrl(text), "_blank", "noopener");
-      setSent({ mode: "chat", text, files });
-      return;
-    }
-
-    // Algunos navegadores comparten archivos pero rechazan texto+archivos juntos
-    let payload = { files };
-    try { if (navigator.canShare({ files, text })) payload = { files, text }; } catch (_) {}
-
-    // navigator.share tiene que llamarse dentro del gesto, sin await previo
-    setSending(true);
-    navigator.share(payload)
-      .then(() => setSent({ mode: "shared", text, files }))
-      .catch((err) => {
-        if (err && err.name === "AbortError") return;   // canceló: sigue en el form
-        setSent({ mode: "manual", text, files });
-      })
-      .finally(() => setSending(false));
+    window.open(wppChatUrl(text), "_blank", "noopener");
+    setSent({ text, files });
   };
 
   const setAndAdvance = (k, v) => {
@@ -767,15 +751,11 @@ function Summary({ data, T }) {
 }
 
 function WizardDone({ setRoute, T, data, sent }) {
-  const { mode, text, files } = sent;
+  const { text, files } = sent;
   const shareable = canShareFiles(files);
-  const pendientes = mode !== "shared" && files.length > 0;
   const [copiado, setCopiado] = useStateW(false);
 
-  const shareImgs = () => {
-    if (!shareable) return;
-    navigator.share({ files }).catch(() => {});
-  };
+  const shareImgs = () => { if (shareable) navigator.share({ files }).catch(() => {}); };
   const abrirChat = () => window.open(wppChatUrl(text), "_blank", "noopener");
   const copiar = () => { copyText(text); setCopiado(true); setTimeout(() => setCopiado(false), 2200); };
 
@@ -787,31 +767,25 @@ function WizardDone({ setRoute, T, data, sent }) {
           <em>{T.waTitleA}</em><br/>{T.waTitleB}
         </h1>
 
-        <p style={{ fontSize: 16.5, lineHeight: 1.55, color: "rgba(0,0,0,0.75)", margin: "0 auto 26px" }}>
-          {mode === "shared" ? T.waBodyShared
-            : mode === "manual" ? T.waBodyManual
-            : T.waBodyChat}
+        {/* Paso 1 — el chat ya abierto con los datos */}
+        <div className="meta" style={{ marginBottom: 10 }}>[ 1 ]</div>
+        <p style={{ fontSize: 16.5, lineHeight: 1.55, color: "rgba(0,0,0,0.75)", margin: "0 0 18px" }}>
+          {T.waBodyChat}
         </p>
-
-        {/* Acción principal */}
         <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
-          {mode === "shared" ? (
-            <button className="btn btn-ghost" onClick={abrirChat}>{T.waOpenChat}</button>
-          ) : (
-            <button className="btn btn-dark" onClick={abrirChat}>{T.waOpenChat}</button>
-          )}
+          <button className="btn btn-dark" onClick={abrirChat}>{T.waOpenChat}</button>
           <button className="btn btn-ghost" onClick={copiar}>
             {copiado ? T.waCopied : T.waCopy}
           </button>
         </div>
 
-        {/* Imágenes que todavía hay que adjuntar */}
-        {pendientes && (
-          <div style={{ marginTop: 34, paddingTop: 26, borderTop: "1px solid var(--hair)" }}>
-            <div className="meta" style={{ marginBottom: 14 }}>
-              [ {files.length} {files.length === 1 ? T.waOneRef : T.waManyRefs} ]
+        {/* Paso 2 — las imágenes, al mismo chat */}
+        {files.length > 0 && (
+          <div style={{ marginTop: 36, paddingTop: 26, borderTop: "1px solid var(--hair)" }}>
+            <div className="meta" style={{ marginBottom: 10 }}>
+              [ 2 · {files.length} {files.length === 1 ? T.waOneRef : T.waManyRefs} ]
             </div>
-            <p style={{ fontSize: 14.5, lineHeight: 1.55, color: "var(--muted)", margin: "0 0 18px" }}>
+            <p style={{ fontSize: 15, lineHeight: 1.55, color: "rgba(0,0,0,0.7)", margin: "0 0 18px" }}>
               {shareable ? T.waAttachShare : T.waAttachManual}
             </p>
 
@@ -838,7 +812,7 @@ function WizardDone({ setRoute, T, data, sent }) {
           </div>
         )}
 
-        <div style={{ marginTop: 34 }}>
+        <div style={{ marginTop: 36 }}>
           <button className="btn btn-ghost" onClick={() => setRoute("home")}>{T.thanksHome}</button>
         </div>
       </div>
@@ -853,14 +827,12 @@ const wzES = {
   back: "Atrás", next: "Siguiente", skip: "Saltear", submit: "Enviar por WhatsApp",
   fWpp: "WhatsApp", fWppPlaceholder: "11 7294 3420 (sin 0 ni 15)",
   waTitleA: "Casi", waTitleB: "listo.",
-  waBodyShared: "Se abrió WhatsApp con el mensaje y tus imágenes. Elegí el chat de Centro Studio y tocá enviar.",
   waBodyChat: "Te abrimos el chat de Centro Studio con todos tus datos cargados. Revisalo y tocá enviar.",
-  waBodyManual: "Tocá el botón para abrir el chat de Centro Studio con todos tus datos cargados.",
   waOpenChat: "Abrir chat de Centro →",
   waCopy: "Copiar el mensaje", waCopied: "✓ Copiado",
   waOneRef: "referencia", waManyRefs: "referencias",
-  waAttachShare: "WhatsApp no deja adjuntar imágenes desde un link. Tocá acá para mandarlas al mismo chat.",
-  waAttachManual: "WhatsApp no deja adjuntar imágenes desde un link. Descargalas y adjuntalas en el chat.",
+  waAttachShare: "Ahora mandá tus referencias al mismo chat: tocá el botón y elegí WhatsApp. El chat de Centro te va a aparecer primero.",
+  waAttachManual: "Adjuntá tus referencias en el chat que se abrió. Si las necesitás, descargalas acá.",
   waShareImgs: "Enviar las imágenes →",
   ready: "listo · podés avanzar", optional: "opcional · podés saltearlo",
   yes: "Sí", no: "No",
@@ -989,14 +961,12 @@ const wzEN = Object.assign({}, wzES, {
   back: "Back", next: "Next", skip: "Skip", submit: "Send via WhatsApp",
   fWpp: "WhatsApp", fWppPlaceholder: "+54 11 7294 3420",
   waTitleA: "Almost", waTitleB: "there.",
-  waBodyShared: "WhatsApp opened with your message and images. Pick the Centro Studio chat and hit send.",
   waBodyChat: "We opened the Centro Studio chat with all your details. Check it and hit send.",
-  waBodyManual: "Tap the button to open the Centro Studio chat with all your details.",
   waOpenChat: "Open Centro chat →",
   waCopy: "Copy the message", waCopied: "✓ Copied",
   waOneRef: "reference", waManyRefs: "references",
-  waAttachShare: "WhatsApp can't attach images from a link. Tap here to send them to the same chat.",
-  waAttachManual: "WhatsApp can't attach images from a link. Download them and attach them in the chat.",
+  waAttachShare: "Now send your references to the same chat: tap the button and pick WhatsApp. The Centro chat will be at the top.",
+  waAttachManual: "Attach your references in the chat that opened. Download them here if you need them.",
   waShareImgs: "Send the images →",
   ready: "ready · you can continue", optional: "optional · you can skip",
   yes: "Yes", no: "No",
